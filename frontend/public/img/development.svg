@@ -1,0 +1,14 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+	<title>development</title>
+	<style>
+		.s0 { fill: #ffffff } 
+	</style>
+	<g id="Layer_1">
+	</g>
+	<g id="Layer_2">
+		<g>
+			<path class="s0" d="m741.3 736.3v-500h-12.5-137.5v500h-23.8v-375h-12.5-137.5v375h-23.7v-425h-12.5-137.5v425h-23.8v-325h-12.5-137.5v325h-20v25h20 150 23.8 150 23.7 150 23.8 150 8.7v-25zm-646.2 0v-300h100v300zm173.7-400h100v400h-100zm173.8 400v-350h100v350zm173.7-475h100v475h-100z"/>
+			<path fill-rule="evenodd" class="s0" d="m327.5 156.3l131.3 128.7 227.4-227.5-17.5-18.7-209.9 209.9-132.6-128.7-220 223.8 18.8 17.4z"/>
+		</g>
+	</g>
+</svg>

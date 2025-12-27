@@ -1,0 +1,40 @@
+/* Dashboard Custom CSS - Minimal fixes only */
+
+/* Fix for Bootstrap collapse not working properly with treeview-menu */
+.sidebar-menu .treeview-menu.collapse.show {
+  display: block !important;
+}
+
+/* Ensure proper display when Bootstrap adds 'show' class */
+.sidebar-menu .treeview-menu.collapse:not(.show) {
+  display: none !important;
+}
+
+/* Fix for submenu items visibility */
+.sidebar-menu .treeview-menu li {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.sidebar-menu .treeview-menu li a {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: rgb(138, 153, 179) !important;
+  padding: 8px 20px 8px 40px !important;
+  line-height: 2.5 !important;
+  font-size: 14px !important;
+}
+
+.sidebar-menu .treeview-menu li a:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure submenu items are not clipped */
+.sidebar-menu .treeview-menu {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}

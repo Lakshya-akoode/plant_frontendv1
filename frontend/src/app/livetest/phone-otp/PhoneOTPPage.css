@@ -1,0 +1,518 @@
+/* Phone OTP Page Styles - Matching Signup Page Design */
+
+/* Import CSS variables from main styles */
+:root {
+  --primary-color: #1E1E1E;
+  --secondary-color: #FAF9FA;
+  --text-color: #343434;
+  --light-color: #e8e8e8;
+  --accent-color: rgb(77, 175, 78);
+  --black-color: #000000;
+  --light-green-color: #e9f2e9;
+  --white-color: #FFFFFF;
+  --light-bg-color: #faf9fa;
+  --mid-bg-color: #f5f5f5;
+  --divider-color: #4156491A;
+  --dark-divider-color: rgba(155, 155, 155, 0.102);
+  --primary-color1-opc: 77, 175, 78;
+  --black-color-opc: 155, 155, 155;
+  --error-color: rgb(230, 87, 87);
+  --default-font: "Sora", sans-serif;
+  --accent-font: "Marcellus", serif;
+}
+
+/* Main Layout - Same as signup page */
+.body_wrapper.frm-vh-md-100 {
+  min-height: 100vh;
+  background: var(--white-color);
+}
+
+.plant_body.plant_signup_fullwidth.plant_signup_fullwidth_two {
+  min-height: 100vh;
+  display: flex;
+}
+
+.plant_left_fullwidth {
+  flex: 1;
+  background: var(--light-bg-color);
+}
+
+.plant_right_fullwidth {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form Container */
+.form_tab_two {
+  width: 100%;
+  max-width: 500px;
+}
+
+.plant_box {
+  background: var(--white-color);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.phone-otp-form .section-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.phone-otp-form .section-title h2 {
+  font-family: var(--accent-font);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.phone-otp-form .section-title h2 span {
+  color: var(--accent-color);
+}
+
+.phone-otp-form .subtitle {
+  font-size: 16px;
+  color: var(--text-color);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.phone-otp-form .subtitle strong {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Form Styles */
+.otp_form {
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.input_title {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  font-size: 14px;
+  display: block;
+  text-align: center;
+}
+
+/* OTP Input Container */
+.otp-input-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.otp-input {
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--light-color);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--white-color);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.otp-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(77, 175, 78, 0.25);
+  transform: scale(1.05);
+}
+
+.otp-input.is-invalid {
+  border-color: var(--error-color);
+  animation: shake 0.5s ease-in-out;
+}
+
+.otp-input:not(:placeholder-shown) {
+  border-color: var(--accent-color);
+  background: var(--light-green-color);
+}
+
+/* Shake animation for invalid input */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Form Text */
+.form-text {
+  font-size: 12px;
+  color: var(--text-color);
+  margin-top: 8px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+/* Button Styles */
+.plant-forms__button {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.btn-default {
+  background: var(--accent-color);
+  color: var(--white-color);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.btn-default:hover:not(:disabled) {
+  background: #5a9f5a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77, 175, 78, 0.3);
+}
+
+.btn-default:disabled {
+  background: var(--light-color);
+  color: var(--text-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-default.prev_tab {
+  background: var(--light-color);
+  color: var(--text-color);
+}
+
+.btn-default.prev_tab:hover:not(:disabled) {
+  background: #d4d4d4;
+  color: var(--white-color);
+}
+
+/* Arrow Icons */
+.arrow_right,
+.arrow_left {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+}
+
+.arrow_right::after {
+  content: '→';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.arrow_left::after {
+  content: '←';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Error Messages */
+.text-danger {
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Resend Section */
+.resend-section {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--light-bg-color);
+  border-radius: 8px;
+}
+
+.resend-text {
+  color: var(--text-color);
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.resend-btn {
+  background: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resend-btn.active:hover {
+  background: var(--accent-color);
+  color: var(--white-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(77, 175, 78, 0.3);
+}
+
+.resend-btn.disabled {
+  color: var(--text-color);
+  border-color: var(--light-color);
+  cursor: not-allowed;
+}
+
+.resend-btn.disabled:hover {
+  background: transparent;
+  color: var(--text-color);
+  border-color: var(--light-color);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Help Section */
+.help-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--light-green-color);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.help-section h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.help-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-section li {
+  color: var(--text-color);
+  font-size: 14px;
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.help-section li:before {
+  content: "•";
+  color: var(--accent-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* Privacy Notice */
+.privacy-notice {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--light-bg-color);
+  border-radius: 6px;
+  border-left: 4px solid var(--accent-color);
+}
+
+.privacy-notice small {
+  font-size: 12px;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.privacy-notice strong {
+  color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .plant_body.plant_signup_fullwidth.plant_signup_fullwidth_two {
+    flex-direction: column;
+  }
+  
+  .plant_left_fullwidth {
+    display: none;
+  }
+  
+  .plant_right_fullwidth {
+    padding: 20px;
+  }
+  
+  .plant_box {
+    padding: 30px 20px;
+  }
+  
+  .phone-otp-form .section-title h2 {
+    font-size: 28px;
+  }
+  
+  .plant-forms__button {
+    flex-direction: column;
+  }
+  
+  .btn-default {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .otp-input-container {
+    gap: 10px;
+  }
+  
+  .otp-input {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .plant_right_fullwidth {
+    padding: 15px;
+  }
+  
+  .plant_box {
+    padding: 25px 15px;
+  }
+  
+  .phone-otp-form .section-title h2 {
+    font-size: 24px;
+  }
+  
+  .otp-input-container {
+    gap: 8px;
+  }
+  
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .resend-section {
+    padding: 15px;
+  }
+  
+  .help-section {
+    padding: 15px;
+  }
+}
+
+/* Loading State */
+.btn-default:disabled {
+  position: relative;
+}
+
+.btn-default:disabled::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Focus Management */
+.otp-input:focus {
+  transform: scale(1.05);
+}
+
+/* Success State Animation */
+.otp-input.success {
+  border-color: var(--accent-color);
+  background: var(--light-green-color);
+  animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Timer Animation */
+.resend-btn.disabled {
+  position: relative;
+}
+
+.resend-btn.disabled::after {
+  content: '';
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--light-color);
+  border-top: 2px solid var(--text-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Auto-focus styling */
+.otp-input:focus {
+  outline: none;
+}
+
+/* Placeholder styling */
+.otp-input::placeholder {
+  color: var(--light-color);
+  font-size: 18px;
+}
+
+/* Input validation states */
+.otp-input.valid {
+  border-color: var(--accent-color);
+  background: var(--light-green-color);
+}
+
+.otp-input.invalid {
+  border-color: var(--error-color);
+  background: #ffebee;
+}
+
+/* Accessibility improvements */
+.otp-input:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+.otp-input,
+.btn-default,
+.resend-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,478 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles to fix menu visibility */
+.main-menu {
+  display: flex !important;
+}
+
+@media (max-width: 991.98px) {
+  /* .main-menu {
+    display: none !important;
+  } */
+  
+  /* .main-menu.show {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    z-index: 1000;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  } */
+}
+
+.navbar-toggle {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-toggle {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  
+  .navbar-toggler-icon {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px 0;
+    transition: 0.3s;
+  }
+}
+
+/* Custom Tab Styles for User Edit Form */
+.user-tabs-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
+.user-tabs-nav {
+  border-bottom: 2px solid #f1f3f4;
+  margin-bottom: 0;
+  padding: 0 25px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  position: relative;
+}
+
+.user-tabs-nav::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #007bff, #28a745, #ffc107, #dc3545, #6f42c1, #20c997, #fd7e14, #6c757d);
+  opacity: 0.1;
+}
+
+.user-tabs-nav .nav-item {
+  margin-right: 0;
+  position: relative;
+}
+
+.user-tabs-nav .nav-link {
+  border: none;
+  background: transparent;
+  padding: 18px 24px;
+  margin-right: 8px;
+  border-radius: 12px 12px 0 0;
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+  position: relative;
+  letter-spacing: 0.3px;
+}
+
+.user-tabs-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,123,255,0.05) 0%, rgba(0,123,255,0.02) 100%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.user-tabs-nav .nav-link:hover {
+  color: #007bff;
+  background-color: rgba(0,123,255,0.05);
+  border-bottom-color: #dee2e6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+}
+
+.user-tabs-nav .nav-link:hover::before {
+  opacity: 1;
+}
+
+.user-tabs-nav .nav-link.active {
+  color: #007bff;
+  background: linear-gradient(135deg, rgba(0,123,255,0.08) 0%, rgba(0,123,255,0.03) 100%);
+  border-bottom-color: #007bff;
+  font-weight: 600;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+}
+
+.user-tabs-nav .nav-link.active::before {
+  opacity: 1;
+}
+
+.user-tabs-content {
+  padding: 30px 25px;
+  min-height: 250px;
+  background: #fff;
+}
+
+.profile-info-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.profile-info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* Custom Button Styles to match screenshot */
+.user-tabs-content .btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-family: serif;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.user-tabs-content .btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-tabs-content .btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.user-tabs-content .btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Override existing btn1 and btn2 classes for tab content */
+.user-tabs-content .btn1,
+.user-tabs-content .btn2 {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+  font-family: serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  padding: 8px 20px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.user-tabs-content .btn1:hover,
+.user-tabs-content .btn2:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+  color: #111827 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+@media (max-width: 1200px) {
+  .user-tabs-nav .nav-link {
+    max-width: 180px;
+    padding: 16px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-tabs-nav {
+    flex-wrap: wrap;
+    padding: 0 15px;
+  }
+  
+  .user-tabs-nav .nav-link {
+    padding: 14px 16px;
+    font-size: 12px;
+    max-width: 150px;
+    margin-right: 4px;
+  }
+  
+  .user-tabs-content {
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .user-tabs-nav .nav-link {
+    padding: 12px 14px;
+    font-size: 11px;
+    max-width: 120px;
+  }
+}
+
+/* How To Use Page Styles */
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+}
+
+.faq-item:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* About Page Styles */
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* Research Mission Page Styles */
+.research-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.process-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.publication-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+}
+
+/* Advanced Education Page Styles */
+.program-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.curriculum-module:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+}
+
+.faculty-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.cta-buttons .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* Smooth transitions for all interactive elements */
+.step-card,
+.feature-card,
+.faq-item,
+.value-card,
+.team-card,
+.research-card,
+.process-card,
+.publication-card,
+.program-card,
+.curriculum-module,
+.faculty-card,
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive adjustments for How To Use, About, Research Mission, and Advanced Education pages */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem !important;
+  }
+  
+  .section-title {
+    font-size: 2rem !important;
+  }
+  
+  .step-card,
+  .feature-card,
+  .value-card,
+  .team-card,
+  .research-card,
+  .process-card,
+  .publication-card,
+  .program-card,
+  .curriculum-module,
+  .faculty-card {
+    margin-bottom: 2rem;
+  }
+  
+  .cta-buttons .btn {
+    display: block !important;
+    margin: 0.5rem auto !important;
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .mission-stats .stat-item,
+  .research-stats .stat-item,
+  .education-stats .stat-item {
+    margin-bottom: 1.5rem;
+  }
+  
+  .publication-meta {
+    flex-direction: column !important;
+    gap: 0.5rem;
+    text-align: center !important;
+  }
+  
+  .module-credits {
+    text-align: center !important;
+    margin-top: 1rem;
+  }
+}
+
+/* CRITICAL FIX: Remove ALL white space below footer */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  overflow-x: hidden;
+}
+
+body {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.main {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Remove ALL bottom spacing from sections */
+/* section {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+} */
+
+.sec-pad {
+  margin-bottom: 0 !important;
+  padding-bottom: 50px !important;
+}
+
+/* Footer fixes */
+.footer-main {
+  margin: 0 !important;
+  padding: 40px 0 0 0 !important;
+}
+
+footer {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Container fixes */
+.container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.container-fluid {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Row and column fixes */
+.row {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.col-lg-12, .col-lg-6, .col-lg-4, .col-lg-3, .col-lg-5, .col-md-6, .col-md-3, .col-md-5 {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Specific section fixes */
+.hero-section {
+  margin-bottom: 0 !important;
+  padding-bottom: 50px !important;
+}
+
+.features-section, .faq-section, .cta-section, .mission-section, .values-section, .team-section, .story-section, .research-areas-section, .research-process-section, .publications-section, .program-tracks-section, .curriculum-section, .faculty-section {
+  margin-bottom: 0 !important;
+  padding-bottom: 50px !important;
+}
+
+/* Ensure no extra space at the very bottom */
+body::after, html::after, .main::after {
+  display: none !important;
+  content: none !important;
+}
+.form_questionnaire.form_tab_two{
+  max-width: 100%;
+}
+.form_questionnaire .nav-tabs .nav-item.show .nav-link, .form_questionnaire .nav-tabs .nav-link.active{
+  background-color:transparent;
+}
+/* Force footer to stick to bottom */
+.footer-main {
+  position: relative;
+  z-index: 1;
+}

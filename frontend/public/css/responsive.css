@@ -1,0 +1,465 @@
+@media (max-width: 1440px) {
+  .plant_box_register {
+    padding: 40px;
+  }
+  .divider_border {
+    margin: 20px 0 10px;
+  }
+  .plant_signup_fullwidth_two .or-text {
+    margin-bottom: 0;
+  }
+  .plant_signup_fullwidth_two
+    .plant_right_fullwidth
+    .plant_box
+    .signup_form
+    .form-group {
+    margin-top: 18px;
+  }
+  .plant_signup_fullwidth_two
+    .plant_right_fullwidth
+    .plant_box
+    .condition_text {
+    margin-top: 20px;
+  }
+  .plant_signup_fullwidth_two
+    .plant_right_fullwidth
+    .plant_box
+    .signup_form
+    .form-group
+    .thm_btn {
+    margin-top: 0;
+  }
+  .header_top {
+    padding: 30px;
+  }
+  .plant_box_four .plant_content_right .plant_box {
+    padding: 80px 0px;
+  }
+  .plant_signup_fullwidth_two
+    .plant_right_fullwidth
+    .plant_box.plant_countdown {
+    padding-top: 20px;
+  }
+}
+@media (max-width: 1366px) {
+  .or-text {
+    margin: 15px 0px 5px;
+  }
+  .signup_form .form-group {
+    margin-bottom: 0;
+  }
+  .header_top {
+    padding: 30px 100px 30px 30px;
+  }
+  .plant_login_two .plant_header,
+  .plant_form_tab .plant_header {
+    margin-bottom: 20px;
+  }
+  .plant_login_two .signup_form .form-group:not(:first-child) {
+    margin-top: 13px;
+  }
+  .plant_box_three {
+    margin: 1rem auto;
+  }
+  .plant_form_tab.plant_login .plant_content_right .plant_box {
+    padding: 30px;
+  }
+  .form_tab {
+    margin-bottom: 16px;
+  }
+  .plant_form_tab .or-text {
+    margin-top: 5px;
+  }
+  .plant_form_tab .signup_form .form-group:not(:first-child) {
+    margin-top: 18px;
+  }
+  .plant_form_tab .thm_btn {
+    margin-top: 0;
+  }
+  .plant_form_tab .tab-content {
+    min-height: 375px;
+  }
+  .plant_right_fullwidth .form_title {
+    margin-bottom: 25px;
+  }
+  .plant_signup_fullwidth_two .plant_right_fullwidth .plant_box {
+    padding-top: 70px;
+  }
+  .plant_box_register .plant_header {
+    margin-bottom: 20px;
+  }
+  .plant_box_register .btn-social + .btn-social {
+    margin-top: 10px;
+  }
+  .plant_box_register .divider_border {
+    margin: 10px 0 6px;
+  }
+  .condition_text {
+    margin-top: 15px;
+  }
+  .plant_box_four {
+    max-width: auto;
+  }
+  .plant_box_four .plant_content_left .content {
+    padding: 40px 0px 0;
+  }
+  .plant_box_four .plant_content_left .content h5 {
+    margin-bottom: 8px;
+  }
+  .plant_box_four .plant_content_left .content h3 {
+    margin-bottom: 10px;
+  }
+  .plant_box_four .plant_content_left .content .thm_btn {
+    margin-top: 15px;
+  }
+  .plant_box_four .plant_content_right .plant_box {
+    padding: 20px 50px;
+  }
+  .plant_box_four .plant_content_left {
+    padding: 25px 15px;
+  }
+  .plant_box_four .plant_content_left .content.quote_text {
+    left: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .plant_box_checkbox {
+    max-width: 500px;
+    padding: 32px 50px;
+  }
+  .plant_box_checkbox .plant_header {
+    margin-bottom: 30px;
+  }
+  .plant_box_checkbox .next_tab {
+    margin-top: 12px;
+  }
+  .plant_cloud_box {
+    padding: 25px 30px 15px;
+  }
+  .plant_cloud_box .signup_form .form-group {
+    margin-bottom: 12px;
+  }
+  .plant_contact_box.plant_login .plant_content_right .plant_box,
+  .plant_contact_box.plant_login .plant_content_left {
+    padding: 30px 45px;
+  }
+  .plant_contact_box.plant_login
+    .plant_content_right
+    .plant_box
+    .signup_form
+    .form-group:not(:first-child) {
+    margin-top: 18px;
+  }
+  .plant_contact_box .signup_form .form-group .top_text {
+    bottom: -4px;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .form_tab {
+    margin-bottom: 10px;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .plant_box .form_title {
+    font-size: 25px;
+    margin-bottom: 7px;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .plant_box {
+    padding-top: 0;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .form_tab li .nav-link span {
+    margin-bottom: 5px;
+  }
+  .page-23 .f_content {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .plant_box {
+    padding: 40px;
+  }
+  .plant_box_two .divider_border {
+    margin: 12px 0px;
+  }
+  .header_top {
+    padding: 20px;
+  }
+  .plant_right_fullwidth .plant_content_body {
+    margin-left: 0;
+  }
+  .plant_box_three {
+    max-width: 960px;
+  }
+  .plant_login .plant_content_left,
+  .plant_login .plant_content_right .plant_box {
+    padding: 30px;
+  }
+  .plant_box_register_three {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .plant_cloud_box {
+    padding: 25px 30px 15px;
+  }
+  .plant_address_content img,
+  .img_p_23 {
+    max-width: 100%;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .plant_box {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 991px) {
+  .plant_box_three {
+    max-width: 720px;
+    width: auto;
+  }
+  .plant_login .plant_content_left .plant_logo_wrapper p br,
+  .plant_signup_fullwidth_two.plant_countdown_inner .plant_left_top_logo {
+    display: none !important;
+  }
+  .plant_login_two .plant_content_left .plant_box,
+  .plant_login_two .plant_content_right .plant_box {
+    margin: 0px auto;
+  }
+  .plant_form_tab .plant_content_right {
+    flex: 0 0 53%;
+    max-width: 53%;
+  }
+  .plant_form_tab .plant_content_left {
+    flex: 0 0 47%;
+    max-width: 47%;
+  }
+  .plant_signup_fullwidth_two {
+    flex-wrap: wrap;
+  }
+  .plant_signup_fullwidth_two .plant_left_fullwidth,
+  .plant_signup_fullwidth_two .plant_right_fullwidth {
+    width: 100%;
+  }
+  .plant_signup_fullwidth_two .plant_right_fullwidth .plant_box {
+    padding: 20px 0px;
+  }
+  .plant_box_four .plant_content_left {
+    background-position: center center !important;
+    height: 500px;
+  }
+  .plant_box_four .plant_content_right .plant_box {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+  .plant_box_four .plant_content_left .content.quote_text {
+    left: 0;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .plant_cloud_content h2 {
+    font-size: 36px;
+    line-height: 50px;
+  }
+  .plant_cloud_content p br {
+    display: none;
+  }
+  .plant_cloud_box {
+    padding: 25px 20px 15px;
+  }
+  .plant_contact_box.plant_login .plant_content_right .plant_box,
+  .plant_contact_box.plant_login .plant_content_left {
+    padding: 30px 20px;
+  }
+  .plant_box_three.plant_contact_box {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .plant_signup_fullwidth_two .form_tab_two {
+    padding: 50px 0px;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .plant_box {
+    max-width: 600px;
+  }
+  .top_logo {
+    position: relative;
+    margin-bottom: 50px;
+    padding-left: 0;
+  }
+  .plant_signup_fullwidth_two .plant_left_top_logo {
+    display: block !important;
+    text-align: center;
+    height: auto;
+  }
+  .page-23 .f_content {
+    display: block !important;
+  }
+  .page-23 .plant_box.plant_countdown {
+    max-width: 500px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .f_content {
+    height: auto;
+  }
+  .plant_box {
+    padding: 30px 20px;
+  }
+  .plant_box_register_three {
+    padding: 30px 40px;
+  }
+  .img {
+    height: auto;
+  }
+  .plant_form_tab .container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .plant_body {
+    min-height: 100vh;
+  }
+  .f_content {
+    height: auto;
+  }
+  .plant_box_three {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+  .plant_left_fullwidth {
+    display: none;
+  }
+  .plant_right_fullwidth {
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .header_top {
+    position: relative;
+    padding: 10px 20px;
+  }
+  .plant_right_fullwidth .plant_content_body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .plant_box_four .container {
+    max-width: 100%;
+  }
+  .plant_box_four .plant_content_left .footer_text {
+    font-size: 14px;
+    bottom: 25px;
+  }
+  #particles-js {
+    height: 200%;
+  }
+  .plant_content_right .plant_cloud_box {
+    max-width: 100%;
+  }
+  .plant_cloud_content {
+    padding-top: 50px;
+  }
+  .plant_box_three.plant_contact_box {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .plant_signup_fullwidth .plant_content_body {
+    padding-top: 0;
+  }
+  .parallax-effect {
+    height: auto;
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 576px) {
+  .plant_countdown .plant_header .form_title {
+    font-size: 29px;
+  }
+  .form_title {
+    font-size: 24px;
+  }
+  .form_footer_text {
+    font-size: 13px;
+  }
+  .signup_form .form-group:not(:first-child) {
+    margin-top: 15px;
+  }
+  .plant_box {
+    margin: 1.75rem 15px;
+  }
+  .plant_box_three {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+  .plant_content_left .plant_box,
+  .plant_content_right .plant_box {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .plant_header p {
+    font-size: 16px;
+  }
+  .plant_header p br {
+    display: none;
+  }
+  .header_top {
+    display: block !important;
+    text-align: center;
+  }
+  .header_top .form_footer_text {
+    text-align: center !important;
+    padding-top: 10px;
+  }
+  .plant_login .plant_content_left,
+  .plant_login .plant_content_right .plant_box {
+    padding: 30px 20px;
+  }
+  .plant_form_tab .plant_content_left,
+  .plant_form_tab .plant_content_right {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .plant_signup_fullwidth_two .plant_right_fullwidth .plant_box {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .plant_box_register_three {
+    padding: 30px 20px;
+  }
+  .social_link_two {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .social_link_two .btn-social {
+    margin-bottom: 5px;
+  }
+  .social_link_two .btn-social.btn-google-blue {
+    width: 100%;
+    margin-right: 0;
+  }
+  .plant_box_register_three .signup_form .form-group:not(:first-child) {
+    margin-top: 15px;
+  }
+  .plant_box_four .plant_content_right .plant_box .form_title {
+    font-size: 28px;
+  }
+  .plant_cloud_content {
+    padding-top: 30px;
+  }
+  .plant_contact_box .d-flex {
+    flex-wrap: wrap;
+    padding-bottom: 15px;
+  }
+  .plant_contact_box .item {
+    width: 100%;
+  }
+  .plant_signup_fullwidth_two .form_tab_two .form_tab li .nav-link {
+    font-size: 13px;
+  }
+  .red_btn {
+    width: 100%;
+    padding: 14px 47px;
+  }
+  .parallax_img {
+    display: none;
+  }
+}

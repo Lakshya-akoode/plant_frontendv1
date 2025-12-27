@@ -1,0 +1,416 @@
+/* Email OTP Page Styles - Matching Signup Page Design */
+
+/* Import CSS variables from main styles */
+:root {
+  --primary-color: #1E1E1E;
+  --secondary-color: #FAF9FA;
+  --text-color: #343434;
+  --light-color: #e8e8e8;
+  --accent-color: rgb(77, 175, 78);
+  --black-color: #000000;
+  --light-green-color: #e9f2e9;
+  --white-color: #FFFFFF;
+  --light-bg-color: #faf9fa;
+  --mid-bg-color: #f5f5f5;
+  --divider-color: #4156491A;
+  --dark-divider-color: rgba(155, 155, 155, 0.102);
+  --primary-color1-opc: 77, 175, 78;
+  --black-color-opc: 155, 155, 155;
+  --error-color: rgb(230, 87, 87);
+  --default-font: "Sora", sans-serif;
+  --accent-font: "Marcellus", serif;
+}
+
+/* Main Layout - Same as signup page */
+.body_wrapper.frm-vh-md-100 {
+  min-height: 100vh;
+  background: var(--white-color);
+}
+
+.plant_body.plant_signup_fullwidth.plant_signup_fullwidth_two {
+  min-height: 100vh;
+  display: flex;
+}
+
+.plant_left_fullwidth {
+  flex: 1;
+  background: var(--light-bg-color);
+}
+
+.plant_right_fullwidth {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form Container */
+.form_tab_two {
+  width: 100%;
+  max-width: 500px;
+}
+
+.plant_box {
+  background: var(--white-color);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.email-otp-form .section-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.email-otp-form .section-title h2 {
+  font-family: var(--accent-font);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.email-otp-form .section-title h2 span {
+  color: var(--accent-color);
+}
+
+.email-otp-form .subtitle {
+  font-size: 16px;
+  color: var(--text-color);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.email-otp-form .subtitle strong {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Form Styles */
+.signup_form {
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.input_title {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  font-size: 14px;
+  display: block;
+}
+
+/* OTP Input Container */
+.otp-input-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.otp-input {
+  width: 50px;
+  height: 50px;
+  border: 2px solid var(--light-color);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--white-color);
+  transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(77, 175, 78, 0.25);
+  outline: none;
+}
+
+.otp-input.is-invalid {
+  border-color: var(--error-color);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.otp-input:not(:placeholder-shown) {
+  border-color: var(--accent-color);
+  background: var(--light-green-color);
+}
+
+/* OTP Actions */
+.otp-actions {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.btn-resend {
+  background: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.btn-resend:hover:not(.disabled) {
+  background: var(--accent-color);
+  color: var(--white-color);
+}
+
+.btn-resend.disabled {
+  color: var(--text-color);
+  border-color: var(--light-color);
+  cursor: not-allowed;
+}
+
+.change-email {
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.btn-link:hover {
+  color: #5a9f5a;
+}
+
+/* Button Styles */
+.plant-forms__button {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn-default {
+  background: var(--accent-color);
+  color: var(--white-color);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-default:hover:not(:disabled) {
+  background: #5a9f5a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77, 175, 78, 0.3);
+}
+
+.btn-default:disabled {
+  background: var(--light-color);
+  color: var(--text-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-default.prev_tab {
+  background: var(--light-color);
+  color: var(--text-color);
+}
+
+.btn-default.prev_tab:hover:not(:disabled) {
+  background: #d4d4d4;
+  color: var(--white-color);
+}
+
+/* Arrow Icons */
+.arrow_right,
+.arrow_left {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+}
+
+.arrow_right::after {
+  content: '→';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.arrow_left::after {
+  content: '←';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Error Messages */
+.text-danger {
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Help Section */
+.otp-help {
+  margin-top: 40px;
+  padding: 20px;
+  background: var(--light-green-color);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.otp-help h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.otp-help ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.otp-help li {
+  color: var(--text-color);
+  font-size: 14px;
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.otp-help li:before {
+  content: "•";
+  color: var(--accent-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .plant_body.plant_signup_fullwidth.plant_signup_fullwidth_two {
+    flex-direction: column;
+  }
+  
+  .plant_left_fullwidth {
+    display: none;
+  }
+  
+  .plant_right_fullwidth {
+    padding: 20px;
+  }
+  
+  .plant_box {
+    padding: 30px 20px;
+  }
+  
+  .email-otp-form .section-title h2 {
+    font-size: 28px;
+  }
+  
+  .otp-input-container {
+    gap: 8px;
+  }
+  
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .plant-forms__button {
+    flex-direction: column;
+  }
+  
+  .btn-default {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .plant_right_fullwidth {
+    padding: 15px;
+  }
+  
+  .plant_box {
+    padding: 25px 15px;
+  }
+  
+  .email-otp-form .section-title h2 {
+    font-size: 24px;
+  }
+  
+  .otp-input-container {
+    gap: 6px;
+  }
+  
+  .otp-input {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+/* Loading State */
+.btn-default:disabled {
+  position: relative;
+}
+
+/* .btn-default:disabled::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+} */
+.btn-default:disabled:hover{
+  color: var(--white-color);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Focus Management */
+.otp-input:focus {
+  transform: scale(1.05);
+}
+
+/* Success State */
+.otp-input.success {
+  border-color: var(--accent-color);
+  background: var(--light-green-color);
+  color: var(--accent-color);
+}
