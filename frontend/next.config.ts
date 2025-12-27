@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'api.plantchat.com',
+        hostname: 'plantchatvercel.akoodedemo.com',
         port: '',
         pathname: '/public/images/**',
     }     ],
