@@ -114,7 +114,7 @@ const ResetPassword = () => {
         toast.success('Password reset successfully! You can now sign in with your new password.');
         setPasswordReset(true);
         setTimeout(() => {
-          router.push('/signin');
+          router.push('/livetest/signin');
         }, 2000);
       } else {
         toast.error(result.message || 'Failed to reset password');
