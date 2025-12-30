@@ -67,7 +67,7 @@ export default function Hero() {
                       <div className="hero-body wow fadeInUp" data-wow-delay="0.4s">
                         {/* Hero Button Start */}
                         <div className="hero-btn">
-                          <a href="/signup" className="btn-default">Get Started</a>                                
+                          <a href="/livetest/signup" className="btn-default">Get Started</a>                                
                         </div>
                         {/* Hero Button End */}
                       </div>
