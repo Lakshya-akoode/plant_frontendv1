@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -7,174 +7,174 @@ import { getBlogcategoryTableData } from "../../../api/blogcategory";
 import { toast } from 'react-toastify';
 
 
-import HtmlEditor from "@/components/common/HtmlEditor";
+import dynamic from 'next/dynamic';
+
+// Dynamically import CKEditor wrapper with SSR disabled
+const CKEditorWrapper = dynamic(() => import('./CKEditorWrapper'), { ssr: false });
 
 
 const CreateList = () => {
-  
-  const params = useParams();  
-    const id = params?.id;  
-    const router = useRouter();
-    const [blog, setBlog] = useState({ title: "", status: false,description: "", });
-    const [title, setTitle] = useState("");
-    const [slug, setSlug] = useState("");
-    const [status, setStatus] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [source, setSource] = useState("");
-   const [date, setDate] = useState("");
-    const [description, setDescription] = useState("");
-    const [error, setError] = useState("");  
-    const [logo, setLogo] = useState(null);
-    const [logoimage, setLogoImage] = useState(null);
-    const [metatitle, setMetatitle] = useState("");
+
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
+  const [blog, setBlog] = useState({ title: "", status: false, description: "", });
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [source, setSource] = useState("");
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [logo, setLogo] = useState(null);
+  const [logoimage, setLogoImage] = useState(null);
+  const [metatitle, setMetatitle] = useState("");
   const [metadescription, setMetaDescription] = useState("");
-    const uploadLogo = (e) => {
-      setLogoImage("")
-      setLogo(e.target.files[0]);
+  const uploadLogo = (e) => {
+    setLogoImage("")
+    setLogo(e.target.files[0]);
   };
   const [blogcategories, setBlogcategories] = useState([]);
   const [selectedBlogcategory, setSelectedBlogcategory] = useState("");
-    useEffect(() => {
-      if (!id) return;      
-      const fetchBlog = async () => {
-         try {
-           const data = await getBlogById(id);
-           // setBlog({ title: data.data.title, status: data.data.status, description: data.data.description });
-           setTitle(data.data.title || "")
-           setSlug(data.data.slug || "")
-           setStatus(data.data.status === true || data.data.status === "true")
-           setDescription(data.data.description || "")
-           setSource(data.data.source || "")
-           // Format the createdAt timestamp for the date field
-           if (data.data.createdAt) {
-             const date = new Date(data.data.createdAt);
-             const formattedDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-             setDate(formattedDate);
-           } else {
-             setDate("");
-           }
-           setMetatitle(data.data.metatitle || "")
-           setMetaDescription(data.data.metadescription || "")
-          
-          setSelectedBlogcategory(data.data.blogCategory?._id || data.data.blogCategory || "")
-          if(data.data.image) {
-          setLogoImage(process.env.NEXT_PUBLIC_API_URL+'public/'+data.data.image)
-          }
-        } catch (error) {
-          console.error("Error fetching Blog:", error);
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    if (!id) return;
+    const fetchBlog = async () => {
+      try {
+        const data = await getBlogById(id);
+        // setBlog({ title: data.data.title, status: data.data.status, description: data.data.description });
+        setTitle(data.data.title || "")
+        setSlug(data.data.slug || "")
+        setStatus(data.data.status === true || data.data.status === "true")
+        setDescription(data.data.description || "")
+        setSource(data.data.source || "")
+        // Format the createdAt timestamp for the date field
+        if (data.data.createdAt) {
+          const date = new Date(data.data.createdAt);
+          const formattedDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+          setDate(formattedDate);
+        } else {
+          setDate("");
         }
-      };
-  
-      fetchBlog();
-      const fetchBlogcategories = async () => {
-            try {
-              const response = await getBlogcategoryTableData();
-              
-              setBlogcategories(response || []);
-            } catch (err) {
-              console.error("Error fetching Blogcategory:", err);
-            }
-          };
-      
-          fetchBlogcategories();
-    }, [id]);
-    const handleBlogcategoryChange = (e) => {
-      setSelectedBlogcategory(e.target.value);
-    };
- const handleDescriptionChange = (e) => {
-      if (typeof e === "string") {
-        setDescription(e);
-      } else if (e?.target?.value) {
-        setDescription(e.target.value);
+        setMetatitle(data.data.metatitle || "")
+        setMetaDescription(data.data.metadescription || "")
+
+        setSelectedBlogcategory(data.data.blogCategory?._id || data.data.blogCategory || "")
+        if (data.data.image) {
+          setLogoImage(process.env.NEXT_PUBLIC_API_URL + 'public/' + data.data.image)
+        }
+      } catch (error) {
+        console.error("Error fetching Blog:", error);
+      } finally {
+        setLoading(false);
       }
-      setError("");
     };
 
-    const handleTitleChange = (e) => {
-      setTitle(e.target.value);
-      
-      // Auto-generate slug from title
-      const generatedSlug = e.target.value
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-        .replace(/\s+/g, '-') // Replace spaces with hyphens
-        .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-        .trim('-'); // Remove leading/trailing hyphens
-      
-      setSlug(generatedSlug);
-    };
-  
-     const handleSubmit = async (e) => {
-       e.preventDefault();
-       try {
-         const formData = new FormData();
-         formData.append("title", title);
-         formData.append("description", description);
-         formData.append("blogCategory", selectedBlogcategory);
-         formData.append("status", status);
-         formData.append("source", source);
-         formData.append("metatitle", metatitle);
-         formData.append("metadescription", metadescription);
-         // Note: date field is read-only (shows creation date)
-         if (logo) {
-           formData.append("image", logo);
-         }
-       const res = await updateBlogAPI(id, formData);
-        // alert("Blog updated successfully!");
-        toast.success(res.message);
-         
-         if(res.status=="success"){
-            setTimeout(() => {
-              router.push("/livetest/cmsadminlogin/my-blog");
-              }, 1500); 
-          }
-      } catch (error) {
-        alert("Failed to update Blog.");
-        console.error(error);
+    fetchBlog();
+    const fetchBlogcategories = async () => {
+      try {
+        const response = await getBlogcategoryTableData();
+
+        setBlogcategories(response || []);
+      } catch (err) {
+        console.error("Error fetching Blogcategory:", err);
       }
     };
-  
-    // const handleChange = (e) => {
-    //   setBlog((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    // };
-  
-    // const handleStatusChange = () => {
-    //   setBlog((prev) => ({ ...prev, status: !prev.status }));
-    // };
-  
-    if (loading) return <p>Loading...</p>;
+
+    fetchBlogcategories();
+  }, [id]);
+  const handleBlogcategoryChange = (e) => {
+    setSelectedBlogcategory(e.target.value);
+  };
+  const handleDescriptionChange = (event, editor) => {
+    const data = editor.getData();
+    setDescription(data);
+    setError("");
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+
+    // Auto-generate slug from title
+    const generatedSlug = e.target.value
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim('-'); // Remove leading/trailing hyphens
+
+    setSlug(generatedSlug);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("blogCategory", selectedBlogcategory);
+      formData.append("status", status);
+      formData.append("source", source);
+      formData.append("metatitle", metatitle);
+      formData.append("metadescription", metadescription);
+      // Note: date field is read-only (shows creation date)
+      if (logo) {
+        formData.append("image", logo);
+      }
+      const res = await updateBlogAPI(id, formData);
+      // alert("Blog updated successfully!");
+      toast.success(res.message);
+
+      if (res.status == "success") {
+        setTimeout(() => {
+          router.push("/livetest/cmsadminlogin/my-blog");
+        }, 1500);
+      }
+    } catch (error) {
+      alert("Failed to update Blog.");
+      console.error(error);
+    }
+  };
+
+  // const handleChange = (e) => {
+  //   setBlog((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  // };
+
+  // const handleStatusChange = () => {
+  //   setBlog((prev) => ({ ...prev, status: !prev.status }));
+  // };
+
+  if (loading) return <p>Loading...</p>;
   return (
     <>
-    <form onSubmit={handleSubmit} className="row">
-    <div className="col-lg-12">
-                <div className="wrap-custom-file">
-                    <input
-                        type="file"
-                        id="image1"
-                         accept="image/png, image/gif, image/jpeg, image/svg+xml, image/svg, image/webp, image/avif"
-                        onChange={uploadLogo}
-                    />
-                   <label
-                      htmlFor="image1"
-                      style={
-                        logoimage                          
-                        ? { backgroundImage: `url(${logoimage})` }
-                          : logo
-                          ? { backgroundImage: `url(${URL.createObjectURL(logo)})` }
-                          : undefined
-                      }
-                    >
-                        <span>
-                            <i className="flaticon-download"></i> Upload Photo{" "}
-                        </span>
-                    </label>
-                </div>
-                <p>*minimum 260px x 260px</p>
-            </div>
-            {/* End .col */}
-            <div className="col-lg-6 col-xl-6">
+      <form onSubmit={handleSubmit} className="row">
+        <div className="col-lg-12">
+          <div className="wrap-custom-file">
+            <input
+              type="file"
+              id="image1"
+              accept="image/png, image/gif, image/jpeg, image/svg+xml, image/svg, image/webp, image/avif"
+              onChange={uploadLogo}
+            />
+            <label
+              htmlFor="image1"
+              style={
+                logoimage
+                  ? { backgroundImage: `url(${logoimage})` }
+                  : logo
+                    ? { backgroundImage: `url(${URL.createObjectURL(logo)})` }
+                    : undefined
+              }
+            >
+              <span>
+                <i className="flaticon-download"></i> Upload Photo{" "}
+              </span>
+            </label>
+          </div>
+          <p>*minimum 260px x 260px</p>
+        </div>
+        {/* End .col */}
+        <div className="col-lg-6 col-xl-6">
           <div className="my_profile_setting_input ui_kit_select_search form-group">
             <label htmlFor="BlogcategorySelect">Select Blog category</label>
             <select
@@ -194,132 +194,324 @@ const CreateList = () => {
             </select>
           </div>
         </div>
-      <div className="col-lg-6 col-xl-6">
-        <div className="my_profile_setting_input form-group">
-          <label htmlFor="BlogTitle">Blog Title</label>
-          <input
-        type="text"
-        className="form-control"
-        id="BlogTitle"
-        name="title"
-        value={title}
-        onChange={handleTitleChange}
-      />
+        <div className="col-lg-6 col-xl-6">
+          <div className="my_profile_setting_input form-group">
+            <label htmlFor="BlogTitle">Blog Title</label>
+            <input
+              type="text"
+              className="form-control"
+              id="BlogTitle"
+              name="title"
+              value={title}
+              onChange={handleTitleChange}
+            />
+          </div>
         </div>
-      </div>
-      {/* End .col */}
-      <div className="col-lg-6 col-xl-6">
-        <div className="my_profile_setting_input form-group">
-          <label htmlFor="BlogSlug">Blog Slug (SEO URL)</label>
-          <input
-        type="text"
-        className="form-control"
-        id="BlogSlug"
-        name="slug"
-        value={slug}
-        onChange={(e) => setSlug(e.target.value)}
-        placeholder="Auto-generated from title"
-        readOnly
-        style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
-      />
-      <small className="text-muted">Auto-generated from title</small>
+        {/* End .col */}
+        <div className="col-lg-6 col-xl-6">
+          <div className="my_profile_setting_input form-group">
+            <label htmlFor="BlogSlug">Blog Slug (SEO URL)</label>
+            <input
+              type="text"
+              className="form-control"
+              id="BlogSlug"
+              name="slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder="Auto-generated from title"
+              readOnly
+              style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
+            />
+            <small className="text-muted">Auto-generated from title</small>
+          </div>
         </div>
-      </div>
-      {/* End .col */}
-      <div className="col-lg-6 col-xl-6">
-        <div className="my_profile_setting_input form-group">
-          <label htmlFor="blogSource">Blog Source</label>
-          <input type="text" className="form-control" id="blogSource" value={source} onChange={(e) => setSource(e.target.value)} />
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        {/* End .col */}
+        <div className="col-lg-6 col-xl-6">
+          <div className="my_profile_setting_input form-group">
+            <label htmlFor="blogSource">Blog Source</label>
+            <input type="text" className="form-control" id="blogSource" value={source} onChange={(e) => setSource(e.target.value)} />
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+          </div>
         </div>
-      </div>
-       <div className="col-lg-6 col-xl-6">
-         <div className="my_profile_setting_input form-group">
-           <label htmlFor="blogDate">Blog Creation Date</label>
-           <input 
-             type="date" 
-             className="form-control" 
-             id="blogDate" 
-             value={date} 
-             readOnly
-             style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
-           />
-         </div>
-       </div>
-      <div className="col-lg-12">
+        <div className="col-lg-6 col-xl-6">
+          <div className="my_profile_setting_input form-group">
+            <label htmlFor="blogDate">Blog Creation Date</label>
+            <input
+              type="date"
+              className="form-control"
+              id="blogDate"
+              value={date}
+              readOnly
+              style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
+            />
+          </div>
+        </div>
+        <div className="col-lg-12">
           <div className="my_profile_setting_textarea form-group">
             <label htmlFor="BlogDescription">Description</label>
-            <HtmlEditor
-              id="blogDescription"
-              value={description}
+            <CKEditorWrapper
+              data={description}
               onChange={handleDescriptionChange}
-              placeholder="Enter services description"
-              height="300px"
+              config={{
+                toolbar: {
+                  items: [
+                    'heading',
+                    '|',
+                    'fontSize',
+                    'fontFamily',
+                    '|',
+                    'fontColor',
+                    'fontBackgroundColor',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'alignment',
+                    '|',
+                    'numberedList',
+                    'bulletedList',
+                    '|',
+                    'outdent',
+                    'indent',
+                    '|',
+                    'link',
+                    'imageUpload',
+                    'insertTable',
+                    'mediaEmbed',
+                    '|',
+                    'blockQuote',
+                    'codeBlock',
+                    '|',
+                    'horizontalLine',
+                    'specialCharacters',
+                    '|',
+                    'undo',
+                    'redo',
+                    '|',
+                    'sourceEditing'
+                  ],
+                  shouldNotGroupWhenFull: true
+                },
+                heading: {
+                  options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+                    { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+                    { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+                  ]
+                },
+                fontSize: {
+                  options: [
+                    9,
+                    11,
+                    13,
+                    'default',
+                    17,
+                    19,
+                    21,
+                    24,
+                    28,
+                    32,
+                    36,
+                    48
+                  ],
+                  supportAllValues: true
+                },
+                fontFamily: {
+                  options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Courier New, Courier, monospace',
+                    'Georgia, serif',
+                    'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Trebuchet MS, Helvetica, sans-serif',
+                    'Verdana, Geneva, sans-serif',
+                    'Roboto, sans-serif',
+                    'Open Sans, sans-serif',
+                    'Lato, sans-serif',
+                    'Montserrat, sans-serif',
+                    'Poppins, sans-serif'
+                  ],
+                  supportAllValues: true
+                },
+                alignment: {
+                  options: ['left', 'center', 'right', 'justify']
+                },
+                image: {
+                  toolbar: [
+                    'imageTextAlternative',
+                    '|',
+                    'toggleImageCaption',
+                    '|',
+                    'imageStyle:inline',
+                    'imageStyle:alignLeft',
+                    'imageStyle:alignCenter',
+                    'imageStyle:alignRight',
+                    'imageStyle:alignBlockLeft',
+                    'imageStyle:alignBlockRight',
+                    'imageStyle:block',
+                    'imageStyle:side',
+                    '|',
+                    'linkImage'
+                  ],
+                  styles: [
+                    // Inline styles
+                    'inline',
+                    'alignLeft',
+                    'alignCenter',
+                    'alignRight',
+                    // Block styles
+                    'alignBlockLeft',
+                    'alignBlockRight',
+                    'block',
+                    'side'
+                  ],
+                  resizeUnit: '%',
+                  resizeOptions: [
+                    {
+                      name: 'resizeImage:original',
+                      label: 'Original Size',
+                      value: null
+                    },
+                    {
+                      name: 'resizeImage:10',
+                      label: '10%',
+                      value: '10'
+                    },
+                    {
+                      name: 'resizeImage:25',
+                      label: '25%',
+                      value: '25'
+                    },
+                    {
+                      name: 'resizeImage:50',
+                      label: '50%',
+                      value: '50'
+                    },
+                    {
+                      name: 'resizeImage:75',
+                      label: '75%',
+                      value: '75'
+                    },
+                    {
+                      name: 'resizeImage:100',
+                      label: '100%',
+                      value: '100'
+                    }
+                  ],
+                  upload: {
+                    types: ['jpeg', 'jpg', 'png', 'gif', 'webp', 'svg+xml']
+                  }
+                },
+                table: {
+                  contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells',
+                    'tableCellProperties',
+                    'tableProperties'
+                  ]
+                },
+                link: {
+                  decorators: {
+                    openInNewTab: {
+                      mode: 'manual',
+                      label: 'Open in a new tab',
+                      attributes: {
+                        target: '_blank',
+                        rel: 'noopener noreferrer'
+                      }
+                    }
+                  },
+                  addTargetToExternalLinks: true
+                },
+                mediaEmbed: {
+                  previewsInData: true
+                },
+                htmlSupport: {
+                  allow: [
+                    {
+                      name: /.*/,
+                      attributes: true,
+                      classes: true,
+                      styles: true
+                    }
+                  ]
+                },
+                minHeight: '500px',
+                placeholder: 'Write your blog content here...'
+              }}
             />
-            {/* <textarea id="BlogDescription" className="form-control" name="description" rows="7"  value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter Blog description"></textarea> */}
             {error.description && <span className="text-danger">{error.description}</span>}
           </div>
-          
-        </div>
-        
 
-      {/* End .col */}
-
-      <div className="col-lg-6 col-xl-6">
-        <div className="my_profile_setting_input ui_kit_select_search form-group">
-          <label>Status</label>
-          <select
-  className="selectpicker form-select"
-  data-live-search="true"
-  data-width="100%"
-  value={status ? "active" : "deactive"}
-  onChange={(e) => setStatus(e.target.value === "active")}
->
-        <option value="active">Active</option>
-        <option value="deactive">Deactive</option>
-      </select>
         </div>
-      </div>
-      {/* End .col */}
 
-     
- <div className=" mt30 ">
-                    <div className="col-lg-12">
-                      <h3 className="mb30">Meta Information</h3>
-                    </div>
-                    <div className="row">
-                    <div className="col-lg-12">
-        <div className="my_profile_setting_input form-group">
-          <label htmlFor="blogMetatitle">Meta Title</label>
-         
-          <input type="text"
-              className="form-control"
-              id="blogMetatitle"
-              value={metatitle}
-              onChange={(e) => setMetatitle(e.target.value)} />
-        </div>
-      </div>
-      <div className="col-lg-12">
-          <div className="my_profile_setting_textarea form-group">
-            <label htmlFor="blogMetaDescription">Meta Description</label>
-            <textarea id="blogMetaDescription" className="form-control" rows="7"  value={metadescription} onChange={(e) => setMetaDescription(e.target.value)}  placeholder="Enter meta description"></textarea>
-            {error.metadescription && <span className="text-danger">{error.metadescription}</span>}
+
+        {/* End .col */}
+
+        <div className="col-lg-6 col-xl-6">
+          <div className="my_profile_setting_input ui_kit_select_search form-group">
+            <label>Status</label>
+            <select
+              className="selectpicker form-select"
+              data-live-search="true"
+              data-width="100%"
+              value={status ? "active" : "deactive"}
+              onChange={(e) => setStatus(e.target.value === "active")}
+            >
+              <option value="active">Active</option>
+              <option value="deactive">Deactive</option>
+            </select>
           </div>
-          
         </div>
-        
+        {/* End .col */}
 
-      {/* End .col */}
-      </div>
-      
-                  </div>
 
-      <div className="col-xl-12">
-        <div className="my_profile_setting_input">
-          <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
-          <button className="btn-default float-end">Submit</button>
+        <div className=" mt30 ">
+          <div className="col-lg-12">
+            <h3 className="mb30">Meta Information</h3>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="my_profile_setting_input form-group">
+                <label htmlFor="blogMetatitle">Meta Title</label>
+
+                <input type="text"
+                  className="form-control"
+                  id="blogMetatitle"
+                  value={metatitle}
+                  onChange={(e) => setMetatitle(e.target.value)} />
+              </div>
+            </div>
+            <div className="col-lg-12">
+              <div className="my_profile_setting_textarea form-group">
+                <label htmlFor="blogMetaDescription">Meta Description</label>
+                <textarea id="blogMetaDescription" className="form-control" rows="7" value={metadescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="Enter meta description"></textarea>
+                {error.metadescription && <span className="text-danger">{error.metadescription}</span>}
+              </div>
+
+            </div>
+
+
+            {/* End .col */}
+          </div>
+
         </div>
-      </div>
+
+        <div className="col-xl-12">
+          <div className="my_profile_setting_input">
+            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
+            <button className="btn-default float-end">Submit</button>
+          </div>
+        </div>
       </form>
     </>
   );

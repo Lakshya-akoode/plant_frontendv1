@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
         hostname: 'plantchatvercel.akoodedemo.com',
         port: '',
         pathname: '/public/images/**',
-    }     ],
+    },
+     {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/public/images/**',
+     }  ],
   },
 };
 

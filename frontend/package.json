@@ -10,12 +10,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^11.0.1",
     "@faker-js/faker": "^8.1.0",
     "@reduxjs/toolkit": "^1.9.6",
     "bootstrap": "^5.2.1",
     "chart.js": "^4.4.0",
+    "ckeditor5": "^47.3.0",
     "date-fns": "^4.1.0",
     "gsap": "^3.13.0",
+    "@tinymce/tinymce-react": "^5.0.3",
+    "tinymce": "^7.3.0",
     "html-react-parser": "^5.2.5",
     "lucide-react": "^0.524.0",
     "multi-select-input": "^1.0.15",
