@@ -113,7 +113,7 @@ const CreateList = () => {
 
       if (data.status == "success") {
         setTimeout(() => {
-          router.push("/cmsadminlogin/my-blog");
+          router.push("/livetest/cmsadminlogin/my-blog");
         }, 1500);
       }
 
