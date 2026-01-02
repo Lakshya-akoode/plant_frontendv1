@@ -81,9 +81,11 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
       toast.success('Successfully signed in!');
       if(!response.data.isEmailVerified){
         router.push('/livetest/email-otp');
-      } else if(!response.data.isPhoneVerified){
-        router.push('/livetest/phone-signup');
-      } else if(!response.data.masterProfileQuestionnaireCompleted){
+      } 
+      // else if(!response.data.isPhoneVerified){
+      //   router.push('/livetest/phone-signup');
+      // } 
+      else if(!response.data.masterProfileQuestionnaireCompleted){
         router.push('/livetest/master-profile-questionnaire');
       }
       else {

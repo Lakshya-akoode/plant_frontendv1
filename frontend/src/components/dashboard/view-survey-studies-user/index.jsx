@@ -167,8 +167,12 @@ const ViewSurveyStudiesUser = () => {
                           onClick={() => {
                             fetchUserData();
                           }}
-                          className="btn btn-default"
-                          style={{ padding: '10px 20px' }}
+                          // className="btn btn-default"
+                          style={{ padding: '10px 20px',
+                            backgroundColor: '#fff',
+                            border: 'none',
+                            // color: '#fff',
+                           }}
                           title="Refresh Data"
                         >
                           <i className="fa fa-refresh mr-2"></i> Refresh
@@ -176,8 +180,12 @@ const ViewSurveyStudiesUser = () => {
                         {userData && userData.surveys && userData.surveys.length > 0 && (
                           <button
                             onClick={() => exportUserSurveyResponsesToCSV(userData)}
-                            className="btn btn-primary"
-                            style={{ padding: '10px 20px' }}
+                            // className="btn btn-primary"
+                            style={{ padding: '10px 20px',
+                              backgroundColor: '#5cb85c',
+                              border: 'none',
+                              color: '#fff'
+                            }}
                             title="Export to CSV"
                           >
                             <i className="fa fa-download mr-2"></i> Export CSV
@@ -185,8 +193,12 @@ const ViewSurveyStudiesUser = () => {
                         )}
                         <button
                           onClick={() => router.push('/livetest/cmsadminlogin/view-survey-studies')}
-                          className="btn btn-default"
-                          style={{ padding: '10px 20px' }}
+                          // className="btn btn-default"
+                          style={{ padding: '10px 20px',
+                            backgroundColor: '#fff',
+                            border: 'none',
+                            // color: '#fff',
+                           }}
                         >
                           <i className="fa fa-arrow-left mr-2"></i> Back to All Responses
                         </button>
@@ -221,7 +233,7 @@ const ViewSurveyStudiesUser = () => {
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{
-                          backgroundColor: '#3b82f6',
+                          backgroundColor: '#5cb85c',
                           color: 'white',
                           padding: '8px 16px',
                           borderRadius: '6px',
@@ -319,14 +331,14 @@ const ViewSurveyStudiesUser = () => {
                                               padding: '16px',
                                               backgroundColor: '#f9fafb',
                                               borderRadius: '6px',
-                                              borderLeft: '4px solid #3b82f6'
+                                              borderLeft: '4px solid #5cb85c'
                                             }}
                                           >
                                             <div style={{ marginBottom: '12px' }}>
                                               <strong style={{ color: '#1f2937', fontSize: '15px', display: 'block', marginBottom: '4px' }}>
                                                 Q{qa.questionIndex}: {qa.question}
                                               </strong>
-                                              {qa.questionId && (
+                                              {/* {qa.questionId && (
                                                 <span style={{ 
                                                   fontSize: '11px', 
                                                   color: '#9ca3af',
@@ -334,7 +346,7 @@ const ViewSurveyStudiesUser = () => {
                                                 }}>
                                                   Question ID: {qa.questionId.substring(0, 8)}...
                                                 </span>
-                                              )}
+                                              )} */}
                                               {qa.options && qa.options.length > 0 && (
                                                 <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
                                                   <strong>Available Options:</strong> {qa.options.join(', ')}
@@ -349,7 +361,7 @@ const ViewSurveyStudiesUser = () => {
                                               borderRadius: '4px',
                                               border: '1px solid #e5e7eb'
                                             }}>
-                                              <strong style={{ color: '#3b82f6' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
+                                              <strong style={{ color: '#5cb85c' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
                                             </div>
                                           </div>
                                         ))}

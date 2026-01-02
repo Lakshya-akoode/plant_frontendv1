@@ -12,7 +12,7 @@ export default function EmailOTPPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [userId, setUserId] = useState('');
-  
+
   // Get email from localStorage (passed from signup) - only on client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -25,14 +25,11 @@ export default function EmailOTPPage() {
   const handleOTPVerification = async (otpCode) => {
     setLoading(true);
     try {
-      // TODO: Call OTP verification API
+      // OTP verification is handled in EmailOTP component
       console.log('Verifying OTP:', otpCode, 'for email:', email);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Redirect to master profile questionnaire on success
-      router.push('/livetest/phone-signup');
+      router.push('/livetest/master-profile-questionnaire');//changed for disable the phone varification
     } catch (error) {
       console.error('OTP verification failed:', error);
       throw error;
@@ -41,12 +38,13 @@ export default function EmailOTPPage() {
     }
   };
 
+
   const handleResendOTP = async () => {
     setLoading(true);
     try {
       // TODO: Call resend OTP API
       console.log('Resending OTP to:', email);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
@@ -62,10 +60,10 @@ export default function EmailOTPPage() {
   };
   useEffect(() => {
     const userData = localStorage.getItem('user');
-      if (!userData) {
-        router.push('/livetest/signin');
-        return;
-      }
+    if (!userData) {
+      router.push('/livetest/signin');
+      return;
+    }
   }, [router]);
   return (
     <>
@@ -77,22 +75,22 @@ export default function EmailOTPPage() {
       <div className="body_wrapper frm-vh-md-100">
         <div className="plant_body plant_signup_fullwidth plant_signup_fullwidth_two d-flex">
           {/* Left Side - Image */}
-          <div 
+          <div
             className="plant_left_fullwidth plant_left_top_logo frm-vh-md-100 d-flex align-items-center justify-content-center"
             style={{ backgroundColor: '#d6d6d6' }}
           >
-            <img 
-              className="img-fluid" 
-              src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/sign-up/plant-test.webp`} 
-              alt="Plant Chat Email Verification" 
+            <img
+              className="img-fluid"
+              src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/sign-up/plant-test.webp`}
+              alt="Plant Chat Email Verification"
             />
           </div>
-          
+
           {/* Right Side - Form */}
           <div className="plant_right_fullwidth d-flex align-items-center justify-content-center">
             <div className="form_tab_two">
               <div className="plant_box">
-                <EmailOTP 
+                <EmailOTP
                   email={email}
                   userId={userId}
                   onVerify={handleOTPVerification}

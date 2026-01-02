@@ -22,7 +22,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (!token) {
       toast.error('Invalid reset link. Please request a new password reset.');
-      router.push('/forgot-password');
+      router.push('/livetest/forgot-password');
     }
   }, [token, router]);
 
@@ -32,7 +32,7 @@ const ResetPassword = () => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -52,43 +52,43 @@ const ResetPassword = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Password validation
     if (!formData.password.trim()) {
       newErrors.password = { message: 'Password is required' };
     } else if (formData.password.length < 6) {
       newErrors.password = { message: 'Password must be at least 6 characters long' };
     }
-    
+
     // Confirm password validation
     if (!formData.confirmPassword.trim()) {
       newErrors.confirmPassword = { message: 'Please confirm your password' };
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = { message: 'Passwords do not match' };
     }
-    
+
     setErrors(newErrors);
-    
+
     if (Object.keys(newErrors).length > 0) {
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!token) {
       toast.error('Invalid reset token. Please request a new password reset.');
-      router.push('/forgot-password');
+      router.push('/livetest/forgot-password');
       return;
     }
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
 
     try {
@@ -119,7 +119,7 @@ const ResetPassword = () => {
       } else {
         toast.error(result.message || 'Failed to reset password');
       }
-      
+
     } catch (error) {
       console.error('Reset password error:', error);
       toast.error(error.message || 'Failed to reset password. Please try again.');
@@ -137,9 +137,9 @@ const ResetPassword = () => {
         </div>
         <div className="form-group plant-mg-top-20">
           <div className="plant-forms__button">
-            <button 
-              className="btn-default" 
-              onClick={() => router.push('/signin')}
+            <button
+              className="btn-default"
+              onClick={() => router.push('/livetest/signin')}
             >
               Go to Sign In
             </button>
@@ -158,9 +158,9 @@ const ResetPassword = () => {
         </div>
         <div className="form-group plant-mg-top-20">
           <div className="plant-forms__button">
-            <button 
-              className="btn-default" 
-              onClick={() => router.push('/forgot-password')}
+            <button
+              className="btn-default"
+              onClick={() => router.push('/livetest/forgot-password')}
             >
               Request New Reset Link
             </button>
@@ -184,16 +184,16 @@ const ResetPassword = () => {
               <div className="plant-forms__input">
                 <label>New Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
-                    type={showPassword ? "text" : "password"} 
-                    name="password" 
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
                     className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                    placeholder="Enter your new password" 
+                    placeholder="Enter your new password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    required 
+                    required
                   />
-                  <span 
+                  <span
                     onClick={() => togglePasswordVisibility('password')}
                     style={{
                       position: 'absolute',
@@ -212,22 +212,22 @@ const ResetPassword = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="col-12">
             <div className="form-group plant-mg-top-30">
               <div className="plant-forms__input">
                 <label>Confirm Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    name="confirmPassword" 
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
                     className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
-                    placeholder="Confirm your new password" 
+                    placeholder="Confirm your new password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    required 
+                    required
                   />
-                  <span 
+                  <span
                     onClick={() => togglePasswordVisibility('confirmPassword')}
                     style={{
                       position: 'absolute',
@@ -246,12 +246,12 @@ const ResetPassword = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="col-12">
             <div className="form-group plant-mg-top-20">
               <div className="plant-forms__button">
-                <button 
-                  className="btn-default" 
+                <button
+                  className="btn-default"
                   type="submit"
                   disabled={loading}
                 >
@@ -260,8 +260,8 @@ const ResetPassword = () => {
               </div>
               <p className="plant-forms__text plant-mg-top-10">
                 Remember your password?{' '}
-                <a 
-                  href="/signin"
+                <a
+                  href="/livetest/signin"
                   className="switch-link"
                 >
                   Sign In

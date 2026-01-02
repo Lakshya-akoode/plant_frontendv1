@@ -1,5 +1,6 @@
 "use client";
 
+/* TODO: Phone verification disabled
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PhoneOTP from '../../../components/phone-otp/PhoneOTP';
@@ -85,14 +86,9 @@ function PhoneOTPContent() {
 
   return (
     <>
-      {/* Header Start */}
       <SigninHeader />
-      {/* Header End */}
-
-      {/* Phone OTP Section Start */}
       <div className="body_wrapper frm-vh-md-100">
         <div className="plant_body plant_signup_fullwidth plant_signup_fullwidth_two d-flex">
-          {/* Left Side - Image */}
           <div 
             className="plant_left_fullwidth plant_left_top_logo frm-vh-md-100 d-flex align-items-center justify-content-center"
             style={{ backgroundColor: '#d6d6d6' }}
@@ -104,7 +100,6 @@ function PhoneOTPContent() {
             />
           </div>
           
-          {/* Right Side - Form */}
           <div className="plant_right_fullwidth d-flex align-items-center justify-content-center">
             <div className="form_tab_two">
               <div className="plant_box">
@@ -120,11 +115,7 @@ function PhoneOTPContent() {
           </div>
         </div>
       </div>
-      {/* Phone OTP Section End */}
-
-      {/* Footer Main Start */}
       <Footer />
-      {/* Footer Main End */}
     </>
   );
 }
@@ -142,3 +133,4 @@ export default function PhoneOTPPage() {
     </Suspense>
   );
 }
+*/

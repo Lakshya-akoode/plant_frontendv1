@@ -117,9 +117,10 @@ const TableData = ({surveyList, setSurveyList}) => {
           gap: '5px'
         }}>
           <button 
-            onClick={() => router.push(`/livetest/cmsadminlogin/view-surveystudies/${item._id}`)}
+            // onClick={() => router.push(`/livetest/cmsadminlogin/view-surveystudies/${item._id}`)}
+            onClick={() => router.push(`/livetest/cmsadminlogin/view-survey-studies`)}
             style={{
-              backgroundColor: '#3b82f6',
+              // backgroundColor: '#3b82f6',
               border: 'none',
               borderRadius: '4px',
               padding: '8px',
@@ -132,8 +133,8 @@ const TableData = ({surveyList, setSurveyList}) => {
             }}
             title="View Responses"
           >
-            <span className="flaticon-eye" style={{
-              color: '#fff',
+            <span className="flaticon-view" style={{
+              color: '#374151',
               fontSize: '16px'
             }}></span>
           </button>

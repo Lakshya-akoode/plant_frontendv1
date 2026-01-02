@@ -112,13 +112,13 @@ const index = () => {
                       <CreateList />
                     </div>
                   </div>
-                   <div className="my_dashboard_review mt30">
+                   {/* <div className="my_dashboard_review mt30">
                     <div className="col-lg-12">
                       <h3 className="mb30">City Glimpse</h3>
                       <button className="btn admore_btn mb30" onClick={handleAddInput} >Add More</button>
                     </div>
                     <CityGlimpse citydetail={citydetail} inputs={inputs} setInputs={setInputs} setCityGlimpse={setCityGlimpse} cityglimpse={cityglimpse}/>
-                  </div>
+                  </div> */}
                 </div>
                 {/* End .col */}
               </div>
