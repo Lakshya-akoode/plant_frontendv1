@@ -120,8 +120,12 @@ const ViewSurveyStudies = () => {
                             setCurrentPage(1);
                             fetchResponsesData();
                           }}
-                          className="btn btn-default"
-                          style={{ padding: '10px 20px' }}
+                          // className="btn btn-default"
+                          style={{ padding: '10px 20px',
+                            backgroundColor: '#fff',
+                            border: 'none',
+                            // color: '#fff',
+                           }}
                           title="Refresh Data"
                         >
                           <i className="fa fa-refresh mr-2"></i> Refresh
@@ -133,8 +137,12 @@ const ViewSurveyStudies = () => {
                               const dataToExport = responsesData.groupedByUser ? responsesData : responsesData.data || responsesData;
                               exportSurveyResponsesToCSV(dataToExport, 'All_Survey_Responses');
                             }}
-                            className="btn btn-primary"
-                            style={{ padding: '10px 20px' }}
+                            // className="btn btn-primary"
+                            style={{ padding: '10px 20px',
+                              backgroundColor: '#5cb85c',
+                              border: 'none',
+                              color: '#fff'
+                            }}
                             title="Export to CSV"
                           >
                             <i className="fa fa-download mr-2"></i> Export CSV
@@ -201,15 +209,15 @@ const ViewSurveyStudies = () => {
                                         style={{
                                           background: 'none',
                                           border: 'none',
-                                          color: '#3b82f6',
+                                          // color: '#3b82f6',
                                           cursor: 'pointer',
                                           padding: 0,
-                                          textDecoration: 'underline',
+                                          // textDecoration: 'underline',
                                           fontSize: '18px',
                                           fontWeight: '600'
                                         }}
-                                        onMouseEnter={(e) => e.currentTarget.style.color = '#2563eb'}
-                                        onMouseLeave={(e) => e.currentTarget.style.color = '#3b82f6'}
+                                        // onMouseEnter={(e) => e.currentTarget.style.color = '#2563eb'}
+                                        // onMouseLeave={(e) => e.currentTarget.style.color = '#3b82f6'}
                                       >
                                         {userGroup.userName || 'Unknown User'}
                                       </button>
@@ -313,7 +321,7 @@ const ViewSurveyStudies = () => {
                                                       <strong style={{ color: '#1f2937', fontSize: '15px', display: 'block', marginBottom: '4px' }}>
                                                         Q{qa.questionIndex}: {qa.question}
                                                       </strong>
-                                                      {qa.questionId && (
+                                                      {/* {qa.questionId && (
                                                         <span style={{ 
                                                           fontSize: '11px', 
                                                           color: '#9ca3af',
@@ -321,7 +329,7 @@ const ViewSurveyStudies = () => {
                                                         }}>
                                                           Question ID: {qa.questionId.substring(0, 8)}...
                                                         </span>
-                                                      )}
+                                                      )} */}
                                                       {qa.options && qa.options.length > 0 && (
                                                         <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
                                                           <strong>Available Options:</strong> {qa.options.join(', ')}
@@ -336,7 +344,7 @@ const ViewSurveyStudies = () => {
                                                       borderRadius: '4px',
                                                       border: '1px solid #e5e7eb'
                                                     }}>
-                                                      <strong style={{ color: '#3b82f6' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
+                                                      <strong style={{ color: '#5cb85c' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
                                                     </div>
                                                   </div>
                                                 ))}

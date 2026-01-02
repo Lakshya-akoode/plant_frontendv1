@@ -60,7 +60,7 @@ const EditProfile = ({ user }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('socialMedia.')) {
       const socialKey = name.split('.')[1];
       setFormData(prev => ({
@@ -124,7 +124,7 @@ const EditProfile = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -133,19 +133,19 @@ const EditProfile = ({ user }) => {
     try {
       // Here you would typically make an API call to update the profile
       console.log('Updating profile with data:', formData);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Update localStorage with new user data
       const updatedUser = { ...user, ...formData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
-      
+
       // Show success message (you can use toast notification here)
       alert('Profile updated successfully!');
-      
+
       // Redirect to dashboard
-      router.push('/dashboard');
+      router.push('/livetest/dashboard');
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Error updating profile. Please try again.');
@@ -155,7 +155,7 @@ const EditProfile = ({ user }) => {
   };
 
   const handleCancel = () => {
-    router.push('/dashboard');
+    router.push('/livetest/dashboard');
   };
 
   const handlePasswordChange = (e) => {
@@ -203,7 +203,7 @@ const EditProfile = ({ user }) => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validatePasswordForm()) {
       return;
     }
@@ -214,7 +214,7 @@ const EditProfile = ({ user }) => {
         passwordData.currentPassword,
         passwordData.newPassword
       );
-      
+
       if (response.status === 'success') {
         toast.success('Password changed successfully!');
         // Clear password fields
@@ -237,13 +237,13 @@ const EditProfile = ({ user }) => {
   return (
     <>
       {/* Header Start */}
-      <SigninHeader 
-        user={user} 
+      <SigninHeader
+        user={user}
         userProfile={formData}
         summaryTags={[]}
       />
       {/* Header End */}
-      
+
       <main className="master_profile_questionnaire body_wrapper">
         <div className="edit-profile-container">
           <div className="container-fluid">
@@ -261,9 +261,9 @@ const EditProfile = ({ user }) => {
                       <div className="profile-image-container">
                         <div className="profile-image">
                           {profileImage ? (
-                            <img 
-                              src={profileImage} 
-                              alt="Profile" 
+                            <img
+                              src={profileImage}
+                              alt="Profile"
                               className="profile-img"
                             />
                           ) : (
@@ -340,10 +340,10 @@ const EditProfile = ({ user }) => {
                             {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                           </div>
                         </div>
-                        
+
                       </div>
 
-                      
+
                     </div>
 
                     {/* Form Actions */}

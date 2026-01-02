@@ -68,7 +68,7 @@ const TableData = () => {
     "State",
     "Date published",
     "Status",
-    "Action",
+    // "Action",
   ];
   let tbodyContent = cityList?.map((item) => (
     <tr key={item._id}>
@@ -103,7 +103,7 @@ const TableData = () => {
           {item.status ? "Active" : "Inactive"}
         </span>
       </td>
-      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+      {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
         <ul className="view_edit_delete_list mb0 d-flex align-items-center">
           <li
             className="list-inline-item"
@@ -126,7 +126,7 @@ const TableData = () => {
             </a>
           </li>
         </ul>
-      </td>
+      </td> */}
     </tr>
   ));
 useEffect(() => {

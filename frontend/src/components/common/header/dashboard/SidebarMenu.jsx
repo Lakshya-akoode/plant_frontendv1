@@ -81,10 +81,10 @@ const SidebarMenu = () => {
     // { id: 1, name: "Add User", route: "/livetest/cmsadminlogin/add-user" },
     { id: 2, name: "User List", route: "/livetest/cmsadminlogin/my-user" }
   ];
-  const myCommunity = [
-    { id: 1, name: "Add Comment", route: "/livetest/cmsadminlogin/add-community" },
-    { id: 2, name: "Comment List", route: "/livetest/cmsadminlogin/my-community" }
-  ];
+  // const myCommunity = [
+  //   { id: 1, name: "Add Comment", route: "/livetest/cmsadminlogin/add-community" },
+  //   { id: 2, name: "Comment List", route: "/livetest/cmsadminlogin/my-community" }
+  // ];
   // const mySeller = [
   //   { id: 1, name: "Add Seller", route: "/cmsadminlogin/add-seller" },
   //   { id: 2, name: "Seller List", route: "/cmsadminlogin/my-seller" }
@@ -471,7 +471,7 @@ const SidebarMenu = () => {
                 ))}
               </ul>
             </li>
-            <li
+            {/* <li
               className={`treeview ${isParentPageActive(myCommunity, pathname) ? "active" : ""
                 }`}
             >
@@ -488,7 +488,7 @@ const SidebarMenu = () => {
                   </li>
                 ))}
               </ul>
-            </li>
+            </li> */}
             {/* <li
               className={`treeview ${
                 isParentPageActive(mySeller, pathname) ? "active" : ""
