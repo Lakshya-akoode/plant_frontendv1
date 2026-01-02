@@ -1,6 +1,6 @@
 "use client";
 
-/* TODO: Phone verification disabled 
+/* TODO: Phone verification disabled */
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PhoneSignup from '../../../components/phone-signup/PhoneSignup';
@@ -115,4 +115,3 @@ export default function PhoneSignupPage() {
     </Suspense>
   );
 }
-*/

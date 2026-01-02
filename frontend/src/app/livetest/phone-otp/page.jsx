@@ -1,6 +1,6 @@
 "use client";
 
-/* TODO: Phone verification disabled
+/* TODO: Phone verification disabled*/
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PhoneOTP from '../../../components/phone-otp/PhoneOTP';
@@ -133,4 +133,4 @@ export default function PhoneOTPPage() {
     </Suspense>
   );
 }
-*/
+
