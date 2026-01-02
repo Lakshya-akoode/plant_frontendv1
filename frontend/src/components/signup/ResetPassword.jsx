@@ -81,7 +81,7 @@ const ResetPassword = () => {
 
     if (!token) {
       toast.error('Invalid reset token. Please request a new password reset.');
-      router.push('/livetest/forgot-password');
+      router.push('/forgot-password');
       return;
     }
 
