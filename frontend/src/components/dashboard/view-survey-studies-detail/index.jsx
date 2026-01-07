@@ -7,7 +7,7 @@ import CopyRight from "../../common/footer/CopyRight";
 import { useState, useEffect } from "react";
 import { getSurveyResponsesBySurveyId } from "@/api/survey";
 import { useRouter, useParams } from "next/navigation";
-import { exportSurveyDetailResponsesToCSV } from "@/utils/exportUtils";
+import { exportSurveyDetailResponsesToCSV, exportSurveyDetailResponsesToExcel } from "@/utils/exportUtils";
 
 const ViewSurveyStudiesDetail = () => {
   const params = useParams();
@@ -17,6 +17,7 @@ const ViewSurveyStudiesDetail = () => {
   const [surveyData, setSurveyData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expandedUsers, setExpandedUsers] = useState({});
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
 
   const fetchSurveyData = async () => {
     if (!surveyId) {
@@ -240,18 +241,100 @@ const ViewSurveyStudiesDetail = () => {
                           <i className="fa fa-refresh mr-2"></i> Refresh
                         </button>
                         {surveyData && surveyData.responses && surveyData.responses.length > 0 && (
-                          <button
-                            onClick={() => exportSurveyDetailResponsesToCSV(surveyData)}
-                            // className="btn btn-primary"
-                            style={{ padding: '10px 20px',
-                              backgroundColor: '#5cb85c',
-                              border: 'none',
-                              color: '#fff'
-                            }}
-                            title="Export to CSV"
-                          >
-                            <i className="fa fa-download mr-2"></i> Export CSV
-                          </button>
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                              style={{ padding: '10px 20px',
+                                backgroundColor: '#5cb85c',
+                                border: 'none',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                              }}
+                              title="Export Data"
+                            >
+                              <i className="fa fa-download mr-2"></i> Export
+                              <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '12px' }}></i>
+                            </button>
+                            {exportDropdownOpen && (
+                              <>
+                                <div 
+                                  style={{ 
+                                    position: 'fixed', 
+                                    top: 0, 
+                                    left: 0, 
+                                    right: 0, 
+                                    bottom: 0, 
+                                    zIndex: 998 
+                                  }} 
+                                  onClick={() => setExportDropdownOpen(false)}
+                                />
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '100%',
+                                  right: 0,
+                                  marginTop: '4px',
+                                  backgroundColor: '#fff',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '6px',
+                                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                  zIndex: 999,
+                                  minWidth: '160px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <button
+                                    onClick={() => {
+                                      exportSurveyDetailResponsesToCSV(surveyData);
+                                      setExportDropdownOpen(false);
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '10px 16px',
+                                      border: 'none',
+                                      backgroundColor: 'transparent',
+                                      textAlign: 'left',
+                                      cursor: 'pointer',
+                                      color: '#374151',
+                                      fontSize: '14px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '8px'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                  >
+                                    <i className="fa fa-file-text-o"></i> Export as CSV
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      exportSurveyDetailResponsesToExcel(surveyData);
+                                      setExportDropdownOpen(false);
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '10px 16px',
+                                      border: 'none',
+                                      backgroundColor: 'transparent',
+                                      textAlign: 'left',
+                                      cursor: 'pointer',
+                                      color: '#374151',
+                                      fontSize: '14px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '8px',
+                                      borderTop: '1px solid #e5e7eb'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                  >
+                                    <i className="fa fa-file-excel-o"></i> Export as Excel
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         )}
                         <button
                           onClick={() => router.push('/livetest/cmsadminlogin/my-survey')}

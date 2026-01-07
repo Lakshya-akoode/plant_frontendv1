@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { getBasicidentityById } from "../../../api/frontend/basicidentity.ts";
@@ -35,6 +35,8 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
   const [currentSurveyIndex, setCurrentSurveyIndex] = useState(0);
   const [surveyAnswers, setSurveyAnswers] = useState({});
   const modalRef = useRef(null);
+  const scrollPositionRef = useRef(null);
+  const shouldRestoreScrollRef = useRef(false);
 
 
   // Fetch fresh completion status when component mounts
@@ -105,14 +107,14 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
           surveys = data.data;
         }
         
-        // Filter for active surveys only
+       
         const active = surveys.filter(survey => survey.status === true);
         console.log('Active Surveys:', active);
         
         setSurveyData(data);
         setActiveSurveys(active);
         
-        // Initialize survey answers for all active surveys
+        
         const initialAnswers = {};
         active.forEach(survey => {
           if (survey.questions && Array.isArray(survey.questions) && survey.questions.length > 0) {
@@ -133,6 +135,130 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
     fetchCompletionStatus();
     fetchSurveyTableData();
   }, []);
+
+ 
+  useEffect(() => {
+    const findFirstIncompleteSurvey = async () => {
+      if (activeSurveys.length === 0) {
+        return;
+      }
+
+      try {
+        const { getUserSurveyResponses } = await import("../../../api/frontend/surveyresponses");
+        const userResponses = await getUserSurveyResponses();
+        
+        let completedSurveyIds = [];
+        const completedResponsesMap = {};
+        
+        if (userResponses.status === 'success' && userResponses.data) {
+          userResponses.data.forEach(resp => {
+            const surveyId = resp.surveyId || resp.survey?._id;
+            if (surveyId) {
+              completedSurveyIds.push(surveyId);
+
+              if (resp.answers && Array.isArray(resp.answers)) {
+                completedResponsesMap[surveyId] = resp.answers;
+              } else if (resp.questionAnswerPairs && Array.isArray(resp.questionAnswerPairs)) {
+
+                completedResponsesMap[surveyId] = resp.questionAnswerPairs.map(qa => qa.answer || '');
+              }
+            }
+          });
+        }
+        
+        // Load answers for completed surveys
+        setSurveyAnswers(prev => {
+          const updated = { ...prev };
+          activeSurveys.forEach(survey => {
+            if (completedSurveyIds.includes(survey._id) && completedResponsesMap[survey._id]) {
+              updated[survey._id] = completedResponsesMap[survey._id];
+            }
+          });
+          return updated;
+        });
+        
+        // Find the first incomplete survey index
+        const firstIncompleteIndex = activeSurveys.findIndex(survey => !completedSurveyIds.includes(survey._id));
+        
+        // If we found an incomplete survey, set the index to it
+        // Otherwise, if all are completed, keep index at 0 (or last survey)
+        if (firstIncompleteIndex !== -1) {
+          setCurrentSurveyIndex(firstIncompleteIndex);
+        } else {
+          // All surveys are completed, set to last survey
+          setCurrentSurveyIndex(activeSurveys.length - 1);
+        }
+      } catch (error) {
+        console.error('Error finding first incomplete survey:', error);
+        // On error, default to first survey
+        setCurrentSurveyIndex(0);
+      }
+    };
+
+    if (activeSurveys.length > 0) {
+      findFirstIncompleteSurvey();
+    }
+  }, [activeSurveys]);
+
+  // ===== AUTO-OPEN SURVEY MODAL WHEN INCOMPLETE SURVEYS DETECTED =====
+
+  
+  useEffect(() => {
+    const checkAndShowSurvey = async () => {
+
+      if (showSurvey) {
+        return;
+      }
+      
+
+      const hash = window.location.hash.replace('#', '');
+
+      if (hash !== 'Nine' || activeSurveys.length === 0) {
+        return;
+      }
+      
+      try {
+        const { getUserSurveyResponses } = await import("../../../api/frontend/surveyresponses");
+        const userResponses = await getUserSurveyResponses();
+        
+        if (userResponses.status === 'success' && userResponses.data) {
+          const completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+          const hasIncomplete = activeSurveys.some(survey => !completedSurveyIds.includes(survey._id));
+          
+          if (hasIncomplete) {
+            // Show toast notification when modal opens
+            toast.info('You have incomplete survey studies. Please complete them to proceed.', {
+              position: "top-right",
+              autoClose: 3000,
+            });
+            // Show survey modal automatically
+            setShowSurvey(true);
+          }
+        } else {
+          // No responses, show toast and modal if there are active surveys
+          toast.info('You have incomplete survey studies. Please complete them to proceed.', {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          setShowSurvey(true);
+        }
+      } catch (error) {
+        console.error('Error checking user survey responses:', error);
+        // If error, show toast and modal if there are active surveys to be safe
+        toast.info('You have incomplete survey studies. Please complete them to proceed.', {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setShowSurvey(true);
+      }
+    };
+
+    // Small delay to ensure activeSurveys are loaded and component is ready
+    if (activeSurveys.length > 0) {
+      const timer = setTimeout(checkAndShowSurvey, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeSurveys, showSurvey]);
 
   const handleComplete = async () => {
     setLoading(true);
@@ -226,7 +352,15 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
     }
   };
 
-  const handleSurveyInput = (surveyId, questionIndex, value) => {
+  const handleSurveyInput = (surveyId, questionIndex, value, shouldRestoreScroll = false) => {
+    // Save scroll position before state update if we need to restore it
+    if (shouldRestoreScroll && modalRef.current) {
+      scrollPositionRef.current = modalRef.current.scrollTop;
+      shouldRestoreScrollRef.current = true;
+    } else {
+      shouldRestoreScrollRef.current = false;
+    }
+    
     setSurveyAnswers(prev => {
       const surveyAnswers = prev[surveyId] || [];
       const updated = [...surveyAnswers];
@@ -237,6 +371,15 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
       };
     });
   };
+
+  // Restore scroll position after state update (only for radio button selections)
+  useLayoutEffect(() => {
+    if (shouldRestoreScrollRef.current && modalRef.current && scrollPositionRef.current !== null) {
+      // Restore scroll position immediately before paint
+      modalRef.current.scrollTop = scrollPositionRef.current;
+      shouldRestoreScrollRef.current = false;
+    }
+  }, [surveyAnswers]);
   
   const goToPreviousSurvey = () => {
     if (currentSurveyIndex > 0) {
@@ -255,6 +398,39 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
     if (!currentSurvey) {
       console.error('No current survey to submit');
       return;
+    }
+
+    // Check if this survey is already completed
+    try {
+      const { getUserSurveyResponses } = await import("../../../api/frontend/surveyresponses");
+      const userResponses = await getUserSurveyResponses();
+      
+      if (userResponses.status === 'success' && userResponses.data) {
+        const completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+        
+        // If current survey is already completed, skip to next incomplete survey
+        if (completedSurveyIds.includes(currentSurvey._id)) {
+          // Find the next incomplete survey
+          const nextIncompleteIndex = activeSurveys.findIndex((survey, index) => 
+            index > currentSurveyIndex && !completedSurveyIds.includes(survey._id)
+          );
+          
+          if (nextIncompleteIndex !== -1) {
+            setCurrentSurveyIndex(nextIncompleteIndex);
+            return;
+          } else {
+            // No more incomplete surveys, close modal and go to dashboard
+            setShowSurvey(false);
+            setTimeout(() => {
+              router.push("/livetest/dashboard");
+            }, 500);
+            return;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking if survey is completed:', error);
+      // Continue with normal submission flow if check fails
     }
 
     const currentAnswers = surveyAnswers[currentSurvey._id] || [];
@@ -294,15 +470,43 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
       if (result.status === 'success') {
         toast.success('Survey submitted successfully!');
         
-        // Move to next survey or complete
-        if (currentSurveyIndex < activeSurveys.length - 1) {
-          setCurrentSurveyIndex(prev => prev + 1);
-        } else {
-          // All surveys completed
-          setShowSurvey(false);
-          setTimeout(() => {
-            router.push("/livetest/dashboard");
-          }, 500);
+        // Find the next incomplete survey
+        try {
+          const { getUserSurveyResponses } = await import("../../../api/frontend/surveyresponses");
+          const userResponses = await getUserSurveyResponses();
+          
+          let completedSurveyIds = [];
+          if (userResponses.status === 'success' && userResponses.data) {
+            completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+          }
+          
+          // Find the next incomplete survey after the current one
+          const nextIncompleteIndex = activeSurveys.findIndex((survey, index) => 
+            index > currentSurveyIndex && !completedSurveyIds.includes(survey._id)
+          );
+          
+          if (nextIncompleteIndex !== -1) {
+            // Move to next incomplete survey
+            setCurrentSurveyIndex(nextIncompleteIndex);
+          } else {
+            // All surveys completed
+            setShowSurvey(false);
+            setTimeout(() => {
+              router.push("/livetest/dashboard");
+            }, 500);
+          }
+        } catch (error) {
+          console.error('Error finding next incomplete survey:', error);
+          // Fallback: move to next survey by index
+          if (currentSurveyIndex < activeSurveys.length - 1) {
+            setCurrentSurveyIndex(prev => prev + 1);
+          } else {
+            // All surveys completed
+            setShowSurvey(false);
+            setTimeout(() => {
+              router.push("/livetest/dashboard");
+            }, 500);
+          }
         }
       }
     } catch (error) {
@@ -350,7 +554,8 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             maxWidth: '600px',
             width: '100%',
             maxHeight: '90vh',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            scrollBehavior: 'auto'
           }}
           onScroll={(e) => {
             e.stopPropagation();
@@ -431,35 +636,14 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
                               alignItems: 'center',
                               gap: '10px'
                             }}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              if (modalRef.current) {
-                                const scrollTop = modalRef.current.scrollTop;
-                                handleSurveyInput(currentSurvey._id, index, option);
-                                requestAnimationFrame(() => {
-                                  if (modalRef.current) {
-                                    modalRef.current.scrollTop = scrollTop;
-                                  }
-                                });
-                              } else {
-                                handleSurveyInput(currentSurvey._id, index, option);
-                              }
-                            }}
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              if (modalRef.current) {
-                                const scrollTop = modalRef.current.scrollTop;
-                                handleSurveyInput(currentSurvey._id, index, option);
-                                requestAnimationFrame(() => {
-                                  if (modalRef.current) {
-                                    modalRef.current.scrollTop = scrollTop;
-                                  }
-                                });
-                              } else {
-                                handleSurveyInput(currentSurvey._id, index, option);
-                              }
+                              handleSurveyInput(currentSurvey._id, index, option, true);
+                            }}
+                            onMouseDown={(e) => {
+                              // Prevent default to avoid focus/scroll
+                              e.preventDefault();
                             }}
                           >
                             <input
@@ -471,41 +655,15 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
                               readOnly
                               onMouseDown={(e) => {
                                 e.preventDefault();
-                                e.stopPropagation();
-                                if (modalRef.current) {
-                                  const scrollTop = modalRef.current.scrollTop;
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                  requestAnimationFrame(() => {
-                                    if (modalRef.current) {
-                                      modalRef.current.scrollTop = scrollTop;
-                                    }
-                                  });
-                                } else {
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                }
                               }}
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                if (modalRef.current) {
-                                  const scrollTop = modalRef.current.scrollTop;
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                  requestAnimationFrame(() => {
-                                    if (modalRef.current) {
-                                      modalRef.current.scrollTop = scrollTop;
-                                    }
-                                  });
-                                } else {
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                }
+                                handleSurveyInput(currentSurvey._id, index, option, true);
                               }}
                               onFocus={(e) => {
                                 e.preventDefault();
-                                e.stopPropagation();
                                 e.target.blur();
-                                if (modalRef.current) {
-                                  modalRef.current.scrollTop = modalRef.current.scrollTop;
-                                }
                               }}
                               tabIndex={-1}
                               style={{
@@ -517,36 +675,6 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
                               required
                             />
                             <span
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (modalRef.current) {
-                                  const scrollTop = modalRef.current.scrollTop;
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                  requestAnimationFrame(() => {
-                                    if (modalRef.current) {
-                                      modalRef.current.scrollTop = scrollTop;
-                                    }
-                                  });
-                                } else {
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                }
-                              }}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (modalRef.current) {
-                                  const scrollTop = modalRef.current.scrollTop;
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                  requestAnimationFrame(() => {
-                                    if (modalRef.current) {
-                                      modalRef.current.scrollTop = scrollTop;
-                                    }
-                                  });
-                                } else {
-                                  handleSurveyInput(currentSurvey._id, index, option);
-                                }
-                              }}
                               style={{
                                 margin: 0,
                                 cursor: 'pointer',
@@ -610,28 +738,9 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             </button>
             <div style={{ display: 'flex', gap: '10px' }}>
               {currentSurveyIndex < activeSurveys.length - 1 ? (
-                <>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={goToNextSurvey}
-                    style={{
-                      padding: '12px 24px',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      borderRadius: '6px',
-                      border: '1px solid #3b82f6',
-                      backgroundColor: 'transparent',
-                      color: '#3b82f6',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    Next
-                  </button>
-                  <button className="btn-default" onClick={submitSurvey}>
-                    Submit & Next
-                  </button>
-                </>
+                <button className="btn-default" onClick={submitSurvey}>
+                  Next
+                </button>
               ) : (
                 <button className="btn-default" onClick={submitSurvey}>
                   Submit

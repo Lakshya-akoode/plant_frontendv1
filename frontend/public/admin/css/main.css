@@ -21485,6 +21485,121 @@ button.gm-ui-hover-effect:focus {
 }
 
 /*************************dashboard-menu*****************************/
+/* Blog Preview Modal Styles */
+.blog-preview-button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.blog-preview-button-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.blog-preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 122px;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 99999;
+  overflow: auto;
+  padding: 20px;
+}
+
+.blog-preview-modal-content {
+  background-color: #ffffff;
+  max-width: 1200px;
+  margin: 0 112px;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+  z-index: 100000;
+}
+
+.blog-preview-modal-content-edit {
+  margin: 0 112px;
+}
+
+.blog-preview-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 10000;
+}
+
+.blog-preview-content-wrapper {
+  padding-top: 20px;
+}
+
+.blog-preview-header {
+  background-size: cover;
+  background-position: bottom center;
+  padding: 120px 0 80px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.blog-preview-header-inner {
+  padding: 0 20px;
+}
+
+.blog-preview-title {
+  color: #ffffff;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  text-transform: capitalize;
+}
+
+.blog-preview-image-container {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.blog-preview-image {
+  width: 100%;
+  max-width: 1200px;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.blog-preview-content-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blog-preview-description {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.blog-preview-empty-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
 .offcanvas.offcanvas-dashboard {
   max-width: 295px;
   transform: translateX(0);

@@ -11,6 +11,8 @@ import { getDietNutritionById } from '../../../api/frontend/dietnutrition';
 import { getPlantInteractionById } from '../../../api/frontend/plantinteraction';
 import { getSocialSubstanceById } from '../../../api/frontend/socialsubstance';
 import { getTechnologyAccessById } from '../../../api/frontend/technologyaccess';
+import { getSurveyTableData } from '../../../api/frontend/survey';
+import { getUserSurveyResponses } from '../../../api/frontend/surveyresponses';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -141,6 +143,54 @@ export default function DashboardPage() {
           return;
         }
 
+        // Check if survey studies are completed
+        try {
+          const surveyTableData = await getSurveyTableData();
+          
+          // Extract surveys from API response
+          let surveys = [];
+          if (surveyTableData && Array.isArray(surveyTableData)) {
+            surveys = surveyTableData;
+          } else if (surveyTableData && surveyTableData.items && Array.isArray(surveyTableData.items)) {
+            surveys = surveyTableData.items;
+          } else if (surveyTableData && surveyTableData.data && Array.isArray(surveyTableData.data)) {
+            surveys = surveyTableData.data;
+          } else if (surveyTableData.status === 'success' && surveyTableData.data && Array.isArray(surveyTableData.data)) {
+            surveys = surveyTableData.data;
+          }
+          
+          const activeSurveys = surveys.filter(survey => survey.status === true);
+          
+          if (activeSurveys.length > 0) {
+            try {
+              const userResponses = await getUserSurveyResponses();
+              
+              let hasIncompleteSurveys = false;
+              
+              if (userResponses.status === 'success' && userResponses.data) {
+                const completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+
+                hasIncompleteSurveys = activeSurveys.some(survey => !completedSurveyIds.includes(survey._id));
+              } else {
+
+                hasIncompleteSurveys = true;
+              }
+
+              if (hasIncompleteSurveys) {
+                router.push('/livetest/master-profile-questionnaire#Nine');
+                return;
+              }
+            } catch (surveyError) {
+              console.error('Error checking survey completion:', surveyError);
+              router.push('/livetest/master-profile-questionnaire#Nine');
+              return;
+            }
+          }
+        } catch (surveyCheckError) {
+          console.error('Error fetching survey data:', surveyCheckError);
+
+        }
+
         setUser(parsedUser);
       } catch (error) {
         console.error('Error checking user data:', error);
@@ -164,7 +214,7 @@ export default function DashboardPage() {
   }
 
   if (!user) {
-    return null; // Will redirect to signin
+    return null; 
   }
 
   return <UserDashboard user={user} basicIdentityData={basicIdentityData} locationHousingData={locationHousingData} educationOccupationData={educationOccupationData} lifestyleHabitsData={lifestyleHabitsData} dietNutritionData={dietNutritionData} plantInteractionData={plantInteractionData} socialSubstanceData={socialSubstanceData} technologyAccessData={technologyAccessData} />;

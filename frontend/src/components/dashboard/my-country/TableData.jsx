@@ -1,6 +1,7 @@
 "use client"; // Add this at the top
 import Image from "next/image";
 import { getCountryTableData,deleteCountryAPI } from "../../../api/country";
+import { getUsersApi } from "../../../api/user";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
@@ -13,28 +14,62 @@ const TableData = () => {
    const [totalCount, setTotalCount] = useState(0);
    const [totalPages, setTotalPages] = useState(0);
    const [loading, setLoading] = useState(false);
+   const [userCounts, setUserCounts] = useState({});
    const pageSize = 10;
     const router = useRouter();
   
+    const fetchUserCounts = async (countries) => {
+      const counts = {};
+      try {
+        // Fetch user count for each country
+        const promises = countries.map(async (country) => {
+          try {
+            const countryName = country.name || country.title || '';
+            if (!countryName) return;
+            
+            const userResponse = await getUsersApi({ country: countryName, limit: 1 });
+            const count = userResponse?.totalCount || 0;
+            counts[country._id] = count;
+          } catch (error) {
+            console.error(`Error fetching user count for country ${country.name}:`, error);
+            counts[country._id] = 0;
+          }
+        });
+        
+        await Promise.all(promises);
+        setUserCounts(counts);
+      } catch (error) {
+        console.error("Error fetching user counts:", error);
+      }
+    };
+
     const fetchCountryData = async (page = 1) => {
       setLoading(true);
       try {
         const response = await getCountryTableData(page, pageSize);
         if (response && response.items) {
-          setCountryList(response.items || []);
+          const countries = response.items || [];
+          setCountryList(countries);
           setTotalCount(response.totalCount || 0);
           setTotalPages(response.totalPages || 0);
           setCurrentPage(response.currentPage || 1);
+          
+          // Fetch user counts for the countries
+          if (countries.length > 0) {
+            await fetchUserCounts(countries);
+          }
         } else {
           setCountryList([]);
           setTotalCount(0);
           setTotalPages(0);
+          setUserCounts({});
         }
       } catch (error) {
         console.error("Error fetching countries:", error);
         setCountryList([]);
         setTotalCount(0);
         setTotalPages(0);
+        setUserCounts({});
       } finally {
         setLoading(false);
       }
@@ -64,6 +99,7 @@ const TableData = () => {
     "Listing Title",
     "Phone Code",
     "Currency Code",
+    "Total Users",
     "Status",
     // "Action",
   ];
@@ -86,6 +122,13 @@ const TableData = () => {
        <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
          <div className="d-flex align-items-center">
            <h4 className="mb-0">{item.currency || '-'}</h4>
+         </div>
+       </td>
+       {/* End td */}
+
+       <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+         <div className="d-flex align-items-center">
+           <h4 className="mb-0">{userCounts[item._id] !== undefined ? userCounts[item._id] : '-'}</h4>
          </div>
        </td>
        {/* End td */}

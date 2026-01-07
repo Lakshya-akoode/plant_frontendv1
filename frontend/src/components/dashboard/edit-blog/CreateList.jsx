@@ -28,6 +28,7 @@ const CreateList = () => {
   const [logoimage, setLogoImage] = useState(null);
   const [metatitle, setMetatitle] = useState("");
   const [metadescription, setMetaDescription] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
   const uploadLogo = (e) => {
     setLogoImage("")
     setLogo(e.target.files[0]);
@@ -307,11 +308,90 @@ const CreateList = () => {
         </div>
 
         <div className="col-xl-12">
-          <div className="my_profile_setting_input">
-            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
-            <button className="btn-default float-end">Submit</button>
+          <div className="my_profile_setting_input blog-preview-button-container">
+            <button className="btn-default" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
+            <div className="blog-preview-button-group">
+              <button className="btn-default" type="button" onClick={() => setShowPreview(true)}>Preview</button>
+              <button className="btn-default" type="submit">Publish</button>
+            </div>
           </div>
         </div>
+
+        {/* Preview Modal */}
+        {showPreview && (
+          <div 
+            className="blog-preview-modal-overlay"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowPreview(false);
+              }
+            }}
+          >
+            <div className="blog-preview-modal-content blog-preview-modal-content-edit">
+              {/* Close Button */}
+              <button
+                className="blog-preview-modal-close"
+                onClick={() => setShowPreview(false)}
+              >
+                ×
+              </button>
+
+              {/* Preview Content - Matching Frontend Blog Display */}
+              <div className="blog-preview-content-wrapper">
+                {/* Page Header */}
+                <div 
+                  className="blog-preview-header"
+                  style={{
+                    backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%), url(${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-leaf.webp)`
+                  }}
+                >
+                  <div className="blog-preview-header-inner">
+                    <h1 className="blog-preview-title">
+                      {title || "Blog Post"}
+                    </h1>
+                  </div>
+                </div>
+
+                {/* Blog Image */}
+                <div className="blog-preview-image-container">
+                  {logo ? (
+                    <img
+                      src={URL.createObjectURL(logo)}
+                      alt={title || "Blog post"}
+                      className="blog-preview-image"
+                    />
+                  ) : logoimage ? (
+                    <img
+                      src={logoimage}
+                      alt={title || "Blog post"}
+                      className="blog-preview-image"
+                    />
+                  ) : (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/about-us.webp`}
+                      alt="Blog post image"
+                      className="blog-preview-image"
+                    />
+                  )}
+                </div>
+
+                {/* Blog Content */}
+                <div className="blog-preview-content-section">
+                  {description ? (
+                    <div 
+                      className="blog-preview-description"
+                      dangerouslySetInnerHTML={{ __html: description }}
+                    />
+                  ) : (
+                    <p className="blog-preview-empty-content">
+                      No content available for this blog post.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </>
   );

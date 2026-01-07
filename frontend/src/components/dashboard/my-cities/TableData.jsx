@@ -3,6 +3,7 @@ import Image from "next/image";
 import properties from "../../../data/properties";
 // import properties from "../../../api/city";
 import { getCityTableData,deleteCityAPI } from "../../../api/city";
+import { getUsersApi } from "../../../api/user";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 // import moment from 'moment';
@@ -15,28 +16,62 @@ const TableData = () => {
    const [totalCount, setTotalCount] = useState(0);
    const [totalPages, setTotalPages] = useState(0);
    const [loading, setLoading] = useState(false);
+   const [userCounts, setUserCounts] = useState({});
    const pageSize = 10;
     const router = useRouter();
   
+    const fetchUserCounts = async (cities) => {
+      const counts = {};
+      try {
+        // Fetch user count for each city
+        const promises = cities.map(async (city) => {
+          try {
+            const cityName = city.name || city.title || '';
+            if (!cityName) return;
+            
+            const userResponse = await getUsersApi({ city: cityName, limit: 1 });
+            const count = userResponse?.totalCount || 0;
+            counts[city._id] = count;
+          } catch (error) {
+            console.error(`Error fetching user count for city ${city.name}:`, error);
+            counts[city._id] = 0;
+          }
+        });
+        
+        await Promise.all(promises);
+        setUserCounts(counts);
+      } catch (error) {
+        console.error("Error fetching user counts:", error);
+      }
+    };
+
     const fetchCityData = async (page = 1) => {
       setLoading(true);
       try {
         const response = await getCityTableData(page, pageSize);
         if (response && response.items) {
-          setCityList(response.items || []);
+          const cities = response.items || [];
+          setCityList(cities);
           setTotalCount(response.totalCount || 0);
           setTotalPages(response.totalPages || 0);
           setCurrentPage(response.currentPage || 1);
+          
+          // Fetch user counts for the cities
+          if (cities.length > 0) {
+            await fetchUserCounts(cities);
+          }
         } else {
           setCityList([]);
           setTotalCount(0);
           setTotalPages(0);
+          setUserCounts({});
         }
       } catch (error) {
         console.error("Error fetching cities:", error);
         setCityList([]);
         setTotalCount(0);
         setTotalPages(0);
+        setUserCounts({});
       } finally {
         setLoading(false);
       }
@@ -66,7 +101,8 @@ const TableData = () => {
     "City Name",
     "Country",
     "State",
-    "Date published",
+    // "Date published",
+    "Total Users",
     "Status",
     // "Action",
   ];
@@ -87,7 +123,7 @@ const TableData = () => {
           <h4 className="mb-0">{item.state_name || item.stateid?.title || item.stateid?.name || '-'}</h4>
         </div>
       </td>
-      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+      {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
         <div className="d-flex align-items-center">
           <h4 className="mb-0">
             {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', {
@@ -96,6 +132,11 @@ const TableData = () => {
               year: 'numeric',
             }) : '-'}
           </h4>
+        </div>
+      </td> */}
+      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+        <div className="d-flex align-items-center">
+          <h4 className="mb-0">{userCounts[item._id] !== undefined ? userCounts[item._id] : '-'}</h4>
         </div>
       </td>
       <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>

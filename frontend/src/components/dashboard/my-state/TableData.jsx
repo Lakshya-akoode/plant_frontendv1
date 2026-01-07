@@ -2,6 +2,7 @@
 import Image from "next/image";
 
 import { getStateTableData,deleteStateAPI } from "../../../api/state";
+import { getUsersApi } from "../../../api/user";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
@@ -15,28 +16,62 @@ const TableData = () => {
    const [totalCount, setTotalCount] = useState(0);
    const [totalPages, setTotalPages] = useState(0);
    const [loading, setLoading] = useState(false);
+   const [userCounts, setUserCounts] = useState({});
    const pageSize = 10;
     const router = useRouter();
   
+    const fetchUserCounts = async (states) => {
+      const counts = {};
+      try {
+        // Fetch user count for each state
+        const promises = states.map(async (state) => {
+          try {
+            const stateName = state.name || state.title || '';
+            if (!stateName) return;
+            
+            const userResponse = await getUsersApi({ state: stateName, limit: 1 });
+            const count = userResponse?.totalCount || 0;
+            counts[state._id] = count;
+          } catch (error) {
+            console.error(`Error fetching user count for state ${state.name}:`, error);
+            counts[state._id] = 0;
+          }
+        });
+        
+        await Promise.all(promises);
+        setUserCounts(counts);
+      } catch (error) {
+        console.error("Error fetching user counts:", error);
+      }
+    };
+
     const fetchStateData = async (page = 1) => {
       setLoading(true);
       try {
         const response = await getStateTableData(page, pageSize);
         if (response && response.items) {
-          setStateList(response.items || []);
+          const states = response.items || [];
+          setStateList(states);
           setTotalCount(response.totalCount || 0);
           setTotalPages(response.totalPages || 0);
           setCurrentPage(response.currentPage || 1);
+          
+          // Fetch user counts for the states
+          if (states.length > 0) {
+            await fetchUserCounts(states);
+          }
         } else {
           setStateList([]);
           setTotalCount(0);
           setTotalPages(0);
+          setUserCounts({});
         }
       } catch (error) {
         console.error("Error fetching states:", error);
         setStateList([]);
         setTotalCount(0);
         setTotalPages(0);
+        setUserCounts({});
       } finally {
         setLoading(false);
       }
@@ -65,7 +100,8 @@ const TableData = () => {
   let theadConent = [
     "State Name",
     "Country",
-    "Date Published",
+    // "Date Published",
+    "Total Users",
     "Status",
     // "Action",
   ];
@@ -86,7 +122,7 @@ const TableData = () => {
       </td>
       {/* End td */}
 
-      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+      {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
         <div className="d-flex align-items-center">
           <h4 className="mb-0">
             {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', {
@@ -95,6 +131,13 @@ const TableData = () => {
               year: 'numeric',
             }) : '-'}
           </h4>
+        </div>
+      </td> */}
+      {/* End td */}
+
+      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+        <div className="d-flex align-items-center">
+          <h4 className="mb-0">{userCounts[item._id] !== undefined ? userCounts[item._id] : '-'}</h4>
         </div>
       </td>
       {/* End td */}
