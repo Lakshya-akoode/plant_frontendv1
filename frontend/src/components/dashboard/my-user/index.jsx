@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
 import MobileMenu from "../../common/header/MobileMenu";
@@ -8,13 +9,45 @@ import Filtering from "./Filtering";
 import Pagination from "./Pagination";
 import SearchBox from "./SearchBox";
 import CopyRight from "../../common/footer/CopyRight";
+import { getUsersApi } from "../../../api/user";
+import { exportUserListToCSV, exportUserListToExcel } from "../../../utils/exportUtils";
+import { toast } from 'react-toastify';
 
 const index = () => {
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState({});
   const [userList, setUserList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const [exporting, setExporting] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  // Initialize filters from URL query parameters and auto-apply them
+  useEffect(() => {
+    if (!initialized) {
+      const mpqStatusParam = searchParams.get('mpqStatus');
+      if (mpqStatusParam) {
+        // Convert URL parameter to filter format (handle both "Not Completed" and "not completed")
+        let mpqStatusValue = '';
+        const paramLower = mpqStatusParam.toLowerCase();
+        if (paramLower === 'not completed') {
+          mpqStatusValue = 'Not Completed';
+        } else if (paramLower === 'completed') {
+          mpqStatusValue = 'Completed';
+        } else {
+          // If it's already in the correct format, use it as is
+          mpqStatusValue = mpqStatusParam;
+        }
+        const initialFilters = {
+          mpqStatus: mpqStatusValue
+        };
+        setFilters(initialFilters);
+        // Filters are automatically applied via TableData's useEffect that watches filters
+      }
+      setInitialized(true);
+    }
+  }, [searchParams, initialized]);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
@@ -27,6 +60,39 @@ const index = () => {
 
   const handleTotalCountChange = (newTotalCount) => {
     setTotalCount(newTotalCount);
+  };
+
+  const handleExport = async (format) => {
+    setExporting(true);
+    try {
+      // Fetch all filtered users without pagination
+      const data = await getUsersApi({
+        ...filters,
+        page: 1,
+        limit: 10000 // Large limit to get all records
+      });
+
+      const usersToExport = data?.items || [];
+      
+      if (usersToExport.length === 0) {
+        toast.warning('No users found to export');
+        setExporting(false);
+        return;
+      }
+
+      if (format === 'csv') {
+        exportUserListToCSV(usersToExport);
+        toast.success(`Exported ${usersToExport.length} users to CSV`);
+      } else if (format === 'excel') {
+        exportUserListToExcel(usersToExport);
+        toast.success(`Exported ${usersToExport.length} users to Excel`);
+      }
+    } catch (error) {
+      console.error('Error exporting users:', error);
+      toast.error('Failed to export users. Please try again.');
+    } finally {
+      setExporting(false);
+    }
   };
   return (
     <>
@@ -84,6 +150,8 @@ const index = () => {
                     <Filtering 
                       onFilterChange={handleFilterChange}
                       currentFilters={filters}
+                      onExport={handleExport}
+                      exporting={exporting}
                     />
                   </div>
                 </div>

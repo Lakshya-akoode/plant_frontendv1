@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getDashboardData, formatNumber } from "../../../api/statistics";
+import { getUsersApi } from "../../../api/user";
 
 const AllStatistics = () => {
   const router = useRouter();
@@ -9,7 +10,7 @@ const AllStatistics = () => {
     totalUsers: 0,
     totalSurveys: 0,
     completedSurveys: 0,
-    enquiries: 0,
+    incompleteMPQUsers: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -19,6 +20,19 @@ const AllStatistics = () => {
         setLoading(true);
         const dashboardData = await getDashboardData();
 
+        // Fetch incomplete MPQ users count
+        let incompleteMPQCount = 0;
+        try {
+          const incompleteUsersResponse = await getUsersApi({
+            mpqStatus: "not completed",
+            limit: 1,
+            page: 1,
+          });
+          incompleteMPQCount = incompleteUsersResponse?.totalCount || 0;
+        } catch (error) {
+          console.error("Error fetching incomplete MPQ users:", error);
+        }
+
         if (dashboardData && dashboardData.data) {
           setStatistics({
             totalUsers: dashboardData.data.users?.totalUsers || 0,
@@ -26,8 +40,14 @@ const AllStatistics = () => {
               dashboardData.data.surveys?.totalSurveys || 0,
             completedSurveys:
               dashboardData.data.surveys?.totalUsersCompletedAllSurveys || 0,
-            enquiries: dashboardData.data.enquiry?.totalEnquiry || 0,
+            incompleteMPQUsers: incompleteMPQCount,
           });
+        } else {
+          // If dashboard data is not available, still set incomplete MPQ users
+          setStatistics(prev => ({
+            ...prev,
+            incompleteMPQUsers: incompleteMPQCount,
+          }));
         }
       } catch (error) {
         console.error("Error fetching statistics:", error);
@@ -112,32 +132,36 @@ const AllStatistics = () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M12 2L4 6V12C4 16.5 7.5 20.5 12 22C16.5 20.5 20 16.5 20 12V6L12 2ZM12 11C10.9 11 10 10.1 10 9C10 7.9 10.9 7 12 7C13.1 7 14 7.9 14 9C14 10.1 13.1 11 12 11ZM12 17C10 17 8.3 15.8 7.5 14C7.8 12.7 10.5 12 12 12C13.5 12 16.2 12.7 16.5 14C15.7 15.8 14 17 12 17Z"
+            d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"
             fill="currentColor"
+          />
+          <circle cx="18" cy="6" r="4.5" fill="currentColor" opacity="0.9" />
+          <path
+            d="M18 4V6L19.5 7.5"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
           />
         </svg>
       ),
-      timer: loading ? "..." : statistics.enquiries,
-      name: "Enquiries",
+      timer: loading ? "..." : formatNumber(statistics.incompleteMPQUsers),
+      name: "Incomplete Users",
     },
   ];
 
   const handleCardClick = (itemId) => {
     if (itemId === 1) {
-      
       router.push("/livetest/cmsadminlogin/my-user");
     } 
     else if (itemId === 2) {
-     
       router.push("/livetest/cmsadminlogin/my-survey");
     }
     else if (itemId === 3) {  
-     
       router.push("/livetest/cmsadminlogin/my-user");
     }
-    else {
-      
-      router.push("/livetest/cmsadminlogin/my-enquiry");
+    else if (itemId === 4) {
+      // Redirect to users list with MPQ Status filter set to "Not Completed"
+      router.push("/livetest/cmsadminlogin/my-user?mpqStatus=Not%20Completed");
     }
   };
 

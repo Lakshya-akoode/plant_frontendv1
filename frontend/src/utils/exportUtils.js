@@ -307,3 +307,67 @@ export const exportSurveyDetailResponsesToExcel = (surveyData) => {
   downloadExcel(flatData, headers, filename);
 };
 
+/**
+ * Prepare user list data for export
+ */
+const prepareUserListData = (usersData) => {
+  if (!usersData || !Array.isArray(usersData) || usersData.length === 0) {
+    return { headers: null, flatData: [] };
+  }
+
+  const headers = [
+    { label: 'Name', accessor: (row) => row.name || 'N/A' },
+    { label: 'Email', accessor: (row) => row.email || 'N/A' },
+    { label: 'MPQ Status', accessor: (row) => row.masterProfileQuestionnaireCompleted ? 'Completed' : 'Not Completed' },
+    { label: 'Registration Completed', accessor: (row) => row.registrationCompleted ? 'Yes' : 'No' },
+    { label: 'Email Verified', accessor: (row) => row.isEmailVerified ? 'Yes' : 'No' },
+    { label: 'Phone Verified', accessor: (row) => row.isPhoneVerified ? 'Yes' : 'No' },
+    { label: 'Status', accessor: (row) => row.status ? 'Active' : 'Inactive' },
+    { label: 'Created At', accessor: (row) => row.createdAt ? new Date(row.createdAt).toLocaleString() : 'N/A' },
+  ];
+
+  const flatData = usersData.map(user => ({
+    name: user.name,
+    email: user.email,
+    masterProfileQuestionnaireCompleted: user.masterProfileQuestionnaireCompleted,
+    registrationCompleted: user.registrationCompleted,
+    isEmailVerified: user.isEmailVerified,
+    isPhoneVerified: user.isPhoneVerified,
+    status: user.status,
+    createdAt: user.createdAt,
+  }));
+
+  return { headers, flatData };
+};
+
+/**
+ * Export user list to CSV
+ */
+export const exportUserListToCSV = (usersData) => {
+  const { headers, flatData } = prepareUserListData(usersData);
+  
+  if (!headers || flatData.length === 0) {
+    console.warn('No user data to export');
+    return;
+  }
+
+  const csvContent = convertToCSV(flatData, headers);
+  const filename = `user_list_${new Date().toISOString().split('T')[0]}.csv`;
+  downloadCSV(csvContent, filename);
+};
+
+/**
+ * Export user list to Excel
+ */
+export const exportUserListToExcel = (usersData) => {
+  const { headers, flatData } = prepareUserListData(usersData);
+  
+  if (!headers || flatData.length === 0) {
+    console.warn('No user data to export');
+    return;
+  }
+
+  const filename = `user_list_${new Date().toISOString().split('T')[0]}.xls`;
+  downloadExcel(flatData, headers, filename);
+};
+

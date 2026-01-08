@@ -198,6 +198,14 @@ const ConsentModal = ({ show, onClose, formData }) => {
                 onChange={handleConsentChange}
                 required 
               />
+              <style jsx>{`
+                .form-check-input:checked {
+                  // background-color: #4daf4e;
+                  // border-color: #4daf4e;
+                  width: 1.5rem;
+                  height: 1.5rem;
+                }
+              `}</style>
               <label className="form-check-label" htmlFor="consentCheck">
                 I agree to the <a href="/livetest/terms-conditions"><strong>Terms of Use: Data Consent</strong></a> and consent to the sharing of my anonymized data in Plant Chat research initiatives on the Master Regulator, the Endocannabinoid System, Lifestyle, Plants, Wellness, and in other ways deemed suitable in Plant Chat's Get Balanced Research Initiative by Nanobles Corporation.
               </label>

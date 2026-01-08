@@ -450,14 +450,14 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
           </div>
 
           <div className="form-group col-md-6">
-            <label className="input_title">Living Arrangement</label>
+            <label className="input_title">Residence Type</label>
             <select 
               className={`form-select ${errors.livingEnvironment ? 'is-invalid' : ''}`}
               name="livingEnvironment"
               value={formData.livingEnvironment}
               onChange={handleInputChange}
             >
-              <option value="">Select Living Arrangement</option>
+              <option value="">Select Residence Type</option>
               {livingEnvironmentOptions.map(option => (
                 <option key={option} value={option}>{option}</option>
               ))}

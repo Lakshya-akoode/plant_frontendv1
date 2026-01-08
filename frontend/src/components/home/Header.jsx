@@ -90,9 +90,62 @@ export default function Header() {
           <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
               {/* Logo Start */}
-              <a className="navbar-brand" href="/livetest">
-                <img src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`} alt="Logo" className="img-fluid" />
-              </a>
+              <div className="navbar-brand-wrapper">
+                <a className="navbar-brand" href="/livetest">
+                  <img src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`} alt="Logo" className="img-fluid" />
+                </a>
+                {/* Sign In/Profile for Mobile/Tablet - outside menu */}
+                <div className="header-auth-mobile">
+                  {isLoggedIn ? (
+                    <div 
+                      className={`profile-dropdown-wrapper ${isProfileOpen ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsProfileOpen(!isProfileOpen);
+                      }}
+                    >
+                      <a 
+                        href="/livetest/dashboard" 
+                        className="profile-button-custom-mobile"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsProfileOpen(!isProfileOpen);
+                        }}
+                      >
+                        {/* <div className="profile-icon-wrapper">
+                          <i className="fa-solid fa-user"></i>
+                        </div> */}
+                        <div className="profile-info-wrapper">
+                         <span className="profile-name">
+  {(user?.name?.trim()?.split(/\s+/)[0]) || user?.email?.split("@")[0] || "User"}
+</span>
+                          <span className="profile-role" style={{ fontSize: "10px" }}>user</span>
+                        </div>
+                        <i className="fa-solid fa-chevron-down profile-chevron"></i>
+                      </a>
+                      <div className={`profile-dropdown-menu ${isProfileOpen ? 'active' : ''}`}>
+                        <a href="/livetest/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                          <i className="fa-solid fa-user-cog"></i>
+                          Dashboard
+                        </a>
+                        <a href="/livetest/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                          <i className="fa-solid fa-edit"></i>
+                          Edit Profile
+                        </a>
+                        <div className="profile-divider"></div>
+                        <button className="profile-menu-item" onClick={() => { closeMenu(); handleLogout(); }}>
+                          <i className="fa-solid fa-sign-out-alt"></i>
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                      Sign In
+                    </a>
+                  )}
+                </div>
+              </div>
               {/* Logo End */}
 
               {/* Main Menu Start */}
@@ -114,7 +167,7 @@ export default function Header() {
                   </ul>
                 </div>
                 
-                {/* Header Contact Btn Start */}
+                {/* Header Contact Btn Start - Desktop Only */}
                 <div className="header-contact-btn">
                   {isLoggedIn ? (
                     <div 
@@ -158,7 +211,7 @@ export default function Header() {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="btn-default" onClick={closeMenu}>Sign In / Create Account</a>
+                    <a href="/livetest/signup" className="btn-default header-signin-btn-desktop" onClick={closeMenu}>Sign In / Create Account</a>
                   )}
                 </div>
                 {/* Header Contact Btn End */}

@@ -1,19 +1,19 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCountryTableData } from '../../../api/country';
-import { getStateTableData, getStateByCountryTableData } from '../../../api/state';
-import { getCityTableData, getCityByStateTableData } from '../../../api/city';
+import { getStateByCountryTableData } from '../../../api/state';
 
-const Filtering = ({ onFilterChange, currentFilters }) => {
+const Filtering = ({ onFilterChange, currentFilters, onExport, exporting = false }) => {
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const exportDropdownRef = useRef(null);
   const [name, setName] = useState(currentFilters?.name || '');
   const [email, setEmail] = useState(currentFilters?.email || '');
   const [country, setCountry] = useState(currentFilters?.country || '');
   const [state, setState] = useState(currentFilters?.state || '');
-  const [city, setCity] = useState(currentFilters?.city || '');
+  const [mpqStatus, setMpqStatus] = useState(currentFilters?.mpqStatus || '');
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
 
   // Fetch countries on component mount
   useEffect(() => {
@@ -29,6 +29,17 @@ const Filtering = ({ onFilterChange, currentFilters }) => {
     };
     fetchCountries();
   }, []);
+
+  // Sync internal state with currentFilters prop when it changes
+  useEffect(() => {
+    if (currentFilters) {
+      if (currentFilters.name !== undefined) setName(currentFilters.name || '');
+      if (currentFilters.email !== undefined) setEmail(currentFilters.email || '');
+      if (currentFilters.country !== undefined) setCountry(currentFilters.country || '');
+      if (currentFilters.state !== undefined) setState(currentFilters.state || '');
+      if (currentFilters.mpqStatus !== undefined) setMpqStatus(currentFilters.mpqStatus || '');
+    }
+  }, [currentFilters]);
 
   // Fetch states when country changes
   useEffect(() => {
@@ -53,40 +64,12 @@ const Filtering = ({ onFilterChange, currentFilters }) => {
         setStates([]);
       }
       setState(''); // Reset state when country changes
-      setCity(''); // Reset city when country changes
     };
     fetchStates();
   }, [country, countries]);
 
-  // Fetch cities when state changes
-  useEffect(() => {
-    const fetchCities = async () => {
-      if (state) {
-        try {
-          // Find the selected state to get its numeric id
-          const selectedState = states.find(s => s._id === state);
-          if (selectedState && selectedState.id) {
-            const response = await getCityByStateTableData(selectedState.id);
-            if (response && response.data) {
-              setCities(response.data);
-            } else if (response && response.items) {
-              setCities(response.items);
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching cities:', error);
-          setCities([]);
-        }
-      } else {
-        setCities([]);
-      }
-      setCity(''); // Reset city when state changes
-    };
-    fetchCities();
-  }, [state, states]);
-
   const handleSearch = () => {
-    onFilterChange({ name, email, country, state, city });
+    onFilterChange({ name, email, country, state, mpqStatus });
   };
 
   const handleClear = () => {
@@ -94,14 +77,136 @@ const Filtering = ({ onFilterChange, currentFilters }) => {
     setEmail('');
     setCountry('');
     setState('');
-    setCity('');
+    setMpqStatus('');
     onFilterChange({}); // Clear all filters
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target)) {
+        setExportDropdownOpen(false);
+      }
+    };
+
+    if (exportDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [exportDropdownOpen]);
+
+  const handleExportCSV = () => {
+    if (onExport) {
+      onExport('csv');
+    }
+    setExportDropdownOpen(false);
+  };
+
+  const handleExportExcel = () => {
+    if (onExport) {
+      onExport('excel');
+    }
+    setExportDropdownOpen(false);
   };
 
   return (
     <div className="filter-container">
-      <div className="filter-header">
+      <div className="filter-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h3 className="filter-title">Filter</h3>
+        {/* Export Button */}
+        <div style={{ position: 'relative' }} ref={exportDropdownRef}>
+          <button
+            className="btn btn-primary filter-btn-search"
+            onClick={() => !exporting && setExportDropdownOpen(!exportDropdownOpen)}
+            disabled={exporting}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 20px',
+              fontSize: '14px',
+              fontWeight: '500',
+              opacity: exporting ? 0.6 : 1,
+              cursor: exporting ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {exporting ? (
+              <>
+                <i className="fa fa-spinner fa-spin"></i>
+                Exporting...
+              </>
+            ) : (
+              <>
+                <i className="fa fa-download"></i>
+                Export After Filter
+                <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '12px' }}></i>
+              </>
+            )}
+          </button>
+          
+          {exportDropdownOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                marginTop: '8px',
+                backgroundColor: '#fff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '6px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                zIndex: 999,
+                minWidth: '160px',
+                overflow: 'hidden'
+              }}
+            >
+              <button
+                onClick={handleExportCSV}
+                style={{
+                  width: '100%',
+                  padding: '10px 16px',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#374151',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <i className="fa fa-file-text-o"></i> Export as CSV
+              </button>
+              <button
+                onClick={handleExportExcel}
+                style={{
+                  width: '100%',
+                  padding: '10px 16px',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#374151',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderTop: '1px solid #e5e7eb'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <i className="fa fa-file-excel-o"></i> Export as Excel
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="row align-items-center g-3">
         {/* Name Filter */}
@@ -167,20 +272,18 @@ const Filtering = ({ onFilterChange, currentFilters }) => {
           </div>
         </div>
 
-        {/* City Filter */}
+        {/* MPQ Status Filter */}
         <div className="col-md-2">
           <div className="filter-group">
-            <label className="filter-label">City</label>
+            <label className="filter-label">MPQ Status</label>
             <select
               className="form-select filter-select"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              disabled={!state || cities.length === 0}
+              value={mpqStatus}
+              onChange={(e) => setMpqStatus(e.target.value)}
             >
-              <option value="">All Cities</option>
-              {cities.map((c) => (
-                <option key={c._id} value={c._id}>{c.name}</option>
-              ))}
+              <option value="">All Statuses</option>
+              <option value="Completed">Completed</option>
+              <option value="Not Completed">Not Completed</option>
             </select>
           </div>
         </div>

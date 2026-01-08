@@ -20,14 +20,14 @@ const EducationOccupationTab = ({ data, onNext, onPrevious }) => {
   const [loading, setLoading] = useState(false);
 
   const householdIncomeOptions = [
-   "<$25,000",
-        "$25,000 - $50,000",
-        "$50,001 - $75,000",
-        "$75,001 - $100,000",
-        "$100,001 - $150,000",
-        "$150,001 - $200,000",
-        "$200,001+",
-        "Prefer not to say",
+   "Under 75k",
+        "75 - 150k",
+        "150k+",
+        // "$75,001 - $100,000",
+        // "$100,001 - $150,000",
+        // "$150,001 - $200,000",
+        // "$200,001+",
+        // "Prefer not to say",
   ];
 
   // Fetch education occupation data on component mount

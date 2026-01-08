@@ -136,15 +136,17 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
         }
 
         .profile-name-compact {
-          font-weight: 600;
-          font-size: 0.9rem;
+          font-weight: 500;
+          font-size: 12px;
           line-height: 1.2;
         }
 
         .profile-role {
-          font-size: 0.8rem;
+          font-size: 10px;
           opacity: 0.9;
           line-height: 1.2;
+          // justify-content: center;
+          // align-item:center;
         }
 
         .dropdown-arrow {
@@ -183,7 +185,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
           display: flex;
           align-items: flex-start;
           gap: 1rem;
-          padding: 1.5rem;
+          padding: 1.3rem;
           border-bottom: 1px solid #e9ecef;
         }
 
@@ -366,7 +368,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
 
         @media (max-width: 768px) {
           .profile-trigger {
-            min-width: 150px;
+            min-width: 100px;
             padding: 0.4rem 0.8rem;
           }
 
@@ -391,13 +393,145 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
           <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
               {/* Logo */}
-              <a className="navbar-brand" href="/livetest">
-                <img
-                  src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`}
-                  alt="Logo"
-                  className="img-fluid"
-                />
-              </a>
+              <div className="navbar-brand-wrapper">
+                <a className="navbar-brand" href="/livetest">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`}
+                    alt="Logo"
+                    className="img-fluid"
+                  />
+                </a>
+                {/* Sign In/Profile for Mobile/Tablet - outside menu */}
+                <div className="header-auth-mobile">
+                  {loggedInUser ? (
+                    <div className="profile-dropdown">
+                      <div className="profile-trigger">
+                        {/* <div className="profile-avatar">
+                          {profileImage ? (
+                            <img
+                              src={profileImage}
+                              alt="Profile"
+                              className="profile-img"
+                            />
+                          ) : (
+                            <div className="default-avatar">
+                              <i className="fas fa-user"></i>
+                            </div>
+                          )}
+                        </div> */}
+                        <div className="profile-info-compact">
+                          <span className="profile-name-compact">
+  {(
+    userProfile?.basicIdentity?.fullName?.trim()?.split(/\s+/)[0] ||
+    loggedInUser?.name?.trim()?.split(/\s+/)[0] ||
+    "User"
+  )}
+</span>
+                          <span className="profile-role">
+                            {/* {getOccupation() || "U" } */}
+                            User
+                          </span>
+                        </div>
+                        <i className="fas fa-chevron-down dropdown-arrow"></i>
+                      </div>
+                      <div className="profile-dropdown-content">
+                        <div className="profile-header-dropdown">
+                          <div className="profile-image-container">
+                            <div className="profile-image">
+                              {profileImage ? (
+                                <img
+                                  src={profileImage}
+                                  alt="Profile"
+                                  className="profile-img"
+                                />
+                              ) : (
+                                <div className="default-avatar">
+                                  <i className="fas fa-user"></i>
+                                </div>
+                              )}
+                              <div className="image-upload-overlay">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageUpload}
+                                  className="image-upload-input"
+                                  id="profile-image-upload-mobile"
+                                />
+                                <label
+                                  htmlFor="profile-image-upload-mobile"
+                                  className="upload-btn"
+                                >
+                                  <i className="fas fa-camera"></i>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="profile-info">
+                            <div className="profile-name-section">
+                              <h3 className="profile-name">
+                                {userProfile?.basicIdentity?.fullName ||
+                                  loggedInUser?.name ||
+                                  "User"}
+                                <span className="verified-badge">
+                                  <i className="fas fa-check-circle"></i>{" "}
+                                  Verified
+                                </span>
+                              </h3>
+                              <button
+                                className="edit-profile-btn"
+                                onClick={() => setIsEditing(!isEditing)}
+                              >
+                                <i className="fas fa-edit"></i> Edit Profile
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="profile-tags">
+                          <h4>About You</h4>
+                          <div className="tags-container">
+                            {summaryTags.length > 0 ? (
+                              summaryTags.map((tag, index) => (
+                                <span key={index} className="profile-tag">
+                                  {tag}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="no-tags">
+                                Complete your profile to see personalized tags
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="profile-actions">
+                          <button
+                            className="action-btn"
+                            onClick={() =>
+                              (window.location.href = "/livetest/dashboard")
+                            }
+                          >
+                            <i className="fas fa-user-cog"></i> Dashboard
+                          </button>
+                          <button
+                            className="action-btn"
+                            onClick={() =>
+                              (window.location.href = "/livetest/edit-profile")
+                            }
+                          >
+                            <i className="fas fa-edit"></i> Edit Profile
+                          </button>
+                          <button className="action-btn" onClick={handleLogout}>
+                            <i className="fas fa-sign-out-alt"></i> Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                      Sign In
+                    </a>
+                  )}
+                </div>
+              </div>
 
               {/* Main Menu */}
               <div
@@ -449,7 +583,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                   </ul>
                 </div>
 
-                {/* User/Profile Section */}
+                {/* User/Profile Section - Desktop Only */}
                 <div className="header-contact-btn">
                   {loggedInUser ? (
                     <div className="profile-dropdown">
@@ -576,7 +710,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="btn-default">
+                    <a href="/livetest/signup" className="btn-default header-signin-btn-desktop">
                       Sign In / Create Account
                     </a>
                   )}

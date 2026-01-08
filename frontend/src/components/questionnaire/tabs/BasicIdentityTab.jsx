@@ -8,7 +8,7 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
   
   const [formData, setFormData] = useState({
     fullName: '',
-    dateOfBirth: '',
+    age: '',
     gender: '',
     genderOther: '',
     ethnicity: [],
@@ -71,8 +71,8 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
     //   newErrors.fullName = 'Full name is required';
     // }
 
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
+    if (!formData.age) {
+      newErrors.age = 'Age is required';
     }
 
     if (!formData.gender) {
@@ -104,7 +104,7 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
         const apiFormData = new FormData();
         apiFormData.append('userId', userId);
         apiFormData.append('fullName', fullName);
-        apiFormData.append('dateOfBirth', formData.dateOfBirth);
+        apiFormData.append('dateOfBirth', formData.age);
         apiFormData.append('genderIdentity', formData.gender);
         apiFormData.append('genderOther', formData.genderOther);
         // Clean ethnicity data to ensure correct hyphen characters
@@ -120,7 +120,7 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
         
         console.log('Submitting form data:', {
           userId,
-          dateOfBirth: formData.dateOfBirth,
+          age: formData.age,
           genderIdentity: formData.gender,
           genderOther: formData.genderOther,
           ethnicity: cleanedEthnicity,
@@ -210,17 +210,19 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
           </div> */}
 
           <div className="form-group col-md-6">
-            <label className="input_title" htmlFor="dob">Date of Birth</label>
+            <label className="input_title" htmlFor="age">Age</label>
             <input 
-              type="date" 
-              className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
-              id="dob" 
-              name="dateOfBirth" 
-              placeholder="Enter Date of Birth" 
-              value={formData.dateOfBirth}
+              type="number" 
+              className={`form-control ${errors.age ? 'is-invalid' : ''}`}
+              id="age" 
+              name="age" 
+              placeholder="Enter your age" 
+              value={formData.age}
               onChange={handleInputChange}
+              min="1"
+              max="150"
             />
-            {errors.dateOfBirth && <p className="text-danger">{errors.dateOfBirth}</p>}
+            {errors.age && <p className="text-danger">{errors.age}</p>}
           </div>
 
           <div className="form-group col-md-6">

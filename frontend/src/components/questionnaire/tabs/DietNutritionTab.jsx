@@ -8,14 +8,10 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
   const [formData, setFormData] = useState({
     dietStyle: '',
     dietStyleOther: '',
-    primaryProteinSources: '',
-    proteinOther: '',
     cookingHabits: '',
     cookingOther: '',
     caffeineIntake: '',
     waterIntake: '',
-    favoriteFoodCategories: [],
-    favoriteFoodOther: '',
     supplementUse: '',
     supplementTypes: [],
     supplementOther: ''
@@ -39,14 +35,10 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
             setFormData({
               dietStyle: apiData.dietStyle || '',
               dietStyleOther: apiData.dietStyleOther || '',
-              primaryProteinSources: apiData.primaryProteinSources || '',
-              proteinOther: apiData.proteinOther || '',
               cookingHabits: apiData.cookingHabits || '',
               cookingOther: apiData.cookingOther || '',
               caffeineIntake: apiData.caffeineIntake || '',
               waterIntake: apiData.waterIntake || '',
-              favoriteFoodCategories: apiData.favoriteFoodCategories ? (Array.isArray(apiData.favoriteFoodCategories) ? apiData.favoriteFoodCategories : JSON.parse(apiData.favoriteFoodCategories || '[]')) : [],
-              favoriteFoodOther: apiData.favoriteFoodOther || '',
               supplementUse: apiData.supplementUse || '',
               supplementTypes: apiData.supplementTypes ? (Array.isArray(apiData.supplementTypes) ? apiData.supplementTypes : JSON.parse(apiData.supplementTypes || '[]')) : [],
               supplementOther: apiData.supplementOther || ''
@@ -106,10 +98,6 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
       newErrors.dietStyle = 'Diet style is required';
     }
 
-    if (!formData.primaryProteinSources) {
-      newErrors.primaryProteinSources = 'Primary protein sources is required';
-    }
-
     if (!formData.cookingHabits) {
       newErrors.cookingHabits = 'Cooking habits is required';
     }
@@ -147,17 +135,9 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
         });
         
         // Handle array fields
-        // if (formData.favoriteFoodCategories && Array.isArray(formData.favoriteFoodCategories)) {
-        //   formDataToSend.append('favoriteFoodCategories', formData.favoriteFoodCategories.join(','));
-        // }
-
-        
         // if (formData.supplementTypes && Array.isArray(formData.supplementTypes)) {
         //   formDataToSend.append('supplementTypes', formData.supplementTypes.join(','));
         // }
-        const cleanedfavoriteFoodCategories = formData.favoriteFoodCategories.map(eth => eth.replace('–', '-'));
-        formDataToSend.append('favoriteFoodCategories', JSON.stringify(cleanedfavoriteFoodCategories));
-
         const cleanedsupplementTypes = formData.supplementTypes.map(eth => eth.replace('–', '-'));
         formDataToSend.append('supplementTypes', JSON.stringify(cleanedsupplementTypes));
         // Add userId
@@ -247,38 +227,6 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
           </div>
 
           <div className="form-group col-md-6">
-            <label className="input_title">Primary Protein Sources</label>
-            <select 
-              className={`form-select ${errors.primaryProteinSources ? 'is-invalid' : ''}`}
-              name="primaryProteinSources"
-              value={formData.primaryProteinSources}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Primary Protein Sources</option>
-              <option value="Meat">Meat</option>
-              <option value="Fish / Seafood">Fish / Seafood</option>
-              <option value="Plant-based (tofu, legumes, soy, seitan)">Plant-based (tofu, legumes, soy, seitan)</option>
-              <option value="Mixed">Mixed</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.primaryProteinSources && <p className="text-danger">{errors.primaryProteinSources}</p>}
-            
-            {formData.primaryProteinSources === 'Other' && (
-              <div className="mb-3 mt-2">
-                <label className="form-label">Please specify</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  name="proteinOther" 
-                  placeholder="Enter protein sources"
-                  value={formData.proteinOther}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="form-group col-md-6">
             <label className="input_title">Cooking Habits</label>
             <select 
               className={`form-select ${errors.cookingHabits ? 'is-invalid' : ''}`}
@@ -341,78 +289,6 @@ const DietNutritionTab = ({ data, onNext, onPrevious }) => {
               <option value="3L+">3L+</option>
             </select>
             {errors.waterIntake && <p className="text-danger">{errors.waterIntake}</p>}
-          </div>
-
-          <div className="form-group col-md-6">
-            <label className="input_title">Favorite Food Categories</label>
-            <div className={`custom-multiselect ${errors.favoriteFoodCategories ? 'is-invalid' : ''}`}>
-              <div className="multiselect-container">
-                <div className="selected-items">
-                  {formData.favoriteFoodCategories.length > 0 ? (
-                    <div className="selected-tags">
-                      {formData.favoriteFoodCategories.map((item, index) => (
-                        <span key={index} className="selected-tag">
-                          {item}
-                          <button
-                            type="button"
-                            className="remove-tag"
-                            onClick={() => {
-                              const newCategories = formData.favoriteFoodCategories.filter((_, i) => i !== index);
-                              handleMultiSelectChange('favoriteFoodCategories', newCategories);
-                            }}
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="placeholder">Select favorite food categories</span>
-                  )}
-                </div>
-                <div className="multiselect-dropdown">
-                  {['Fresh fruits', 'Leafy greens', 'Grains', 'Legumes', 'Meat', 'Dairy', 'Sugary snacks', 'Fried foods', 'Other'].map(option => (
-                    <label key={option} className="multiselect-option">
-                      <input
-                        type="checkbox"
-                        value={option}
-                        checked={formData.favoriteFoodCategories.includes(option)}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const isChecked = e.target.checked;
-                          let newCategories;
-                          
-                          if (isChecked) {
-                            newCategories = [...formData.favoriteFoodCategories, value];
-                          } else {
-                            newCategories = formData.favoriteFoodCategories.filter(item => item !== value);
-                          }
-                          
-                          handleMultiSelectChange('favoriteFoodCategories', newCategories);
-                        }}
-                      />
-                      <span className="checkmark"></span>
-                      <span className="option-text">{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {errors.favoriteFoodCategories && <p className="text-danger">{errors.favoriteFoodCategories}</p>}
-            
-            {formData.favoriteFoodCategories.includes('Other') && (
-              <div className="mb-3 mt-2">
-                <label className="form-label">Please specify</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  name="favoriteFoodOther" 
-                  placeholder="Enter favorite food category"
-                  value={formData.favoriteFoodOther}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
           </div>
 
           <div className="form-group col-md-6">

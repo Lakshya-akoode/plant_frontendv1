@@ -31,7 +31,7 @@ export const addUserAPI = async (title: string) => {
     email?: string;
     country?: string;
     state?: string;
-    city?: string;
+    mpqStatus?: string;
     limit?: number;
     page?: number;
   }) {
@@ -50,7 +50,12 @@ export const addUserAPI = async (title: string) => {
       if (filters?.email) queryParams.append('email', filters.email);
       if (filters?.country) queryParams.append('country', filters.country);
       if (filters?.state) queryParams.append('state', filters.state);
-      if (filters?.city) queryParams.append('city', filters.city);
+      if (filters?.mpqStatus && filters.mpqStatus.trim() !== '') {
+        const statusValue = filters.mpqStatus.toLowerCase().trim();
+        if (statusValue && statusValue !== 'all statuses') {
+          queryParams.append('mpqStatus', statusValue);
+        }
+      }
       if (filters?.limit) queryParams.append('limit', filters.limit.toString());
       if (filters?.page) queryParams.append('page', filters.page.toString());
 

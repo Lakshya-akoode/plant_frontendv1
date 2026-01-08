@@ -6,12 +6,8 @@ import { addSocialSubstanceAPI,getSocialSubstanceById } from "../../../api/front
 
 const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
   const [formData, setFormData] = useState({
-    supportSystemStrength: '',
-    religiousAffiliation: '',
-    religiousOther: '',
     primaryTransportation: '',
     transportOther: '',
-    accessToNature: '',
     communityInvolvement: [],
     communityOther: '',
     shopsHealthProducts: '',
@@ -23,7 +19,6 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
     recoveringAlcoholic: '',
     illicitDrugUse: '',
     pharmaceuticalsUse: '',
-    pharmaceuticalDependence: '',
     addictionHistory: '',
     cannabisUse: ''
   });
@@ -44,12 +39,8 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
           if (response.status === 'success' && response.data) {
             const apiData = response.data;
             setFormData({
-              supportSystemStrength: apiData.supportSystemStrength || '',
-              religiousAffiliation: apiData.religiousAffiliation || '',
-              religiousOther: apiData.religiousOther || '',
               primaryTransportation: apiData.primaryTransportation || '',
               transportOther: apiData.transportOther || '',
-              accessToNature: apiData.accessToNature || '',
               communityInvolvement: apiData.communityInvolvement ? (Array.isArray(apiData.communityInvolvement) ? apiData.communityInvolvement : JSON.parse(apiData.communityInvolvement || '[]')) : [],
               communityOther: apiData.communityOther || '',
               shopsHealthProducts: apiData.shopsHealthProducts || '',
@@ -61,7 +52,6 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
               recoveringAlcoholic: apiData.recoveringAlcoholic || '',
               illicitDrugUse: apiData.illicitDrugUse || '',
               pharmaceuticalsUse: apiData.pharmaceuticalsUse || '',
-              pharmaceuticalDependence: apiData.pharmaceuticalDependence || '',
               addictionHistory: apiData.addictionHistory || '',
               cannabisUse: apiData.cannabisUse || ''
             });
@@ -116,16 +106,8 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.supportSystemStrength) {
-      newErrors.supportSystemStrength = 'Support system strength is required';
-    }
-
     if (!formData.primaryTransportation) {
       newErrors.primaryTransportation = 'Primary transportation is required';
-    }
-
-    if (!formData.accessToNature) {
-      newErrors.accessToNature = 'Access to nature is required';
     }
 
     if (!formData.shopsHealthProducts) {
@@ -232,55 +214,6 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
         <h4 className="form_title">Social, Consumer & <span>Substance Use Behavior</span></h4>
         <form onSubmit={handleSubmit} className="signup_form row">
           <div className="form-group col-md-6">
-            <label className="input_title">Support System Strength</label>
-            <select 
-              className={`form-select ${errors.supportSystemStrength ? 'is-invalid' : ''}`}
-              name="supportSystemStrength"
-              value={formData.supportSystemStrength}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Support System</option>
-              <option value="Strong">Strong</option>
-              <option value="None">None</option>
-            </select>
-            {errors.supportSystemStrength && <p className="text-danger">{errors.supportSystemStrength}</p>}
-          </div>
-
-          <div className="form-group col-md-6">
-            <label className="input_title">Religious Affiliation</label>
-            <select 
-              className="form-select"
-              name="religiousAffiliation"
-              value={formData.religiousAffiliation}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Religious Affiliation</option>
-              <option value="None">None</option>
-              <option value="Christian">Christian</option>
-              <option value="Jewish">Jewish</option>
-              <option value="Muslim">Muslim</option>
-              <option value="Hindu">Hindu</option>
-              <option value="Buddhist">Buddhist</option>
-              <option value="Spiritual but not religious">Spiritual but not religious</option>
-              <option value="Other">Other</option>
-            </select>
-            
-            {formData.religiousAffiliation === 'Other' && (
-              <div className="mb-3 mt-2">
-                <label className="form-label">Please specify</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  name="religiousOther" 
-                  placeholder="Enter religious affiliation"
-                  value={formData.religiousOther}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="form-group col-md-6">
             <label className="input_title">Primary Transportation</label>
             <select 
               className={`form-select ${errors.primaryTransportation ? 'is-invalid' : ''}`}
@@ -310,21 +243,6 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
                 />
               </div>
             )}
-          </div>
-
-          <div className="form-group col-md-6">
-            <label className="input_title">Access to Nature</label>
-            <select 
-              className={`form-select ${errors.accessToNature ? 'is-invalid' : ''}`}
-              name="accessToNature"
-              value={formData.accessToNature}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Access to Nature</option>
-              <option value="Daily">Daily</option>
-              <option value="Rarely">Rarely</option>
-            </select>
-            {errors.accessToNature && <p className="text-danger">{errors.accessToNature}</p>}
           </div>
 
           <div className="form-group col-md-6">
@@ -544,23 +462,21 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
               onChange={handleInputChange}
             >
               <option value="">Select Status</option>
-              <option value="Yes current">Yes current</option>
-              <option value="Yes past">Yes past</option>
+              <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
           </div>
 
           <div className="form-group col-md-6">
-            <label className="input_title">Illicit Drug Use</label>
+            <label className="input_title">Past Illicit Drug Use</label>
             <select 
               className="form-select"
               name="illicitDrugUse"
               value={formData.illicitDrugUse}
               onChange={handleInputChange}
             >
-              <option value="">Select Illicit Drug Use</option>
-              <option value="Yes current">Yes current</option>
-              <option value="Yes past">Yes past</option>
+              <option value="">Select Past Illicit Drug Use</option>
+              <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
           </div>
@@ -581,21 +497,6 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
           </div>
 
           <div className="form-group col-md-6">
-            <label className="input_title">Pharmaceutical Dependence</label>
-            <select 
-              className="form-select"
-              name="pharmaceuticalDependence"
-              value={formData.pharmaceuticalDependence}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Dependence Status</option>
-              <option value="Yes current">Yes current</option>
-              <option value="Yes past">Yes past</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-
-          <div className="form-group col-md-6">
             <label className="input_title">Addiction History</label>
             <select 
               className="form-select"
@@ -604,8 +505,7 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
               onChange={handleInputChange}
             >
               <option value="">Select Addiction History</option>
-              <option value="Yes current">Yes current</option>
-              <option value="Yes past">Yes past</option>
+              <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
           </div>
