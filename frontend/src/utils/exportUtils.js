@@ -240,6 +240,67 @@ export const exportUserSurveyResponsesToExcel = (userData) => {
 };
 
 /**
+ * Prepare single survey response data for export
+ */
+const prepareSingleSurveyResponseData = (user, survey) => {
+  if (!survey || !survey.questionAnswerPairs || survey.questionAnswerPairs.length === 0) {
+    return { headers: null, flatData: [] };
+  }
+
+  const headers = [
+    { label: 'Survey Name', accessor: (row) => row.surveyName || 'N/A' },
+    { label: 'Question', accessor: (row) => row.question || 'N/A' },
+    { label: 'Options', accessor: (row) => row.options ? row.options.join('; ') : 'N/A' },
+    { label: 'Answer', accessor: (row) => row.answer || 'N/A' },
+    { label: 'Completed At', accessor: (row) => row.completedAt ? new Date(row.completedAt).toLocaleString() : 'N/A' },
+  ];
+
+  // Flatten the data for single survey
+  const flatData = survey.questionAnswerPairs.map(qa => ({
+    surveyName: survey.surveyName,
+    question: qa.question,
+    options: qa.options || [],
+    answer: qa.answer,
+    completedAt: survey.completedAt || survey.createdAt,
+  }));
+
+  return { headers, flatData };
+};
+
+/**
+ * Export single survey response to CSV
+ */
+export const exportSingleSurveyResponseToCSV = (user, survey) => {
+  const { headers, flatData } = prepareSingleSurveyResponseData(user, survey);
+  
+  if (!headers || flatData.length === 0) {
+    return;
+  }
+
+  const csvContent = convertToCSV(flatData, headers);
+  const userName = user?.name ? user.name.replace(/[^a-z0-9]/gi, '_') : 'User';
+  const surveyName = survey?.surveyName ? survey.surveyName.replace(/[^a-z0-9]/gi, '_') : 'Survey';
+  const filename = `${userName}_${surveyName}_${new Date().toISOString().split('T')[0]}.csv`;
+  downloadCSV(csvContent, filename);
+};
+
+/**
+ * Export single survey response to Excel
+ */
+export const exportSingleSurveyResponseToExcel = (user, survey) => {
+  const { headers, flatData } = prepareSingleSurveyResponseData(user, survey);
+  
+  if (!headers || flatData.length === 0) {
+    return;
+  }
+
+  const userName = user?.name ? user.name.replace(/[^a-z0-9]/gi, '_') : 'User';
+  const surveyName = survey?.surveyName ? survey.surveyName.replace(/[^a-z0-9]/gi, '_') : 'Survey';
+  const filename = `${userName}_${surveyName}_${new Date().toISOString().split('T')[0]}.xls`;
+  downloadExcel(flatData, headers, filename);
+};
+
+/**
  * Prepare survey detail responses data for export
  */
 const prepareSurveyDetailResponsesData = (surveyData) => {

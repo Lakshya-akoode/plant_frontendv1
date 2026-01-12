@@ -124,7 +124,7 @@ const TabbedQuestionnaireForm = ({ currentTab, onTabChange }) => {
             
             const basicIdentityData = {
               // fullName: apiData.fullName || '',
-              dateOfBirth: apiData.dateOfBirth ? new Date(apiData.dateOfBirth).toISOString().split('T')[0] : '',
+              age: apiData.dateOfBirth || '',
               gender: apiData.genderIdentity || '',
               genderOther: apiData.genderOther || '',
               ethnicity: apiData.ethnicity ? (Array.isArray(apiData.ethnicity) ? apiData.ethnicity.map(eth => eth.replace('–', '-')) : JSON.parse(apiData.ethnicity || '[]').map(eth => eth.replace('–', '-'))) : [],

@@ -190,7 +190,7 @@ const SurveyStudiesTab = () => {
         )}
         
         {/* Incomplete Survey Message and Button */}
-        {hasIncompleteSurveys ? (
+        {/* {hasIncompleteSurveys ? (
           <div className="survey-studies-warning-box">
             <div className="survey-studies-warning-box-inner">
               <p className="survey-studies-warning-text">
@@ -206,12 +206,14 @@ const SurveyStudiesTab = () => {
               Complete Survey Study
             </button>
           </div>
-        ) : (
+        ) : ( */}
+        {!hasIncompleteSurveys && (
           <div className="text-center" style={{ padding: '40px' }}>
             <h4 className="mb-4">No Survey Studies Found</h4>
             <p className="m-0">You haven't completed any survey studies yet.</p>
           </div>
         )}
+        {/* )} */}
       </div>
     );
   }
@@ -253,7 +255,7 @@ const SurveyStudiesTab = () => {
       )}
       
       {/* Incomplete Survey Message and Button */}
-      {hasIncompleteSurveys && (
+      {/* {hasIncompleteSurveys && (
         <div className="survey-studies-warning-box">
           <div className="survey-studies-warning-box-inner">
             <p className="survey-studies-warning-text">
@@ -268,7 +270,7 @@ const SurveyStudiesTab = () => {
             Complete Survey Study
           </button>
         </div>
-      )}
+      )} */}
       
       <p className="mb-4 survey-studies-description-text">
         View all your completed survey studies with questions and answers below.

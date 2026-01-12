@@ -199,11 +199,17 @@ const ConsentModal = ({ show, onClose, formData }) => {
                 required 
               />
               <style jsx>{`
-                .form-check-input:checked {
+                #consentCheck.form-check-input {
+                  border-color: #000 !important;
+                  border-width: 2px !important;
+                }
+                #consentCheck.form-check-input:checked {
                   // background-color: #4daf4e;
                   // border-color: #4daf4e;
                   width: 1.5rem;
                   height: 1.5rem;
+                  border-color: #000 !important;
+                  border-width: 2px !important;
                 }
               `}</style>
               <label className="form-check-label" htmlFor="consentCheck">

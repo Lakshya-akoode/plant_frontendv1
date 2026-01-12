@@ -21,15 +21,58 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [fullName,setFullName]=useState('');
-  // Fetch basic identity data on component mount
   
-        
+  // Fetch basic identity data on component mount
   useEffect(() => {
-    setFullName(JSON.parse(localStorage.getItem("user")).name);
-    console.log("Full name from localStorage:",JSON.parse(localStorage.getItem("user")).name);
+    const fetchBasicIdentity = async () => {
+      setLoading(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const userId = userData._id;
+        setFullName(userData.name || '');
+        
+        if (userId && (!data || Object.keys(data).length === 0)) {
+          // Only fetch from API if no data prop is provided
+          const response = await getBasicidentityById(userId);
+          if (response.status === 'success' && response.data) {
+            const apiData = response.data;
+            setFormData({
+              fullName: userData.name || '',
+              age: apiData.dateOfBirth || '', // dateOfBirth field contains age value
+              gender: apiData.genderIdentity || '',
+              genderOther: apiData.genderOther || '',
+              ethnicity: apiData.ethnicity ? (Array.isArray(apiData.ethnicity) ? apiData.ethnicity : JSON.parse(apiData.ethnicity || '[]')) : [],
+              ethnicityOther: apiData.ethinicityOther || '',
+              maritalStatus: apiData.maritalStatus || '',
+              statusOther: apiData.maritalStatusOther || '',
+              numberOfChildren: apiData.numberOfChildren || 'None',
+              agesOfChildren: apiData.agesOfchildren ? (Array.isArray(apiData.agesOfchildren) ? apiData.agesOfchildren : JSON.parse(apiData.agesOfchildren || '[]')) : []
+            });
+          }
+        }
+      } catch (error) {
+        console.log('No basic identity data found for user, using default values:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBasicIdentity();
+  }, []);
+
+  // Handle data prop from parent component
+  useEffect(() => {
     if (data && Object.keys(data).length > 0) {
-      
-      setFormData(data);
+      // Ensure age is always a string, convert from dateOfBirth if needed
+      const processedData = {
+        ...data,
+        age: data.age || data.dateOfBirth || ''
+      };
+      // Remove dateOfBirth from processedData if it exists
+      if (processedData.dateOfBirth) {
+        delete processedData.dateOfBirth;
+      }
+      setFormData(processedData);
     }
   }, [data]);
 
@@ -217,7 +260,7 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
               id="age" 
               name="age" 
               placeholder="Enter your age" 
-              value={formData.age}
+              value={formData.age || ''}
               onChange={handleInputChange}
               min="1"
               max="150"

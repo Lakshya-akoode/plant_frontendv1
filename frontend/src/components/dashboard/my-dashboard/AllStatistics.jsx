@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getDashboardData, formatNumber } from "../../../api/statistics";
 import { getUsersApi } from "../../../api/user";
+import { getEnquiryTableData } from "../../../api/enquiry";
 
 const AllStatistics = () => {
   const router = useRouter();
@@ -11,6 +12,7 @@ const AllStatistics = () => {
     totalSurveys: 0,
     completedSurveys: 0,
     incompleteMPQUsers: 0,
+    totalEnquiries: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +35,18 @@ const AllStatistics = () => {
           console.error("Error fetching incomplete MPQ users:", error);
         }
 
+        // Fetch total enquiries count
+        let totalEnquiriesCount = 0;
+        try {
+          const enquiriesResponse = await getEnquiryTableData({
+            limit: 1,
+            page: 1,
+          });
+          totalEnquiriesCount = enquiriesResponse?.totalCount || 0;
+        } catch (error) {
+          console.error("Error fetching enquiries count:", error);
+        }
+
         if (dashboardData && dashboardData.data) {
           setStatistics({
             totalUsers: dashboardData.data.users?.totalUsers || 0,
@@ -41,12 +55,14 @@ const AllStatistics = () => {
             completedSurveys:
               dashboardData.data.surveys?.totalUsersCompletedAllSurveys || 0,
             incompleteMPQUsers: incompleteMPQCount,
+            totalEnquiries: totalEnquiriesCount,
           });
         } else {
-          // If dashboard data is not available, still set incomplete MPQ users
+          // If dashboard data is not available, still set incomplete MPQ users and enquiries
           setStatistics(prev => ({
             ...prev,
             incompleteMPQUsers: incompleteMPQCount,
+            totalEnquiries: totalEnquiriesCount,
           }));
         }
       } catch (error) {
@@ -147,6 +163,26 @@ const AllStatistics = () => {
       timer: loading ? "..." : formatNumber(statistics.incompleteMPQUsers),
       name: "Incomplete Users",
     },
+    {
+      id: 5,
+      blockStyle: "style5",
+      icon: (
+        <svg
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      timer: loading ? "..." : formatNumber(statistics.totalEnquiries),
+      name: "Total Enquiries",
+    },
   ];
 
   const handleCardClick = (itemId) => {
@@ -157,18 +193,31 @@ const AllStatistics = () => {
       router.push("/livetest/cmsadminlogin/my-survey");
     }
     else if (itemId === 3) {  
-      router.push("/livetest/cmsadminlogin/my-user");
+      router.push("/livetest/cmsadminlogin/view-survey-studies");
     }
     else if (itemId === 4) {
       // Redirect to users list with MPQ Status filter set to "Not Completed"
       router.push("/livetest/cmsadminlogin/my-user?mpqStatus=Not%20Completed");
+    }
+    else if (itemId === 5) {
+      router.push("/livetest/cmsadminlogin/my-enquiry");
     }
   };
 
   return (
     <>
       {allStatistics.map((item) => (
-        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-3" key={item.id}>
+        <div 
+          className="col-12 col-sm-6 col-md-4 col-lg" 
+          key={item.id}
+          style={{ 
+            flex: '0 0 20%',
+            maxWidth: '20%',
+            paddingLeft: '7px',
+            paddingRight: '7px',
+            minWidth: '0'
+          }}
+        >
           <div 
             className={`ff_one ${item.blockStyle}`}
             onClick={() => handleCardClick(item.id)}

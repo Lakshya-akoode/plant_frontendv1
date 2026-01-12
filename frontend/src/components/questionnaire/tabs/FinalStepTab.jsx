@@ -34,6 +34,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [currentSurveyIndex, setCurrentSurveyIndex] = useState(0);
   const [surveyAnswers, setSurveyAnswers] = useState({});
+  const [isNewUser, setIsNewUser] = useState(false); // Track if user has no completed surveys
   const modalRef = useRef(null);
   const scrollPositionRef = useRef(null);
   const shouldRestoreScrollRef = useRef(false);
@@ -108,8 +109,44 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
         }
         
        
-        const active = surveys.filter(survey => survey.status === true);
+        let active = surveys.filter(survey => survey.status === true);
         console.log('Active Surveys:', active);
+        
+        // Check if user has completed any surveys (new user detection)
+        try {
+          const { getUserSurveyResponses } = await import("../../../api/frontend/surveyresponses");
+          const userResponses = await getUserSurveyResponses();
+          
+          let completedSurveyIds = [];
+          if (userResponses.status === 'success' && userResponses.data && userResponses.data.length > 0) {
+            completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+          }
+          
+          // If user has no completed surveys (new user), show only the most recent survey
+          if (completedSurveyIds.length === 0 && active.length > 0) {
+            setIsNewUser(true);
+            // Sort by createdAt (newest first) or by _id (MongoDB _id contains timestamp, newer ones are greater)
+            // If createdAt exists, use it; otherwise, use _id for sorting
+            active = active.sort((a, b) => {
+              if (a.createdAt && b.createdAt) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+              }
+              // Fallback: compare _id strings (newer MongoDB _ids are greater lexicographically)
+              return b._id.localeCompare(a._id);
+            });
+            // Take only the most recent survey
+            active = [active[0]];
+            console.log('New user detected - showing only most recent survey:', active[0]);
+          } else {
+            setIsNewUser(false);
+            // For existing users (coming from button), filter out completed surveys - only show incomplete ones
+            active = active.filter(survey => !completedSurveyIds.includes(survey._id));
+            console.log('Existing user - filtering out completed surveys, showing only incomplete:', active);
+          }
+        } catch (error) {
+          console.error('Error checking user responses for new user detection:', error);
+          setIsNewUser(false);
+        }
         
         setSurveyData(data);
         setActiveSurveys(active);
@@ -226,29 +263,16 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
           const hasIncomplete = activeSurveys.some(survey => !completedSurveyIds.includes(survey._id));
           
           if (hasIncomplete) {
-            // Show toast notification when modal opens
-            toast.info('You have incomplete survey studies. Please complete them to proceed.', {
-              position: "top-right",
-              autoClose: 3000,
-            });
-            // Show survey modal automatically
+            // Show survey modal automatically (toast removed)
             setShowSurvey(true);
           }
         } else {
-          // No responses, show toast and modal if there are active surveys
-          toast.info('You have incomplete survey studies. Please complete them to proceed.', {
-            position: "top-right",
-            autoClose: 3000,
-          });
+          // No responses, show modal if there are active surveys (toast removed)
           setShowSurvey(true);
         }
       } catch (error) {
         console.error('Error checking user survey responses:', error);
-        // If error, show toast and modal if there are active surveys to be safe
-        toast.info('You have incomplete survey studies. Please complete them to proceed.', {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        // If error, show modal if there are active surveys to be safe (toast removed)
         setShowSurvey(true);
       }
     };
@@ -485,6 +509,15 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             index > currentSurveyIndex && !completedSurveyIds.includes(survey._id)
           );
           
+          // For new users (first survey), redirect to dashboard after completing one survey
+          if (isNewUser) {
+            setShowSurvey(false);
+            setTimeout(() => {
+              router.push("/livetest/dashboard");
+            }, 500);
+            return;
+          }
+          
           if (nextIncompleteIndex !== -1) {
             // Move to next incomplete survey
             setCurrentSurveyIndex(nextIncompleteIndex);
@@ -498,14 +531,14 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
         } catch (error) {
           console.error('Error finding next incomplete survey:', error);
           // Fallback: move to next survey by index
-          if (currentSurveyIndex < activeSurveys.length - 1) {
-            setCurrentSurveyIndex(prev => prev + 1);
-          } else {
-            // All surveys completed
-            setShowSurvey(false);
-            setTimeout(() => {
-              router.push("/livetest/dashboard");
-            }, 500);
+        if (currentSurveyIndex < activeSurveys.length - 1) {
+          setCurrentSurveyIndex(prev => prev + 1);
+        } else {
+          // All surveys completed
+          setShowSurvey(false);
+          setTimeout(() => {
+            router.push("/livetest/dashboard");
+          }, 500);
           }
         }
       }
@@ -565,7 +598,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             {currentSurvey.studyName || `Survey ${currentSurveyIndex + 1}`}
           </h3>
 
-          {activeSurveys.length > 1 && (
+          {activeSurveys.length > 1 && !isNewUser && (
             <p style={{ color: '#6b7280', marginBottom: '20px', fontSize: '14px' }}>
               Survey {currentSurveyIndex + 1} of {activeSurveys.length}
             </p>
@@ -716,31 +749,33 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             )}
           </div>
 
-          <div className="survey-buttons" style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
-            <button
-              className="btn btn-secondary"
-              onClick={goToPreviousSurvey}
-              disabled={currentSurveyIndex === 0}
-              style={{
-                padding: '12px 24px',
-                fontSize: '16px',
-                fontWeight: '500',
-                borderRadius: '6px',
-                border: '1px solid #d1d5db',
-                backgroundColor: currentSurveyIndex === 0 ? '#f3f4f6' : '#fff',
-                color: currentSurveyIndex === 0 ? '#9ca3af' : '#374151',
-                cursor: currentSurveyIndex === 0 ? 'not-allowed' : 'pointer',
-                opacity: currentSurveyIndex === 0 ? 0.6 : 1,
-                transition: 'all 0.2s'
-              }}
-            >
-              Previous
-            </button>
+          <div className="survey-buttons" style={{ display: 'flex', justifyContent: isNewUser ? 'flex-end' : 'space-between', gap: '10px' }}>
+            {!isNewUser && (
+              <button
+                className="btn btn-secondary"
+                onClick={goToPreviousSurvey}
+                disabled={currentSurveyIndex === 0}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  borderRadius: '6px',
+                  border: '1px solid #d1d5db',
+                  backgroundColor: currentSurveyIndex === 0 ? '#f3f4f6' : '#fff',
+                  color: currentSurveyIndex === 0 ? '#9ca3af' : '#374151',
+                  cursor: currentSurveyIndex === 0 ? 'not-allowed' : 'pointer',
+                  opacity: currentSurveyIndex === 0 ? 0.6 : 1,
+                  transition: 'all 0.2s'
+                }}
+              >
+                Previous
+              </button>
+            )}
             <div style={{ display: 'flex', gap: '10px' }}>
-              {currentSurveyIndex < activeSurveys.length - 1 ? (
+              {!isNewUser && currentSurveyIndex < activeSurveys.length - 1 ? (
                 <button className="btn-default" onClick={submitSurvey}>
-                  Next
-                </button>
+                    Next
+                  </button>
               ) : (
                 <button className="btn-default" onClick={submitSurvey}>
                   Submit

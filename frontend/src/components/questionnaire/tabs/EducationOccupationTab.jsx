@@ -169,6 +169,11 @@ const EducationOccupationTab = ({ data, onNext, onPrevious }) => {
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
+          // Send industry as empty string since field is commented out but backend may require it
+          if (key === 'industry') {
+            formDataToSend.append(key, '');
+            return;
+          }
           if (formData[key] && typeof formData[key] === 'string') {
             formDataToSend.append(key, formData[key]);
           }
@@ -339,7 +344,7 @@ const EducationOccupationTab = ({ data, onNext, onPrevious }) => {
             )}
           </div>
 
-          <div className="form-group col-md-6">
+          {/* <div className="form-group col-md-6">
             <label className="input_title">Industry</label>
             <input 
               type="text" 
@@ -349,7 +354,7 @@ const EducationOccupationTab = ({ data, onNext, onPrevious }) => {
               value={formData.industry}
               onChange={handleInputChange}
             />
-          </div>
+          </div> */}
 
           <div className="form-group col-md-6">
             <label className="input_title">Household Income Bracket</label>

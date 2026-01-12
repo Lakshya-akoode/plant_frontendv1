@@ -7,7 +7,7 @@ import CopyRight from "../../common/footer/CopyRight";
 import { useState, useEffect } from "react";
 import { getSurveyResponsesByUserId } from "@/api/survey";
 import { useRouter, useParams } from "next/navigation";
-import { exportUserSurveyResponsesToCSV, exportUserSurveyResponsesToExcel } from "@/utils/exportUtils";
+import { exportUserSurveyResponsesToCSV, exportUserSurveyResponsesToExcel, exportSingleSurveyResponseToCSV, exportSingleSurveyResponseToExcel } from "@/utils/exportUtils";
 
 const ViewSurveyStudiesUser = () => {
   const params = useParams();
@@ -18,6 +18,7 @@ const ViewSurveyStudiesUser = () => {
   const [loading, setLoading] = useState(true);
   const [expandedSurveys, setExpandedSurveys] = useState({});
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [surveyExportDropdowns, setSurveyExportDropdowns] = useState({});
 
   const fetchUserData = async () => {
     if (!userId) return;
@@ -64,11 +65,11 @@ const ViewSurveyStudiesUser = () => {
           <div className="container-fluid ovh">
             <div className="row">
               <div className="col-lg-12 maxw100flex-992">
-                <div style={{ padding: '60px', textAlign: 'center' }}>
+                <div className="user-survey-loading-container">
                   <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                  <p style={{ marginTop: '20px', color: '#6b7280' }}>Loading user survey data...</p>
+                  <p className="user-survey-loading-text">Loading user survey data...</p>
                 </div>
               </div>
             </div>
@@ -92,7 +93,7 @@ const ViewSurveyStudiesUser = () => {
           <div className="container-fluid ovh">
             <div className="row">
               <div className="col-lg-12 maxw100flex-992">
-                <div style={{ padding: '60px', textAlign: 'center', color: '#6b7280' }}>
+                <div className="user-survey-notfound-container">
                   <h4 className="mb-4">User Not Found</h4>
                   <p className="m-0">The user you're looking for doesn't exist or has been deleted.</p>
                   <button
@@ -158,90 +159,44 @@ const ViewSurveyStudiesUser = () => {
                 {/* Breadcrumb and Back Button */}
                 <div className="col-lg-12 mb10">
                   <div className="breadcrumb_content style2 mb30-991">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="user-survey-responses-header-content">
                       <div>
                         <h2 className="breadcrumb_title">User Survey Responses</h2>
                         <p>View all survey responses and question-answer pairs for this user.</p>
                       </div>
-                      <div style={{ display: 'flex', gap: '10px' }}>
+                      <div className="user-survey-responses-header-actions">
                         <button
                           onClick={() => {
                             fetchUserData();
                           }}
-                          // className="btn btn-default"
-                          style={{ padding: '10px 20px',
-                            backgroundColor: '#fff',
-                            border: 'none',
-                            // color: '#fff',
-                           }}
+                          className="user-survey-btn-refresh"
                           title="Refresh Data"
                         >
                           <i className="fa fa-refresh mr-2"></i> Refresh
                         </button>
                         {userData && userData.surveys && userData.surveys.length > 0 && (
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <div className="user-survey-dropdown-wrapper">
                             <button
                               onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
-                              style={{ padding: '10px 20px',
-                                backgroundColor: '#5cb85c',
-                                border: 'none',
-                                color: '#fff',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                              }}
+                              className="user-survey-btn-export"
                               title="Export Data"
                             >
                               <i className="fa fa-download mr-2"></i> Export
-                              <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '12px' }}></i>
+                              <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`}></i>
                             </button>
                             {exportDropdownOpen && (
                               <>
                                 <div 
-                                  style={{ 
-                                    position: 'fixed', 
-                                    top: 0, 
-                                    left: 0, 
-                                    right: 0, 
-                                    bottom: 0, 
-                                    zIndex: 998 
-                                  }} 
+                                  className="user-survey-dropdown-overlay"
                                   onClick={() => setExportDropdownOpen(false)}
                                 />
-                                <div style={{
-                                  position: 'absolute',
-                                  top: '100%',
-                                  right: 0,
-                                  marginTop: '4px',
-                                  backgroundColor: '#fff',
-                                  border: '1px solid #e5e7eb',
-                                  borderRadius: '6px',
-                                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                  zIndex: 999,
-                                  minWidth: '160px',
-                                  overflow: 'hidden'
-                                }}>
+                                <div className="user-survey-dropdown-menu">
                                   <button
                                     onClick={() => {
                                       exportUserSurveyResponsesToCSV(userData);
                                       setExportDropdownOpen(false);
                                     }}
-                                    style={{
-                                      width: '100%',
-                                      padding: '10px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'transparent',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      color: '#374151',
-                                      fontSize: '14px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '8px'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    className="user-survey-dropdown-item"
                                   >
                                     <i className="fa fa-file-text-o"></i> Export as CSV
                                   </button>
@@ -250,22 +205,7 @@ const ViewSurveyStudiesUser = () => {
                                       exportUserSurveyResponsesToExcel(userData);
                                       setExportDropdownOpen(false);
                                     }}
-                                    style={{
-                                      width: '100%',
-                                      padding: '10px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'transparent',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      color: '#374151',
-                                      fontSize: '14px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '8px',
-                                      borderTop: '1px solid #e5e7eb'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    className="user-survey-dropdown-item"
                                   >
                                     <i className="fa fa-file-excel-o"></i> Export as Excel
                                   </button>
@@ -276,12 +216,7 @@ const ViewSurveyStudiesUser = () => {
                         )}
                         <button
                           onClick={() => router.push('/livetest/cmsadminlogin/view-survey-studies')}
-                          // className="btn btn-default"
-                          style={{ padding: '10px 20px',
-                            backgroundColor: '#fff',
-                            border: 'none',
-                            // color: '#fff',
-                           }}
+                          className="user-survey-btn-back"
                         >
                           <i className="fa fa-arrow-left mr-2"></i> Back to All Responses
                         </button>
@@ -293,37 +228,23 @@ const ViewSurveyStudiesUser = () => {
 
                 {/* User Info Card */}
                 <div className="col-lg-12 mb-4">
-                  <div style={{
-                    padding: '24px',
-                    backgroundColor: '#fff',
-                    borderRadius: '8px',
-                    border: '1px solid #e5e7eb',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+                  <div className="user-survey-info-card">
+                    <div className="user-survey-info-header">
                       <div>
-                        <h3 style={{ margin: 0, color: '#1f2937', fontWeight: '600', fontSize: '24px', marginBottom: '8px' }}>
+                        <h3 className="user-survey-info-name">
                           {user.name || 'Unknown User'}
                         </h3>
-                        <p style={{ margin: '4px 0', color: '#6b7280', fontSize: '14px' }}>
+                        <p className="user-survey-info-text">
                           {user.email}
                         </p>
                         {user.phone && (
-                          <p style={{ margin: '4px 0', color: '#6b7280', fontSize: '14px' }}>
+                          <p className="user-survey-info-text">
                             Phone: {user.phone}
                           </p>
                         )}
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{
-                          backgroundColor: '#5cb85c',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          display: 'inline-block'
-                        }}>
+                      <div className="user-survey-info-badge-wrapper">
+                        <div className="user-survey-info-badge">
                           {totalSurveys || 0} Survey{totalSurveys !== 1 ? 's' : ''} Completed
                         </div>
                       </div>
@@ -336,48 +257,31 @@ const ViewSurveyStudiesUser = () => {
                   <div className="my_dashboard_review mb40">
                     <div className="property_table">
                       {!surveys || surveys.length === 0 ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
+                        <div className="user-survey-empty-state">
                           <h4 className="mb-4">No Survey Responses</h4>
                           <p className="m-0">This user hasn't completed any surveys yet.</p>
                         </div>
                       ) : (
                         <div>
-                          <h4 style={{ margin: '0 0 24px 0', color: '#1f2937', fontWeight: '600', fontSize: '20px' }}>
+                          <h4 className="user-survey-completed-title">
                             Completed Surveys ({totalSurveys})
                           </h4>
                           <div className="survey-responses-container">
                             {surveys.map((survey, index) => (
                               <div
                                 key={survey._id}
-                                style={{
-                                  marginBottom: index < surveys.length - 1 ? '24px' : '0',
-                                  border: '1px solid #e5e7eb',
-                                  borderRadius: '8px',
-                                  overflow: 'hidden',
-                                  backgroundColor: '#fff'
-                                }}
+                                className={index < surveys.length - 1 ? 'user-survey-card' : 'user-survey-card'}
                               >
                                 {/* Survey Header */}
                                 <div
                                   onClick={() => toggleSurvey(survey.surveyId)}
-                                  style={{
-                                    padding: '16px 20px',
-                                    backgroundColor: '#f9fafb',
-                                    borderBottom: '1px solid #e5e7eb',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    transition: 'background-color 0.2s'
-                                  }}
-                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
-                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                  className="user-survey-card-header"
                                 >
                                   <div>
-                                    <h5 style={{ margin: 0, color: '#1f2937', fontWeight: '600', fontSize: '18px' }}>
+                                    <h5 className="user-survey-card-title">
                                       {survey.surveyName || 'Unknown Survey'}
                                     </h5>
-                                    <p style={{ margin: '4px 0 0 0', color: '#6b7280', fontSize: '13px' }}>
+                                    <p className="user-survey-card-meta">
                                       Completed: {new Date(survey.completedAt || survey.createdAt).toLocaleString('en-US', {
                                         month: 'short',
                                         day: '2-digit',
@@ -386,39 +290,90 @@ const ViewSurveyStudiesUser = () => {
                                         minute: '2-digit'
                                       })}
                                     </p>
-                                    <p style={{ margin: '4px 0 0 0', color: '#9ca3af', fontSize: '12px' }}>
+                                    <p className="user-survey-card-meta-secondary">
                                       {survey.questionAnswerPairs?.length || 0} question{survey.questionAnswerPairs?.length !== 1 ? 's' : ''} answered
                                     </p>
                                   </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                                  <div className="user-survey-card-actions">
+                                    <div className="user-survey-dropdown-wrapper">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSurveyExportDropdowns(prev => ({
+                                            ...prev,
+                                            [survey.surveyId]: !prev[survey.surveyId]
+                                          }));
+                                        }}
+                                        className="user-survey-btn-export-small"
+                                        title="Export Survey"
+                                      >
+                                        <i className="fa fa-download"></i> Export
+                                        <i className={`fa fa-chevron-${surveyExportDropdowns[survey.surveyId] ? 'up' : 'down'}`}></i>
+                                      </button>
+                                      {surveyExportDropdowns[survey.surveyId] && (
+                                        <>
+                                          <div 
+                                            className="user-survey-dropdown-overlay"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setSurveyExportDropdowns(prev => ({
+                                                ...prev,
+                                                [survey.surveyId]: false
+                                              }));
+                                            }}
+                                          />
+                                          <div className="user-survey-dropdown-menu">
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                exportSingleSurveyResponseToCSV(user, survey);
+                                                setSurveyExportDropdowns(prev => ({
+                                                  ...prev,
+                                                  [survey.surveyId]: false
+                                                }));
+                                              }}
+                                              className="user-survey-dropdown-item"
+                                            >
+                                              <i className="fa fa-file-text-o"></i> Export as CSV
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                exportSingleSurveyResponseToExcel(user, survey);
+                                                setSurveyExportDropdowns(prev => ({
+                                                  ...prev,
+                                                  [survey.surveyId]: false
+                                                }));
+                                              }}
+                                              className="user-survey-dropdown-item"
+                                            >
+                                              <i className="fa fa-file-excel-o"></i> Export as Excel
+                                            </button>
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+                                    <span className="user-survey-answers-toggle">
                                       {expandedSurveys[survey.surveyId] ? 'Hide' : 'Show'} Answers
                                     </span>
                                     <i
-                                      className={`fa fa-chevron-${expandedSurveys[survey.surveyId] ? 'up' : 'down'}`}
-                                      style={{ color: '#6b7280' }}
+                                      className={`fa fa-chevron-${expandedSurveys[survey.surveyId] ? 'up' : 'down'} user-survey-chevron-icon`}
                                     ></i>
                                   </div>
                                 </div>
 
                                 {/* Question-Answer Pairs (Expanded) */}
                                 {expandedSurveys[survey.surveyId] && (
-                                  <div style={{ padding: '20px' }}>
+                                  <div className="user-survey-card-content">
                                     {survey.questionAnswerPairs && survey.questionAnswerPairs.length > 0 ? (
                                       <div>
                                         {survey.questionAnswerPairs.map((qa, qaIndex) => (
                                           <div
                                             key={qaIndex}
-                                            style={{
-                                              marginBottom: qaIndex < survey.questionAnswerPairs.length - 1 ? '16px' : '0',
-                                              padding: '16px',
-                                              backgroundColor: '#f9fafb',
-                                              borderRadius: '6px',
-                                              borderLeft: '4px solid #5cb85c'
-                                            }}
+                                            className={qaIndex < survey.questionAnswerPairs.length - 1 ? 'user-survey-question-item' : 'user-survey-question-item'}
                                           >
-                                            <div style={{ marginBottom: '12px' }}>
-                                              <strong style={{ color: '#1f2937', fontSize: '15px', display: 'block', marginBottom: '4px' }}>
+                                            <div className="user-survey-question-wrapper">
+                                              <strong className="user-survey-question-text">
                                                 Q{qa.questionIndex}: {qa.question}
                                               </strong>
                                               {/* {qa.questionId && (
@@ -431,26 +386,19 @@ const ViewSurveyStudiesUser = () => {
                                                 </span>
                                               )} */}
                                               {qa.options && qa.options.length > 0 && (
-                                                <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
+                                                <div className="user-survey-question-options">
                                                   <strong>Available Options:</strong> {qa.options.join(', ')}
                                                 </div>
                                               )}
                                             </div>
-                                            <div style={{ 
-                                              color: '#374151', 
-                                              fontSize: '14px', 
-                                              padding: '12px',
-                                              backgroundColor: '#fff',
-                                              borderRadius: '4px',
-                                              border: '1px solid #e5e7eb'
-                                            }}>
-                                              <strong style={{ color: '#5cb85c' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
+                                            <div className="user-survey-answer-box">
+                                              <strong className="user-survey-answer-label">User's Answer:</strong> <span className="user-survey-answer-text">{qa.answer || 'No answer provided'}</span>
                                             </div>
                                           </div>
                                         ))}
                                       </div>
                                     ) : (
-                                      <p style={{ color: '#9ca3af', fontSize: '14px', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
+                                      <p className="user-survey-no-questions">
                                         No questions available for this survey
                                       </p>
                                     )}
