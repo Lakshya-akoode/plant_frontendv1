@@ -402,135 +402,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                   />
                 </a>
                 {/* Sign In/Profile for Mobile/Tablet - outside menu */}
-                <div className="header-auth-mobile">
-                  {loggedInUser ? (
-                    <div className="profile-dropdown">
-                      <div className="profile-trigger">
-                        {/* <div className="profile-avatar">
-                          {profileImage ? (
-                            <img
-                              src={profileImage}
-                              alt="Profile"
-                              className="profile-img"
-                            />
-                          ) : (
-                            <div className="default-avatar">
-                              <i className="fas fa-user"></i>
-                            </div>
-                          )}
-                        </div> */}
-                        <div className="profile-info-compact">
-                          <span className="profile-name-compact">
-  {(
-    userProfile?.basicIdentity?.fullName?.trim()?.split(/\s+/)[0] ||
-    loggedInUser?.name?.trim()?.split(/\s+/)[0] ||
-    "User"
-  )}
-</span>
-                          <span className="profile-role">
-                            {/* {getOccupation() || "U" } */}
-                            User
-                          </span>
-                        </div>
-                        <i className="fas fa-chevron-down dropdown-arrow"></i>
-                      </div>
-                      <div className="profile-dropdown-content">
-                        <div className="profile-header-dropdown">
-                          <div className="profile-image-container">
-                            <div className="profile-image">
-                              {profileImage ? (
-                                <img
-                                  src={profileImage}
-                                  alt="Profile"
-                                  className="profile-img"
-                                />
-                              ) : (
-                                <div className="default-avatar">
-                                  <i className="fas fa-user"></i>
-                                </div>
-                              )}
-                              <div className="image-upload-overlay">
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={handleImageUpload}
-                                  className="image-upload-input"
-                                  id="profile-image-upload-mobile"
-                                />
-                                <label
-                                  htmlFor="profile-image-upload-mobile"
-                                  className="upload-btn"
-                                >
-                                  <i className="fas fa-camera"></i>
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="profile-info">
-                            <div className="profile-name-section">
-                              <h3 className="profile-name">
-                                {userProfile?.basicIdentity?.fullName ||
-                                  loggedInUser?.name ||
-                                  "User"}
-                                <span className="verified-badge">
-                                  <i className="fas fa-check-circle"></i>{" "}
-                                  Verified
-                                </span>
-                              </h3>
-                              <button
-                                className="edit-profile-btn"
-                                onClick={() => setIsEditing(!isEditing)}
-                              >
-                                <i className="fas fa-edit"></i> Edit Profile
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="profile-tags">
-                          <h4>About You</h4>
-                          <div className="tags-container">
-                            {summaryTags.length > 0 ? (
-                              summaryTags.map((tag, index) => (
-                                <span key={index} className="profile-tag">
-                                  {tag}
-                                </span>
-                              ))
-                            ) : (
-                              <span className="no-tags">
-                                Complete your profile to see personalized tags
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="profile-actions">
-                          <button
-                            className="action-btn"
-                            onClick={() =>
-                              (window.location.href = "/livetest/dashboard")
-                            }
-                          >
-                            <i className="fas fa-user-cog"></i> Dashboard
-                          </button>
-                          <button
-                            className="action-btn"
-                            onClick={() =>
-                              (window.location.href = "/livetest/edit-profile")
-                            }
-                          >
-                            <i className="fas fa-edit"></i> Edit Profile
-                          </button>
-                          <button className="action-btn" onClick={handleLogout}>
-                            <i className="fas fa-sign-out-alt"></i> Sign Out
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
-                      Sign In
-                    </a>
-                  )}
-                </div>
+                
               </div>
 
               {/* Main Menu */}
@@ -717,21 +589,152 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                 </div>
               </div>
 
-              {/* Toggle Button */}
-              <button
-                className={`menubars navbar-toggler ${
-                  isMenuOpen ? "active" : ""
-                }`}
-                type="button"
-                onClick={toggleMenu}
-                aria-controls="navbarNav"
-                aria-expanded={isMenuOpen}
-                aria-label="Toggle navigation"
-              >
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
+              <div className="d-flex align-items-center gap-3">
+               <div className="header-auth-mobile">
+                  {loggedInUser ? (
+                    <div className="profile-dropdown">
+                      <div className="profile-trigger">
+                        {/* <div className="profile-avatar">
+                          {profileImage ? (
+                            <img
+                              src={profileImage}
+                              alt="Profile"
+                              className="profile-img"
+                            />
+                          ) : (
+                            <div className="default-avatar">
+                              <i className="fas fa-user"></i>
+                            </div>
+                          )}
+                        </div> */}
+                        <div className="profile-info-compact">
+                          <span className="profile-name-compact">
+                            {(
+                              userProfile?.basicIdentity?.fullName?.trim()?.split(/\s+/)[0] ||
+                              loggedInUser?.name?.trim()?.split(/\s+/)[0] ||
+                              "User"
+                            )}
+                          </span>
+                          <span className="profile-role">
+                            {/* {getOccupation() || "U" } */}
+                            User
+                          </span>
+                        </div>
+                        <i className="fas fa-chevron-down dropdown-arrow"></i>
+                      </div>
+                      <div className="profile-dropdown-content">
+                        <div className="profile-header-dropdown">
+                          <div className="profile-image-container">
+                            <div className="profile-image">
+                              {profileImage ? (
+                                <img
+                                  src={profileImage}
+                                  alt="Profile"
+                                  className="profile-img"
+                                />
+                              ) : (
+                                <div className="default-avatar">
+                                  <i className="fas fa-user"></i>
+                                </div>
+                              )}
+                              <div className="image-upload-overlay">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageUpload}
+                                  className="image-upload-input"
+                                  id="profile-image-upload-mobile"
+                                />
+                                <label
+                                  htmlFor="profile-image-upload-mobile"
+                                  className="upload-btn"
+                                >
+                                  <i className="fas fa-camera"></i>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="profile-info">
+                            <div className="profile-name-section">
+                              <h3 className="profile-name">
+                                {userProfile?.basicIdentity?.fullName ||
+                                  loggedInUser?.name ||
+                                  "User"}
+                                <span className="verified-badge">
+                                  <i className="fas fa-check-circle"></i>{" "}
+                                  Verified
+                                </span>
+                              </h3>
+                              <button
+                                className="edit-profile-btn"
+                                onClick={() => setIsEditing(!isEditing)}
+                              >
+                                <i className="fas fa-edit"></i> Edit Profile
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="profile-tags">
+                          <h4>About You</h4>
+                          <div className="tags-container">
+                            {summaryTags.length > 0 ? (
+                              summaryTags.map((tag, index) => (
+                                <span key={index} className="profile-tag">
+                                  {tag}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="no-tags">
+                                Complete your profile to see personalized tags
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="profile-actions">
+                          <button
+                            className="action-btn"
+                            onClick={() =>
+                              (window.location.href = "/livetest/dashboard")
+                            }
+                          >
+                            <i className="fas fa-user-cog"></i> Dashboard
+                          </button>
+                          <button
+                            className="action-btn"
+                            onClick={() =>
+                              (window.location.href = "/livetest/edit-profile")
+                            }
+                          >
+                            <i className="fas fa-edit"></i> Edit Profile
+                          </button>
+                          <button className="action-btn" onClick={handleLogout}>
+                            <i className="fas fa-sign-out-alt"></i> Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                      Sign In
+                    </a>
+                  )}
+                </div>   
+                  {/* Toggle Button */}
+                  <button
+                    className={`menubars navbar-toggler ${
+                      isMenuOpen ? "active" : ""
+                    }`}
+                    type="button"
+                    onClick={toggleMenu}
+                    aria-controls="navbarNav"
+                    aria-expanded={isMenuOpen}
+                    aria-label="Toggle navigation"
+                  >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </button>
+            </div>
             </div>
           </nav>
 

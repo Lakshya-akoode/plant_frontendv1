@@ -18,7 +18,71 @@ const ViewSurveyStudies = () => {
   const [expandedSurveys, setExpandedSurveys] = useState({});
   const [pageSize] = useState(10);
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const router = useRouter();
+
+  // Fetch all survey responses for export (fetches all pages)
+  const fetchAllSurveyResponsesForExport = async () => {
+    try {
+      // First, get the first page to know the total count
+      const firstPageData = await getSurveyResponsesByUser({ limit: 10, page: 1 });
+      const totalCount = firstPageData?.totalCount || 0;
+      const pageSize = 100; // Use larger page size for efficiency
+      const totalPages = firstPageData?.totalPages || Math.ceil(totalCount / pageSize);
+      
+      if (totalCount === 0) {
+        return { data: { groupedByUser: [] }, totalCount: 0 };
+      }
+
+      // Fetch all pages in parallel
+      const pagePromises = [];
+      for (let page = 1; page <= totalPages; page++) {
+        pagePromises.push(getSurveyResponsesByUser({ limit: pageSize, page }));
+      }
+      
+      const allPagesData = await Promise.all(pagePromises);
+      
+      // Combine all groupedByUser data
+      const userMap = new Map(); // Use Map for efficient user merging
+      
+      allPagesData.forEach(pageData => {
+        const groupedByUser = pageData?.data?.groupedByUser || pageData?.groupedByUser || [];
+        if (Array.isArray(groupedByUser)) {
+          groupedByUser.forEach(userGroup => {
+            const userId = userGroup.userId?.toString() || userGroup.userId;
+            if (userMap.has(userId)) {
+              // Merge surveys - add new surveys that don't already exist
+              const existingUser = userMap.get(userId);
+              const existingSurveyIds = new Set(
+                (existingUser.surveys || []).map(s => s.surveyId?.toString() || s.surveyId)
+              );
+              const newSurveys = (userGroup.surveys || []).filter(
+                s => !existingSurveyIds.has(s.surveyId?.toString() || s.surveyId)
+              );
+              existingUser.surveys = [...(existingUser.surveys || []), ...newSurveys];
+            } else {
+              // Add new user
+              userMap.set(userId, { ...userGroup });
+            }
+          });
+        }
+      });
+
+      const allGroupedByUser = Array.from(userMap.values());
+
+      return {
+        status: 'success',
+        data: {
+          groupedByUser: allGroupedByUser,
+          responses: []
+        },
+        totalCount: totalCount
+      };
+    } catch (error) {
+      console.error('Error fetching all survey responses:', error);
+      throw error;
+    }
+  };
 
   const fetchResponsesData = async () => {
     setLoading(true);
@@ -176,11 +240,22 @@ const ViewSurveyStudies = () => {
                                   overflow: 'hidden'
                                 }}>
                                   <button
-                                    onClick={() => {
-                                      const dataToExport = responsesData.groupedByUser ? responsesData : responsesData.data || responsesData;
-                                      exportSurveyResponsesToCSV(dataToExport, 'All_Survey_Responses');
-                                      setExportDropdownOpen(false);
+                                    onClick={async () => {
+                                      setExporting(true);
+                                      try {
+                                        const allData = await fetchAllSurveyResponsesForExport();
+                                        // Data structure: { status, data: { groupedByUser, responses }, totalCount }
+                                        const dataToExport = allData.data || allData;
+                                        exportSurveyResponsesToCSV(dataToExport, 'All_Survey_Responses');
+                                      } catch (error) {
+                                        console.error('Error exporting survey responses:', error);
+                                        alert('Failed to export survey responses. Please try again.');
+                                      } finally {
+                                        setExporting(false);
+                                        setExportDropdownOpen(false);
+                                      }
                                     }}
+                                    disabled={exporting}
                                     style={{
                                       width: '100%',
                                       padding: '10px 16px',
@@ -200,11 +275,22 @@ const ViewSurveyStudies = () => {
                                     <i className="fa fa-file-text-o"></i> Export as CSV
                                   </button>
                                   <button
-                                    onClick={() => {
-                                      const dataToExport = responsesData.groupedByUser ? responsesData : responsesData.data || responsesData;
-                                      exportSurveyResponsesToExcel(dataToExport, 'All_Survey_Responses');
-                                      setExportDropdownOpen(false);
+                                    onClick={async () => {
+                                      setExporting(true);
+                                      try {
+                                        const allData = await fetchAllSurveyResponsesForExport();
+                                        // Data structure: { status, data: { groupedByUser, responses }, totalCount }
+                                        const dataToExport = allData.data || allData;
+                                        exportSurveyResponsesToExcel(dataToExport, 'All_Survey_Responses');
+                                      } catch (error) {
+                                        console.error('Error exporting survey responses:', error);
+                                        alert('Failed to export survey responses. Please try again.');
+                                      } finally {
+                                        setExporting(false);
+                                        setExportDropdownOpen(false);
+                                      }
                                     }}
+                                    disabled={exporting}
                                     style={{
                                       width: '100%',
                                       padding: '10px 16px',

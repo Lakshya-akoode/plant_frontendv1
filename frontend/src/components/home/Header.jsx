@@ -95,56 +95,7 @@ export default function Header() {
                   <img src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`} alt="Logo" className="img-fluid" />
                 </a>
                 {/* Sign In/Profile for Mobile/Tablet - outside menu */}
-                <div className="header-auth-mobile">
-                  {isLoggedIn ? (
-                    <div 
-                      className={`profile-dropdown-wrapper ${isProfileOpen ? 'active' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsProfileOpen(!isProfileOpen);
-                      }}
-                    >
-                      <a 
-                        href="/livetest/dashboard" 
-                        className="profile-button-custom-mobile"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setIsProfileOpen(!isProfileOpen);
-                        }}
-                      >
-                        {/* <div className="profile-icon-wrapper">
-                          <i className="fa-solid fa-user"></i>
-                        </div> */}
-                        <div className="profile-info-wrapper">
-                         <span className="profile-name">
-  {(user?.name?.trim()?.split(/\s+/)[0]) || user?.email?.split("@")[0] || "User"}
-</span>
-                          <span className="profile-role" style={{ fontSize: "10px" }}>user</span>
-                        </div>
-                        <i className="fa-solid fa-chevron-down profile-chevron"></i>
-                      </a>
-                      <div className={`profile-dropdown-menu ${isProfileOpen ? 'active' : ''}`}>
-                        <a href="/livetest/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
-                          <i className="fa-solid fa-user-cog"></i>
-                          Dashboard
-                        </a>
-                        <a href="/livetest/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
-                          <i className="fa-solid fa-edit"></i>
-                          Edit Profile
-                        </a>
-                        <div className="profile-divider"></div>
-                        <button className="profile-menu-item" onClick={() => { closeMenu(); handleLogout(); }}>
-                          <i className="fa-solid fa-sign-out-alt"></i>
-                          Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
-                      Sign In
-                    </a>
-                  )}
-                </div>
+                
               </div>
               {/* Logo End */}
 
@@ -217,6 +168,58 @@ export default function Header() {
                 {/* Header Contact Btn End */}
               </div>
               {/* Main Menu End */}
+              <div className="d-flex align-items-center gap-3">
+                  <div className="header-auth-mobile">
+                  {isLoggedIn ? (
+                    <div 
+                      className={`profile-dropdown-wrapper ${isProfileOpen ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsProfileOpen(!isProfileOpen);
+                      }}
+                    >
+                      <a 
+                        href="/livetest/dashboard" 
+                        className="profile-button-custom-mobile"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsProfileOpen(!isProfileOpen);
+                        }}
+                      >
+                        {/* <div className="profile-icon-wrapper">
+                          <i className="fa-solid fa-user"></i>
+                        </div> */}
+                        <div className="profile-info-wrapper">
+                         <span className="profile-name">
+                            {(user?.name?.trim()?.split(/\s+/)[0]) || user?.email?.split("@")[0] || "User"}
+                          </span>
+                          <span className="profile-role" style={{ fontSize: "10px" }}>user</span>
+                        </div>
+                        <i className="fa-solid fa-chevron-down profile-chevron"></i>
+                      </a>
+                      <div className={`profile-dropdown-menu ${isProfileOpen ? 'active' : ''}`}>
+                        <a href="/livetest/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                          <i className="fa-solid fa-user-cog"></i>
+                          Dashboard
+                        </a>
+                        <a href="/livetest/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                          <i className="fa-solid fa-edit"></i>
+                          Edit Profile
+                        </a>
+                        <div className="profile-divider"></div>
+                        <button className="profile-menu-item" onClick={() => { closeMenu(); handleLogout(); }}>
+                          <i className="fa-solid fa-sign-out-alt"></i>
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                      Sign In
+                    </a>
+                  )}
+                </div>
+
             <button
           className={`menubars navbar-toggler ${isMenuOpen ? 'active' : ''}`}
           type="button"
@@ -229,6 +232,7 @@ export default function Header() {
               <span></span>
               <span></span>
             </button>
+          </div>
           </div>
         </nav>
         <div className={`responsive-menu ${isMenuOpen ? 'active' : ''}`}></div>

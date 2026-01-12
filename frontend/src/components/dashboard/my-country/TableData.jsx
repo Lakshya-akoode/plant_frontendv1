@@ -15,7 +15,7 @@ const TableData = () => {
    const [totalPages, setTotalPages] = useState(0);
    const [loading, setLoading] = useState(false);
    const [userCounts, setUserCounts] = useState({});
-   const pageSize = 10;
+   const pageSize = 20;
     const router = useRouter();
   
     const fetchUserCounts = async (countries) => {
@@ -100,7 +100,7 @@ const TableData = () => {
     "Phone Code",
     "Currency Code",
     "Total Users",
-    "Status",
+    // "Status",
     // "Action",
   ];
    let tbodyContent = countryList?.map((item) => (
@@ -130,15 +130,15 @@ const TableData = () => {
          <div className="d-flex align-items-center">
            <h4 className="mb-0">{userCounts[item._id] !== undefined ? userCounts[item._id] : '-'}</h4>
          </div>
-       </td>
-       {/* End td */}
+      </td>
+      {/* End td */}
 
-       <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-         <span className={`status_tag ${item.status ? 'badge2' : 'badge'}`}>
-           {item.status ? "Active" : "Inactive"}
-         </span>
-       </td>
-       {/* End td */}
+      {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+        <span className={`status_tag ${item.status ? 'badge2' : 'badge'}`}>
+          {item.status ? "Active" : "Inactive"}
+        </span>
+      </td> */}
+      {/* End td */}
 
        {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
          <ul className="view_edit_delete_list mb0 d-flex align-items-center">

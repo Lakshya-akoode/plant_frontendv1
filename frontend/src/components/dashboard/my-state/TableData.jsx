@@ -17,7 +17,7 @@ const TableData = () => {
    const [totalPages, setTotalPages] = useState(0);
    const [loading, setLoading] = useState(false);
    const [userCounts, setUserCounts] = useState({});
-   const pageSize = 10;
+   const pageSize = 20;
     const router = useRouter();
   
     const fetchUserCounts = async (states) => {
@@ -102,7 +102,7 @@ const TableData = () => {
     "Country",
     // "Date Published",
     "Total Users",
-    "Status",
+    // "Status",
     // "Action",
   ];
 
@@ -142,11 +142,11 @@ const TableData = () => {
       </td>
       {/* End td */}
 
-      <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+      {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
         <span className={`status_tag ${item.status ? 'badge2' : 'badge'}`}>
           {item.status ? "Active" : "Inactive"}
         </span>
-      </td>
+      </td> */}
       {/* End td */}
 
       {/* <td className="py-2 px-3 align-middle" style={{border: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>

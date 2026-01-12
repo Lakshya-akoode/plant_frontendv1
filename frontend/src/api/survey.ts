@@ -227,3 +227,36 @@ export async function getSurveyResponsesByUserId(userId: string) {
   }
 }
 
+// Get all survey responses for export (no pagination)
+export async function getAllSurveyResponsesForExport() {
+  const userData = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = userData.token;
+
+  if (!token) {
+    throw new Error("User not authenticated!");
+  }
+
+  try {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_ADMIN_API_URL + `api/survey/responses/export`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: "Failed to fetch all survey responses for export" }));
+      throw new Error(errorData.message || "Failed to fetch all survey responses for export");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching all survey responses for export:", error);
+    throw error;
+  }
+}
+

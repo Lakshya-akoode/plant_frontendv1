@@ -45,15 +45,15 @@ const SidebarMenu = () => {
   //   { id: 2, name: "Services List", route: "/cmsadminlogin/my-services" }
   // ];
   const myCountry = [
-    { id: 1, name: "Add Country", route: "/livetest/cmsadminlogin/add-country" },
+    // { id: 1, name: "Add Country", route: "/livetest/cmsadminlogin/add-country" },
     { id: 2, name: "Country List", route: "/livetest/cmsadminlogin/my-country" }
   ];
   const myState = [
-    { id: 1, name: "Add State", route: "/livetest/cmsadminlogin/add-state" },
+    // { id: 1, name: "Add State", route: "/livetest/cmsadminlogin/add-state" },
     { id: 2, name: "State List", route: "/livetest/cmsadminlogin/my-state" }
   ];
   const myCity = [
-    { id: 1, name: "Add City", route: "/livetest/cmsadminlogin/add-city" },
+    // { id: 1, name: "Add City", route: "/livetest/cmsadminlogin/add-city" },
     { id: 2, name: "City List", route: "/livetest/cmsadminlogin/my-cities" }
   ];
 
