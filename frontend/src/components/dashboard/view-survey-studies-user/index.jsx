@@ -200,15 +200,15 @@ const ViewSurveyStudiesUser = () => {
                                   >
                                     <i className="fa fa-file-text-o"></i> Export as CSV
                                   </button>
-                                  <button
+                          <button
                                     onClick={() => {
                                       exportUserSurveyResponsesToExcel(userData);
                                       setExportDropdownOpen(false);
                                     }}
                                     className="user-survey-dropdown-item"
-                                  >
+                          >
                                     <i className="fa fa-file-excel-o"></i> Export as Excel
-                                  </button>
+                          </button>
                                 </div>
                               </>
                             )}

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Header from '@/components/home/Header';
 import Footer from '@/components/common/footer/Footer';
+import GetNewsletter from '@/components/home/GetNewsletter';
 import Link from "next/link";
 import { getBlogBySlug } from "../../api/frontend/blog";
 
@@ -322,7 +323,7 @@ const BlogSingle = () => {
         </div>
       </div>
       {/* Page Single Post End */}
-
+      <GetNewsletter/>
       <Footer/>
       
     </>

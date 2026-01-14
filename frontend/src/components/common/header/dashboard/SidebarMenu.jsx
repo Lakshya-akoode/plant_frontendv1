@@ -136,6 +136,9 @@ const SidebarMenu = () => {
     // { id: 4, name: "My Subscribe enquiry list", route: "/cmsadminlogin/my-subscribeenquiry" },
     // { id: 5, name: "My brochure enquiry list", route: "/cmsadminlogin/my-brochureenquiry" },
   ];
+  const mySubscriber = [
+    { id: 1, name: "My Subscribers", route: "/livetest/cmsadminlogin/my-subscriber" },
+  ];
   const manageAccount = [
     {
       id: 1,
@@ -689,6 +692,28 @@ const SidebarMenu = () => {
               </ul>
             </li>
 
+            <li
+              className={`treeview ${isParentPageActive(mySubscriber, pathname) ? "active" : ""}`}
+            >
+              <a
+                data-bs-toggle="collapse"
+                href="#my-subscriber"
+                aria-expanded="false"
+                aria-controls="my-subscriber"
+              >
+                <span>My Subscriber</span>
+                <i className="fa fa-angle-down pull-right"></i>
+              </a>
+              <ul className="treeview-menu collapse" id="my-subscriber" data-bs-parent=".sidebar-menu" style={{ display: 'none' }}>
+                {mySubscriber.map((item) => (
+                  <li key={item.id} style={{ display: 'block', visibility: 'visible', opacity: '1' }}>
+                    <Link href={item.route} style={{ display: 'block', visibility: 'visible', opacity: '1' }}>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
 
 
 

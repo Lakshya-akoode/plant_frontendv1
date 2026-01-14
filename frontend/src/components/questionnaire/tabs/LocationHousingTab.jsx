@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { addLocationHousingAPI } from "../../../api/frontend/locationhousing.ts";
 import { getCountryTableData } from "../../../api/frontend/country";
 import { getStateByCountryTableData } from "../../../api/frontend/state";
-import { getCityByStateTableData } from "../../../api/frontend/city";
+import { getCityByStateTableData, getLocationByCityName } from "../../../api/frontend/city";
 
 
 
@@ -34,7 +34,10 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
+  const [cityName, setCityName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedCountryName, setSelectedCountryName] = useState("");
+  const [selectedStateName, setSelectedStateName] = useState("");
   useEffect(() => {
     if (data && Object.keys(data).length > 0 && countries.length > 0) {
       console.log("Loading data into form:", data);
@@ -169,13 +172,81 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
     }
   };
 
-  const handleCityChange = (e) => {
-    const cityId = e.target.value;
-    setSelectedCity(cityId);
-    setFormData(prev => ({
-      ...prev,
-      city: cityId
-    }));
+  const handleCityInputChange = (e) => {
+    const value = e.target.value;
+    setCityName(value);
+  };
+
+  const handleCityBlur = async () => {
+    if (!cityName || cityName.trim() === "") {
+      // Clear values if city name is empty
+      setSelectedCountry("");
+      setSelectedState("");
+      setSelectedCity("");
+      setSelectedCountryName("");
+      setSelectedStateName("");
+      setFormData(prev => ({
+        ...prev,
+        country: '',
+        stateOrProvince: '',
+        city: ''
+      }));
+      return;
+    }
+
+    try {
+      // Fetch location data (state and country) by city name
+      const locationResponse = await getLocationByCityName(cityName.trim());
+      
+      if (locationResponse.success && locationResponse.data) {
+        const { state, country, city } = locationResponse.data;
+        
+        // Set display names
+        if (country && country.name) {
+          setSelectedCountryName(country.name);
+        }
+        if (state && state.name) {
+          setSelectedStateName(state.name);
+        }
+        
+        // Find MongoDB _id values for country and state
+        if (country && country.id) {
+          const countryObj = countries.find(c => c.id === country.id || c.id === String(country.id));
+          if (countryObj && countryObj._id) {
+            setSelectedCountry(countryObj._id);
+            
+            // Fetch states for the country to find the state _id
+            try {
+              const statesResponse = await getStateByCountryTableData(country.id);
+              if (statesResponse.data && state && state.id) {
+                const stateObj = statesResponse.data.find(s => s.id === state.id || s.id === String(state.id));
+                if (stateObj && stateObj._id) {
+                  setSelectedState(stateObj._id);
+                  // Use the city ID from the response if available, otherwise use the city name
+                  const cityId = city && city.id ? city.id : cityName.trim();
+                  setSelectedCity(cityId);
+                  setFormData(prev => ({
+                    ...prev,
+                    country: countryObj._id,
+                    stateOrProvince: stateObj._id,
+                    city: cityId
+                  }));
+                }
+              }
+            } catch (error) {
+              console.error("Error fetching states:", error);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching location by city name:", error);
+      setSelectedCountryName("");
+      setSelectedStateName("");
+      setSelectedCountry("");
+      setSelectedState("");
+      setSelectedCity("");
+    }
   };
 
   const validateForm = () => {
@@ -193,9 +264,10 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
       newErrors.city = 'City is required';
     }
 
-    if (!formData.zipCode.trim()) {
-      newErrors.zipCode = 'ZIP/Postal code is required';
-    }
+    // ZIP/Postal code is optional - no validation required
+    // if (!formData.zipCode.trim()) {
+    //   newErrors.zipCode = 'ZIP/Postal code is required';
+    // }
 
     if (!formData.housingType) {
       newErrors.housingType = 'Housing type is required';
@@ -349,61 +421,43 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
       <div className="plant_box">
         <h4 className="form_title">Location & <span>Housing</span></h4>
         <form onSubmit={handleSubmit} className="signup_form row">
-          <div className="form-group col-md-6">
-            <label className="input_title">Country</label>
-            <select 
-              className={`form-select ${errors.country ? 'is-invalid' : ''}`}
-              name="country"
-              value={selectedCountry}
-              onChange={handleCountryChange}
-            >
-                  <option value="">Select Country</option>
-                  {countries?.map((country) => (
-                    <option key={country.id} value={country._id} data-id={country.id}>
-                      {country.name}
-                    </option>
-                  ))}
-                  
-            </select>
-            {errors.country && <p className="text-danger">{errors.country}</p>}
+
+        <div className="form-group col-md-6">
+            <label className="input_title">City</label>
+            <input
+              type="text"
+              className={`form-control ${errors.city ? 'is-invalid' : ''}`}
+              name="city"
+              value={cityName}
+              onChange={handleCityInputChange}
+              onBlur={handleCityBlur}
+              placeholder="Enter city name"
+            />
+            {errors.city && <p className="text-danger">{errors.city}</p>}
           </div>
 
           <div className="form-group col-md-6">
             <label className="input_title">State / Province</label>
-            <select 
-              className={`form-select ${errors.state ? 'is-invalid' : ''}`}
-              name="state"
-              value={selectedState}
-              onChange={handleStateChange}
-            >
-              <option value="">Select State / Province</option>
-              {states?.map((state) => (
-                <option key={state._id} value={state._id} data-id={state.id}>
-                  {state.name}
-                </option>
-              ))}
-              
-              {/* Add state options based on country selection */}
-            </select>
+            <input
+              type="text"
+              className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+              value={selectedStateName || ''}
+              readOnly
+              placeholder="Auto-filled when city is selected"
+            />
             {errors.state && <p className="text-danger">{errors.state}</p>}
           </div>
 
           <div className="form-group col-md-6">
-            <label className="input_title">City</label>
-            <select 
-              className={`form-select ${errors.city ? 'is-invalid' : ''}`}
-              name="city"
-              value={selectedCity}
-              onChange={handleCityChange}
-            >
-              <option value="">Select City</option>
-              {cities?.map((city) => (
-                <option key={city._id} value={city._id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-            {errors.city && <p className="text-danger">{errors.city}</p>}
+            <label className="input_title">Country</label>
+            <input
+              type="text"
+              className={`form-control ${errors.country ? 'is-invalid' : ''}`}
+              value={selectedCountryName || ''}
+              readOnly
+              placeholder="Auto-filled when city is selected"
+            />
+            {errors.country && <p className="text-danger">{errors.country}</p>}
           </div>
 
           <div className="form-group col-md-6">

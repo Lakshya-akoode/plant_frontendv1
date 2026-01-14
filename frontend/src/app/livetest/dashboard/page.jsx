@@ -11,6 +11,8 @@ import { getDietNutritionById } from '../../../api/frontend/dietnutrition';
 import { getPlantInteractionById } from '../../../api/frontend/plantinteraction';
 import { getSocialSubstanceById } from '../../../api/frontend/socialsubstance';
 import { getTechnologyAccessById } from '../../../api/frontend/technologyaccess';
+import { getSurveyTableData } from '../../../api/frontend/survey';
+import { getUserSurveyResponses } from '../../../api/frontend/surveyresponses';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -135,10 +137,67 @@ export default function DashboardPage() {
         const allCompleted = Object.values(completionStatus).every(status => status === true);
 
         if (!allCompleted) {
-          // console.log('Questionnaire not fully completed, redirecting...');
-          // console.log('Completion status:', completionStatus);
-          router.push('/livetest/master-profile-questionnaire');
+          // Find the first incomplete tab
+          const tabMapping = [
+            { key: 'basicIdentity', tab: 'One' },
+            { key: 'locationHousing', tab: 'Two' },
+            { key: 'educationOccupation', tab: 'Three' },
+            { key: 'lifestyleHabits', tab: 'Four' },
+            { key: 'dietNutrition', tab: 'Five' },
+            { key: 'plantInteraction', tab: 'Six' },
+            { key: 'socialSubstance', tab: 'Seven' },
+            { key: 'technologyAccess', tab: 'Eight' }
+          ];
+          
+          const firstIncompleteTab = tabMapping.find(tab => !completionStatus[tab.key]);
+          const redirectHash = firstIncompleteTab ? `#${firstIncompleteTab.tab}` : '';
+          router.push(`/livetest/master-profile-questionnaire${redirectHash}`);
           return;
+        }
+
+        // Check if the first survey study (most recent) is completed
+        try {
+          const surveyData = await getSurveyTableData();
+          let surveys = [];
+          if (surveyData && Array.isArray(surveyData)) {
+            surveys = surveyData;
+          } else if (surveyData && surveyData.items && Array.isArray(surveyData.items)) {
+            surveys = surveyData.items;
+          } else if (surveyData && surveyData.data && Array.isArray(surveyData.data)) {
+            surveys = surveyData.data;
+          }
+          
+          const activeSurveys = surveys.filter(survey => survey.status === true);
+          
+          if (activeSurveys.length > 0) {
+            // Sort by createdAt (newest first) to get the most recent survey
+            const sortedSurveys = activeSurveys.sort((a, b) => {
+              if (a.createdAt && b.createdAt) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+              }
+              return b._id.localeCompare(a._id);
+            });
+            
+            const mostRecentSurvey = sortedSurveys[0];
+            
+            // Check if the most recent survey is completed
+            const userResponses = await getUserSurveyResponses();
+            let completedSurveyIds = [];
+            if (userResponses.status === 'success' && userResponses.data) {
+              completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+            }
+            
+            const isMostRecentSurveyCompleted = completedSurveyIds.includes(mostRecentSurvey._id);
+            
+            if (!isMostRecentSurveyCompleted) {
+              // Redirect to Final Step tab to complete the first survey
+              router.push('/livetest/master-profile-questionnaire#Nine');
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Error checking survey completion:', error);
+          // On error, allow access (don't block dashboard)
         }
 
         setUser(parsedUser);

@@ -61,6 +61,23 @@
     }
   };
 
+  export const getLocationByCityName = async (cityName: string) => {
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_FRONTEND_API_URL + `api/city/location/${encodeURIComponent(cityName)}`
+      );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch location by city name");
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching location by city name:", error);
+      throw error;
+    }
+  };
+
   export async function countPropertiesByCity() {
     // Fake delay
     await new Promise((resolve) => setTimeout(resolve, 10));

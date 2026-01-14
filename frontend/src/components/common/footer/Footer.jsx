@@ -93,7 +93,7 @@ export default function Footer() {
             <div className="footer-copyright">
               {/* Footer Copyright Text Start */}
               <div className="footer-copyright-text">
-                <p>Copyright © 2025 All Rights Reserved. <a className="ms-2" target="_blank" style={{textDecoration:'underline'}} href="https://www.akoode.com/"> Built in partnership with Akoode Technologies </a></p>
+                <p>Copyright© 2026 <a href="https://nanobles.com/" target="_blank" rel="noopener noreferrer">Nanobles Inc. </a>All rights reserved |<a className="ms-2" target="_blank" style={{textDecoration:'underline'}} href="https://www.akoode.com/">Built in partnership with Akoode Technologies </a></p>
               </div>
               {/* Footer Copyright Text End */}
                 
@@ -101,7 +101,7 @@ export default function Footer() {
               <div className="footer-privacy-policy">
                 <ul>
                   <li><a href="/livetest/privacy-policy">Privacy policy</a></li>
-                  <li><a href="/livetest/terms-conditions">Term's & condition</a></li>
+                  <li><a href="/livetest/terms-conditions">Terms & condition</a></li>
                   <li><a href="/livetest/disclosures">Disclosure</a></li>
                 </ul>
               </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from '@/components/home/Header';
 import Footer from '@/components/common/footer/Footer';
+import GetNewsletter from '../../../components/home/GetNewsletter';
 
 export default function ResearchMission() {
   useEffect(() => {
@@ -1480,7 +1481,7 @@ export default function ResearchMission() {
       </section>
 
       
-
+      <GetNewsletter/>
       <Footer />
     </main>
   );

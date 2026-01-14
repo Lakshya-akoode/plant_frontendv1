@@ -97,22 +97,22 @@ const SurveyStudiesTab = () => {
     checkForIncompleteSurveys();
   }, []);
 
-  const fetchSurveyResponses = async () => {
-    setLoading(true);
-    try {
-      const response = await getUserSurveyResponses();
-      if (response.status === 'success' && response.data) {
-        setSurveyResponses(response.data || []);
-      } else {
+    const fetchSurveyResponses = async () => {
+      setLoading(true);
+      try {
+        const response = await getUserSurveyResponses();
+        if (response.status === 'success' && response.data) {
+          setSurveyResponses(response.data || []);
+        } else {
+          setSurveyResponses([]);
+        }
+      } catch (error) {
+        console.error("Error fetching survey responses:", error);
         setSurveyResponses([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching survey responses:", error);
-      setSurveyResponses([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   const toggleSurvey = (surveyId) => {
     setExpandedSurveys(prev => ({
@@ -209,8 +209,8 @@ const SurveyStudiesTab = () => {
         ) : ( */}
         {!hasIncompleteSurveys && (
           <div className="text-center" style={{ padding: '40px' }}>
-            <h4 className="mb-4">No Survey Studies Found</h4>
-            <p className="m-0">You haven't completed any survey studies yet.</p>
+        <h4 className="mb-4">No Survey Studies Found</h4>
+        <p className="m-0">You haven't completed any survey studies yet.</p>
           </div>
         )}
         {/* )} */}

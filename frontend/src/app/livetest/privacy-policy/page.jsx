@@ -108,7 +108,7 @@ export default function About() {
                 maxWidth: '100%',
                 margin: '0 0 auto'
               }}>
-                Plant Chat™ is a research and education platform designed to help people learn about plant medicine, wellness, and The Master Regulator (Endocannabinoid System). Your privacy matters—but because this is a research-driven platform, some information is collected automatically to improve the experience for you, other users, and our manufacturing partners who help bring wellness solutions forward.
+                Plant Chat® is a research and education platform designed to help people learn about plant medicine, wellness, and The Master Regulator (Endocannabinoid System). Your privacy matters—but because this is a research-driven platform, some information is collected automatically to improve the experience for you, other users, and our manufacturing partners who help bring wellness solutions forward.
               </p>
             </div>
           </div>

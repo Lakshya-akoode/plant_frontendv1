@@ -360,8 +360,8 @@ const CreateList = () => {
                   )}
                 </div>
               </div>
-            </div>
           </div>
+        </div>
         )}
       </form>
     </>
