@@ -1,7 +1,46 @@
 'use client';
+import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
+import { subscribeNewsletterAPI } from '../../../api/frontend/newsletter';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const response = await subscribeNewsletterAPI(email);
+      
+      if (response.status === 'success') {
+        toast.success(response.message || 'Successfully subscribed to newsletter!');
+        setEmail(''); // Reset form
+      } else {
+        toast.error(response.message || 'Failed to subscribe. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      toast.error(error.message || 'Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
     <footer className="footer-main">
@@ -76,10 +115,26 @@ export default function Footer() {
 
               {/* Newsletter Form start */}
               <div className="newsletter-form">
-                <form id="newsletterForm" action="#" method="POST">
+                <form id="newsletterForm" onSubmit={handleSubmit}>
                   <div className="input-group">
-                  <input type="email" name="email" className="form-control" id="mail" placeholder="Enter Your Email" required />
-                  <button type="submit" className="btn-default btn-highlighted">Subscribe</button>
+                  <input 
+                    type="email" 
+                    name="email" 
+                    className="form-control" 
+                    id="mail" 
+                    placeholder="Enter Your Email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
+                    disabled={loading}
+                  />
+                  <button 
+                    type="submit" 
+                    className="btn-default btn-highlighted"
+                    disabled={loading}
+                  >
+                    {loading ? 'Subscribing...' : 'Subscribe'}
+                  </button>
                   </div>
                 </form>
               </div>
