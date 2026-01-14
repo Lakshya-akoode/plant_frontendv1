@@ -46,7 +46,7 @@ const AboutMeTab = ({ userProfile, basicIdentityData, locationHousingData, educa
       employmentStatusOther: educationOccupation.employmentStatusOther || '',
       occupation: educationOccupation.occupation || basicIdentity.occupation || 'Not specified',
       occupationOther: educationOccupation.occupationOther || '',
-      industry: educationOccupation.industry || 'Not specified',
+      // industry: educationOccupation.industry || 'Not specified',
       householdIncomeBracket: educationOccupation.householdIncomeBracket || 'Not specified',
       educationOccupationCompleted: educationOccupation.educationOccupationCompleted || false,
      
@@ -120,12 +120,12 @@ const AboutMeTab = ({ userProfile, basicIdentityData, locationHousingData, educa
       plantInteractionCompleted: plantInteraction.plantInteractionCompleted || false,
       
       // Social, Consumer & Substance Use - Updated to match SocialSubstanceTab fields
-      supportSystemStrength: socialSubstance.supportSystemStrength || 'Not specified',
-      religiousAffiliation: socialSubstance.religiousAffiliation || 'Not specified',
-      religiousOther: socialSubstance.religiousOther || '',
+      // supportSystemStrength: socialSubstance.supportSystemStrength || 'Not specified',
+      // religiousAffiliation: socialSubstance.religiousAffiliation || 'Not specified',
+      // religiousOther: socialSubstance.religiousOther || '',
       primaryTransportation: socialSubstance.primaryTransportation || 'Not specified',
       transportOther: socialSubstance.transportOther || '',
-      accessToNature: socialSubstance.accessToNature || 'Not specified',
+      // accessToNature: socialSubstance.accessToNature || 'Not specified',
       communityInvolvement: Array.isArray(socialSubstance.communityInvolvement) ? socialSubstance.communityInvolvement.join(', ') : (socialSubstance.communityInvolvement || 'Not specified'),
       communityOther: socialSubstance.communityOther || '',
       shopsHealthProducts: socialSubstance.shopsHealthProducts || 'Not specified',
@@ -137,7 +137,7 @@ const AboutMeTab = ({ userProfile, basicIdentityData, locationHousingData, educa
       recoveringAlcoholic: socialSubstance.recoveringAlcoholic || 'Not specified',
       illicitDrugUse: socialSubstance.illicitDrugUse || 'Not specified',
       pharmaceuticalsUse: socialSubstance.pharmaceuticalsUse || 'Not specified',
-      pharmaceuticalDependence: socialSubstance.pharmaceuticalDependence || 'Not specified',
+      // pharmaceuticalDependence: socialSubstance.pharmaceuticalDependence || 'Not specified',
       addictionHistory: socialSubstance.addictionHistory || 'Not specified',
       cannabisUse: socialSubstance.cannabisUse || 'Not specified',
       socialConsumerSubstanceUseCompleted: socialSubstance.socialConsumerSubstanceUseCompleted || false,
@@ -184,7 +184,7 @@ const percentage = (trueCount / keys.length) * 100;
 
   const handleEditSection = (tabId) => {
     // Navigate to master-profile-questionnaire page with the specific tab
-    window.location.href = `/master-profile-questionnaire#${tabId}`;
+    window.location.href = `/livetest/master-profile-questionnaire#${tabId}`;
   };
 
   const sections = [
@@ -241,7 +241,7 @@ const percentage = (trueCount / keys.length) * 100;
         ...(demographics.employmentStatusOther ? [{ label: 'Employment Status (Other)', value: demographics.employmentStatusOther }] : []),
         { label: 'Occupation', value: demographics.occupation },
         ...(demographics.occupationOther ? [{ label: 'Occupation (Other)', value: demographics.occupationOther }] : []),
-        { label: 'Industry', value: demographics.industry },
+        // { label: 'Industry', value: demographics.industry },
         { label: 'Household Income Bracket', value: demographics.householdIncomeBracket }
       ]
     },
@@ -325,12 +325,8 @@ const percentage = (trueCount / keys.length) * 100;
       tabId: 'Seven',
       questionnaireName: 'Social, Consumer & Substance Use Behavior',
       fields: [
-        { label: 'Support System Strength', value: demographics.supportSystemStrength },
-        { label: 'Religious Affiliation', value: demographics.religiousAffiliation },
-        ...(demographics.religiousOther ? [{ label: 'Religious Affiliation (Other)', value: demographics.religiousOther }] : []),
         { label: 'Primary Transportation', value: demographics.primaryTransportation },
         ...(demographics.transportOther ? [{ label: 'Transportation (Other)', value: demographics.transportOther }] : []),
-        { label: 'Access to Nature', value: demographics.accessToNature },
         { label: 'Community Involvement', value: demographics.communityInvolvement },
         ...(demographics.communityOther ? [{ label: 'Community Involvement (Other)', value: demographics.communityOther }] : []),
         { label: 'Shops Health Products', value: demographics.shopsHealthProducts },
@@ -342,7 +338,6 @@ const percentage = (trueCount / keys.length) * 100;
         { label: 'Recovering Alcoholic', value: demographics.recoveringAlcoholic },
         { label: 'Illicit Drug Use', value: demographics.illicitDrugUse },
         { label: 'Pharmaceuticals Use', value: demographics.pharmaceuticalsUse },
-        { label: 'Pharmaceutical Dependence', value: demographics.pharmaceuticalDependence },
         { label: 'Addiction History', value: demographics.addictionHistory },
         { label: 'Cannabis Use', value: demographics.cannabisUse }
       ]

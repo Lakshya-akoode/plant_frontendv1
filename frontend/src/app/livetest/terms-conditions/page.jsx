@@ -144,7 +144,7 @@ export default function About() {
                         <span>✓</span>
                       </div>
                       <div>
-                      <strong>Get Balanced®</strong>, <strong>Nano Terps™</strong>, and <strong>Plant Chat™</strong>, along with other marks displayed on this site, are registered or pending trademarks of Nanobles® Inc.
+                      <strong>Get Balanced®</strong>, <strong>Nano Terps®</strong>, and <strong>Plant Chat®</strong>, along with other marks displayed on this site, are registered or pending trademarks of Nanobles® Inc.
                       </div>
                     </li>
 
@@ -152,7 +152,7 @@ export default function About() {
                       <div className="check-icon">
                         <span>✓</span>
                       </div>
-                      The Plant Chat™ platform, its interface, its educational content, and all associated features are proprietary to Nanobles® Inc. and may not be reproduced, reverse-engineered, or redistributed without written consent.
+                      The Plant Chat® platform, its interface, its educational content, and all associated features are proprietary to Nanobles® Inc. and may not be reproduced, reverse-engineered, or redistributed without written consent.
                     </li>
                     <li>
                       <div className="check-icon">
@@ -243,7 +243,7 @@ export default function About() {
                       <div className="check-icon">
                         <span>✓</span>
                       </div>
-                      This includes physical products such as Get Balanced® and Nano Terps™ lines, as well as digital services like Plant Chat™.
+                      This includes physical products such as Get Balanced® and Nano Terps® lines, as well as digital services like Plant Chat®.
 
                     </li>
 
@@ -356,7 +356,7 @@ export default function About() {
                       <div className="check-icon">
                         <span>✓</span>
                       </div>
-                      This limitation applies to physical product use (Get Balanced®, Nano Terps™), digital service use (Plant Chat™), and participation in any Nanobles® programs or studies.
+                      This limitation applies to physical product use (Get Balanced®, Nano Terps®), digital service use (Plant Chat®), and participation in any Nanobles® programs or studies.
                     </li>
                    
                 </ul>
