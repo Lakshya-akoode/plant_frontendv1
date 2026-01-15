@@ -13,7 +13,7 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import Placeholder from '@tiptap/extension-placeholder';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import './tiptap-styles.css';
 
 // Custom Font Size Extension
@@ -62,6 +62,49 @@ const FontSize = Extension.create({
                     .setMark('textStyle', { fontSize: null })
                     .removeEmptyTextStyle()
                     .run();
+            },
+        };
+    },
+});
+
+// Custom Image Extension with Alignment Support
+const ImageWithAlignment = Image.extend({
+    addAttributes() {
+        return {
+            ...this.parent(),
+            align: {
+                default: null,
+                parseHTML: element => {
+                    const float = element.style.float;
+                    const textAlign = element.style.textAlign;
+                    const alignAttr = element.getAttribute('align');
+                    return float || textAlign || alignAttr || null;
+                },
+                renderHTML: attributes => {
+                    if (!attributes.align) {
+                        return {};
+                    }
+                    if (attributes.align === 'left' || attributes.align === 'right') {
+                        return {
+                            style: `float: ${attributes.align};`,
+                        };
+                    }
+                    if (attributes.align === 'center') {
+                        return {
+                            style: 'display: block; margin-left: auto; margin-right: auto;',
+                        };
+                    }
+                    return {};
+                },
+            },
+        };
+    },
+
+    addCommands() {
+        return {
+            ...this.parent(),
+            setImageAlign: (align) => ({ commands }) => {
+                return commands.updateAttributes('image', { align });
             },
         };
     },
@@ -165,6 +208,7 @@ const MenuBar = ({ editor }) => {
     };
 
     const fontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 48, 56, 64, 72];
+    const fontSizeSelectRef = useRef(null);
 
     return (
         <div className="tiptap-menubar">
@@ -191,10 +235,17 @@ const MenuBar = ({ editor }) => {
 
             {/* Font Size */}
             <select
+                ref={fontSizeSelectRef}
                 onChange={(e) => {
                     const size = e.target.value;
                     if (size) {
                         editor.chain().focus().setFontSize(size).run();
+                        // Reset the select to allow selecting the same size again
+                        setTimeout(() => {
+                            if (fontSizeSelectRef.current) {
+                                fontSizeSelectRef.current.value = '';
+                            }
+                        }, 0);
                     }
                 }}
                 className="tiptap-select"
@@ -256,34 +307,57 @@ const MenuBar = ({ editor }) => {
 
             {/* Alignment */}
             <button
-                onClick={() => editor.chain().focus().setTextAlign('left').run()}
-                className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}
+                onClick={() => {
+                    if (editor.isActive('image')) {
+                        editor.chain().focus().setImageAlign('left').run();
+                    } else {
+                        editor.chain().focus().setTextAlign('left').run();
+                    }
+                }}
+                className={editor.isActive({ textAlign: 'left' }) || (editor.isActive('image') && editor.getAttributes('image').align === 'left') ? 'is-active' : ''}
                 type="button"
                 title="Align Left"
             >
                 ⬅
             </button>
             <button
-                onClick={() => editor.chain().focus().setTextAlign('center').run()}
-                className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}
+                onClick={() => {
+                    if (editor.isActive('image')) {
+                        editor.chain().focus().setImageAlign('center').run();
+                    } else {
+                        editor.chain().focus().setTextAlign('center').run();
+                    }
+                }}
+                className={editor.isActive({ textAlign: 'center' }) || (editor.isActive('image') && editor.getAttributes('image').align === 'center') ? 'is-active' : ''}
                 type="button"
                 title="Align Center"
             >
                 ↔
             </button>
             <button
-                onClick={() => editor.chain().focus().setTextAlign('right').run()}
-                className={editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}
+                onClick={() => {
+                    if (editor.isActive('image')) {
+                        editor.chain().focus().setImageAlign('right').run();
+                    } else {
+                        editor.chain().focus().setTextAlign('right').run();
+                    }
+                }}
+                className={editor.isActive({ textAlign: 'right' }) || (editor.isActive('image') && editor.getAttributes('image').align === 'right') ? 'is-active' : ''}
                 type="button"
                 title="Align Right"
             >
                 ➡
             </button>
             <button
-                onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+                onClick={() => {
+                    if (!editor.isActive('image')) {
+                        editor.chain().focus().setTextAlign('justify').run();
+                    }
+                }}
                 className={editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}
                 type="button"
                 title="Justify"
+                disabled={editor.isActive('image')}
             >
                 ≡
             </button>
@@ -389,7 +463,7 @@ const TiptapEditor = ({ data, onChange }) => {
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
-            Image,
+            ImageWithAlignment,
             Link.configure({
                 openOnClick: false,
             }),
