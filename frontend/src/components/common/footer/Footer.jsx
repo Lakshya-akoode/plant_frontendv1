@@ -1,46 +1,7 @@
 'use client';
-import { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import { subscribeNewsletterAPI } from '../../../api/frontend/newsletter';
+import { ToastContainer } from 'react-toastify';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!email.trim()) {
-      toast.error('Please enter your email address');
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error('Please enter a valid email address');
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      const response = await subscribeNewsletterAPI(email);
-      
-      if (response.status === 'success') {
-        toast.success(response.message || 'Successfully subscribed to newsletter!');
-        setEmail(''); // Reset form
-      } else {
-        toast.error(response.message || 'Failed to subscribe. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error subscribing to newsletter:', error);
-      toast.error(error.message || 'Failed to subscribe. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
     <footer className="footer-main">
@@ -74,6 +35,26 @@ export default function Footer() {
             {/* Footer Header End */}
           </div>
 
+          <div className="col-lg-5">
+            {/* Footer Content Box Start */}
+            <div className="footer-newsletter-box">
+              {/* Footer Content Start */}
+              <div className="section-title-footer">
+                <h2 className="text-anime-style-2" data-cursor="-opaque">About Plant Chat®</h2>
+              </div>
+              {/* Footer Content Title End */}
+
+              {/* Footer Description start */}
+              <div className="newsletter-form">
+                <p>
+                  Plant Chat® is an integrated platform centered on plant-based wellness and botanical science, designed to support and restore human balance. Built on a research-driven foundation, we deliver personalized insights for consumers, evidence-backed guidance for wellness practitioners, and comprehensive data intelligence for the nutraceutical and pharmaceutical sectors.
+                </p>
+              </div>
+              {/* Footer Description end */}
+            </div>
+            {/* Footer Content Box End */}
+          </div>
+
           <div className="col-lg-4 col-md-3">
             {/* Footer Links Start */}
             <div className="footer-links">
@@ -102,45 +83,6 @@ export default function Footer() {
               </ul>
             </div>
             {/* Footer Contact Links End */}
-          </div>
-          
-          <div className="col-lg-5">
-            {/* Footer Newsletter Box Start */}
-            <div className="footer-newsletter-box">
-              {/* Footer Newsletter Title Start */}
-              <div className="section-title">
-                <h2 className="text-anime-style-2" data-cursor="-opaque">Subscribe for Plant-Powered Wellness Tips & Insights</h2>
-              </div>
-              {/* Footer Newsletter Title End */}
-
-              {/* Newsletter Form start */}
-              <div className="newsletter-form">
-                <form id="newsletterForm" onSubmit={handleSubmit}>
-                  <div className="input-group">
-                  <input 
-                    type="email" 
-                    name="email" 
-                    className="form-control" 
-                    id="mail" 
-                    placeholder="Enter Your Email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required 
-                    disabled={loading}
-                  />
-                  <button 
-                    type="submit" 
-                    className="btn-default btn-highlighted"
-                    disabled={loading}
-                  >
-                    {loading ? 'Subscribing...' : 'Subscribe'}
-                  </button>
-                  </div>
-                </form>
-              </div>
-              {/* Newsletter Form end */}
-            </div>
-            {/* Footer Newsletter Box End */}
           </div>
           
           <div className="col-lg-12">
