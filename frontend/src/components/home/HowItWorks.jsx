@@ -7,7 +7,7 @@ export default function HowItWorks() {
         <div className="row justify-content-center mb-70 wow animate fadeInDown" data-wow-delay="200ms" data-wow-duration="1500ms">
           <div className="col-xl-12 col-lg-12">
             <div className="section-title two text-center">
-              <h2>How It Works Test</h2>
+              <h2>How It Works</h2>
               <p>Your wellness journey made simple — from sign-up to personalized insights, 
                 Plant Chat® guides you every step of the way.</p>
             </div>

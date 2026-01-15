@@ -18,7 +18,7 @@ export default function AboutUs() {
 
               {/* About Image Title Start */}
               <div className="about-image-title">
-                <h2>about us Test</h2>
+                <h2>about us</h2>
               </div>
               {/* About Image Title End */}
             </a>
