@@ -4,6 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { loginUserAPI } from '../../api/frontend/user';
+import { getBasicidentityById } from '../../api/frontend/basicidentity';
+import { getLocationHousingById } from '../../api/frontend/locationhousing';
+import { getEducationOccupationById } from '../../api/frontend/educationoccupation';
+import { getLifestyleHabitsById } from '../../api/frontend/lifestylehabits';
+import { getDietNutritionById } from '../../api/frontend/dietnutrition';
+import { getPlantInteractionById } from '../../api/frontend/plantinteraction';
+import { getSocialSubstanceById } from '../../api/frontend/socialsubstance';
+import { getTechnologyAccessById } from '../../api/frontend/technologyaccess';
+import { getSurveyTableData } from '../../api/frontend/survey';
+import { getUserSurveyResponses } from '../../api/frontend/surveyresponses';
 
 const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
   const router = useRouter();
@@ -81,16 +91,151 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
       toast.success('Successfully signed in!');
       if(!response.data.isEmailVerified){
         router.push('/livetest/email-otp');
+        return;
       } 
       // else if(!response.data.isPhoneVerified){
       //   router.push('/livetest/phone-signup');
       // } 
-      else if(!response.data.masterProfileQuestionnaireCompleted){
-        router.push('/livetest/master-profile-questionnaire');
+      
+      // First check if at least one survey study is completed
+      // If yes, go directly to dashboard (skip MPQ check)
+      const userId = response.data._id;
+      let hasCompletedSurvey = false;
+      
+      try {
+        const surveyData = await getSurveyTableData();
+        let surveys = [];
+        
+        // Extract surveys from API response
+        if (surveyData && Array.isArray(surveyData)) {
+          surveys = surveyData;
+        } else if (surveyData && surveyData.items && Array.isArray(surveyData.items)) {
+          surveys = surveyData.items;
+        } else if (surveyData && surveyData.data && Array.isArray(surveyData.data)) {
+          surveys = surveyData.data;
+        }
+        
+        // Filter for active surveys
+        const activeSurveys = surveys.filter(survey => survey.status === true);
+        
+        if (activeSurveys.length > 0) {
+          // Check if user has completed at least one survey
+          const userResponses = await getUserSurveyResponses();
+          let completedSurveyIds = [];
+          
+          if (userResponses.status === 'success' && userResponses.data && userResponses.data.length > 0) {
+            completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+          }
+          
+          // Check if at least one active survey is completed
+          hasCompletedSurvey = activeSurveys.some(survey => completedSurveyIds.includes(survey._id));
+        }
+      } catch (error) {
+        console.error('Error checking survey completion:', error);
+        // Continue to MPQ check if survey check fails
       }
-      else {
-        router.push('/livetest/dashboard'); // Redirect to dashboard after successful signin
+      
+      // If at least one survey is completed, go directly to dashboard
+      if (hasCompletedSurvey) {
+        router.push('/livetest/dashboard');
+        return;
       }
+      
+      // If no survey is completed, check MPQ completion
+      // Always check actual tab completion status, not just the flag
+      let redirectTab = 'One'; // Default to first tab
+      let allTabsCompleted = false;
+      
+      try {
+        // Check completion status of all tabs
+        const completionStatus = {
+          basicIdentity: false,
+          locationHousing: false,
+          educationOccupation: false,
+          lifestyleHabits: false,
+          dietNutrition: false,
+          plantInteraction: false,
+          socialSubstance: false,
+          technologyAccess: false
+        };
+
+        // Fetch all questionnaire data to check completion status
+        const [
+          basicIdentityRes,
+          locationHousingRes,
+          educationOccupationRes,
+          lifestyleHabitsRes,
+          dietNutritionRes,
+          plantInteractionRes,
+          socialSubstanceRes,
+          technologyAccessRes
+        ] = await Promise.allSettled([
+          getBasicidentityById(userId).catch(() => null),
+          getLocationHousingById(userId).catch(() => null),
+          getEducationOccupationById(userId).catch(() => null),
+          getLifestyleHabitsById(userId).catch(() => null),
+          getDietNutritionById(userId).catch(() => null),
+          getPlantInteractionById(userId).catch(() => null),
+          getSocialSubstanceById(userId).catch(() => null),
+          getTechnologyAccessById(userId).catch(() => null)
+        ]);
+
+        if (basicIdentityRes.status === 'fulfilled' && basicIdentityRes.value?.data) {
+          completionStatus.basicIdentity = basicIdentityRes.value.data.basicIdentityCompleted || false;
+      }
+        if (locationHousingRes.status === 'fulfilled' && locationHousingRes.value?.data) {
+          completionStatus.locationHousing = locationHousingRes.value.data.locationHousingCompleted || false;
+        }
+        if (educationOccupationRes.status === 'fulfilled' && educationOccupationRes.value?.data) {
+          completionStatus.educationOccupation = educationOccupationRes.value.data.educationOccupationCompleted || false;
+        }
+        if (lifestyleHabitsRes.status === 'fulfilled' && lifestyleHabitsRes.value?.data) {
+          completionStatus.lifestyleHabits = lifestyleHabitsRes.value.data.LifestyleAndDailyHabitsCompleted || false;
+        }
+        if (dietNutritionRes.status === 'fulfilled' && dietNutritionRes.value?.data) {
+          completionStatus.dietNutrition = dietNutritionRes.value.data.dietNutritionCompleted || false;
+        }
+        if (plantInteractionRes.status === 'fulfilled' && plantInteractionRes.value?.data) {
+          completionStatus.plantInteraction = plantInteractionRes.value.data.plantInteractionCompleted || false;
+        }
+        if (socialSubstanceRes.status === 'fulfilled' && socialSubstanceRes.value?.data) {
+          completionStatus.socialSubstance = socialSubstanceRes.value.data.socialConsumerSubstanceUseCompleted || false;
+        }
+        if (technologyAccessRes.status === 'fulfilled' && technologyAccessRes.value?.data) {
+          completionStatus.technologyAccess = technologyAccessRes.value.data.technologyAndAccessCompleted || false;
+        }
+
+        // Check if all tabs are completed
+        allTabsCompleted = Object.values(completionStatus).every(status => status === true);
+
+        // If all tabs are completed, redirect to final tab
+        if (allTabsCompleted) {
+          router.push('/livetest/master-profile-questionnaire#Nine');
+          return;
+        }
+
+        // Find the first incomplete tab
+        const tabMapping = [
+          { key: 'basicIdentity', tab: 'One' },
+          { key: 'locationHousing', tab: 'Two' },
+          { key: 'educationOccupation', tab: 'Three' },
+          { key: 'lifestyleHabits', tab: 'Four' },
+          { key: 'dietNutrition', tab: 'Five' },
+          { key: 'plantInteraction', tab: 'Six' },
+          { key: 'socialSubstance', tab: 'Seven' },
+          { key: 'technologyAccess', tab: 'Eight' }
+        ];
+        
+        const firstIncompleteTab = tabMapping.find(tab => !completionStatus[tab.key]);
+        if (firstIncompleteTab) {
+          redirectTab = firstIncompleteTab.tab;
+        }
+      } catch (error) {
+        console.error('Error checking MPQ completion status:', error);
+        // Default to first tab if there's an error
+      }
+      
+      router.push(`/livetest/master-profile-questionnaire#${redirectTab}`);
       
     } catch (error) {
       console.error('Sign in error:', error);

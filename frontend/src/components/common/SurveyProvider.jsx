@@ -2,7 +2,8 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { checkIncompleteSurveys } from '@/api/frontend/survey';
+import { getSurveyTableData } from '@/api/frontend/survey';
+import { getUserSurveyResponses } from '@/api/frontend/surveyresponses';
 import SurveyModal from './SurveyModal';
 
 const SurveyContext = createContext({
@@ -85,23 +86,83 @@ const SurveyProvider = ({ children }) => {
         return;
       }
 
-      const result = await checkIncompleteSurveys();
-      
-      if (result.status === 'success') {
-        setHasIncompleteSurveys(result.hasIncompleteSurveys);
-        setSurveys(result.surveys || []);
+      // Get all surveys and check only the most recent one
+      try {
+        const surveyData = await getSurveyTableData();
+        let surveys = [];
         
-        // Show modal if there are incomplete surveys and user is on a blocked route
-        if (result.hasIncompleteSurveys && result.count > 0) {
-          const isBlockedRoute = BLOCKED_ROUTES.some(route => normalizedPathname?.includes(route));
-          const isAllowedRoute = ALLOWED_ROUTES.some(route => normalizedPathname === route || normalizedPathname?.startsWith(route));
-          
-          if (isBlockedRoute && !isAllowedRoute) {
-            setShowModal(true);
+        // Extract surveys from API response
+        if (surveyData && Array.isArray(surveyData)) {
+          surveys = surveyData;
+        } else if (surveyData && surveyData.items && Array.isArray(surveyData.items)) {
+          surveys = surveyData.items;
+        } else if (surveyData && surveyData.data && Array.isArray(surveyData.data)) {
+          surveys = surveyData.data;
+        }
+        
+        // Filter for active surveys only
+        const activeSurveys = surveys.filter(survey => survey.status === true);
+        
+        // If no active surveys, no blocking needed
+        if (activeSurveys.length === 0) {
+          setHasIncompleteSurveys(false);
+          setSurveys([]);
+          setShowModal(false);
+          return;
+        }
+        
+        // Sort by createdAt (newest first) to get the most recent survey
+        const sortedSurveys = activeSurveys.sort((a, b) => {
+          if (a.createdAt && b.createdAt) {
+            return new Date(b.createdAt) - new Date(a.createdAt);
           }
-        } else {
+          // Fallback to _id comparison if createdAt is not available
+          return (b._id || '').localeCompare(a._id || '');
+        });
+        
+        const mostRecentSurvey = sortedSurveys[0];
+        
+        // Check if the most recent survey is completed
+        try {
+          const userResponses = await getUserSurveyResponses();
+          let completedSurveyIds = [];
+          if (userResponses.status === 'success' && userResponses.data) {
+            completedSurveyIds = userResponses.data.map(resp => resp.surveyId || resp.survey?._id).filter(Boolean);
+          }
+          
+          const isMostRecentSurveyCompleted = completedSurveyIds.includes(mostRecentSurvey._id);
+          
+          // Only block if the most recent survey is NOT completed
+          // Don't block if older surveys are incomplete - user can complete them from dashboard
+          setHasIncompleteSurveys(!isMostRecentSurveyCompleted);
+          setSurveys(isMostRecentSurveyCompleted ? [] : [mostRecentSurvey]);
+          
+          // Show modal if the most recent survey is incomplete and user is on a blocked route
+          if (!isMostRecentSurveyCompleted) {
+            const isBlockedRoute = BLOCKED_ROUTES.some(route => normalizedPathname?.includes(route));
+            const isAllowedRoute = ALLOWED_ROUTES.some(route => normalizedPathname === route || normalizedPathname?.startsWith(route));
+            
+            if (isBlockedRoute && !isAllowedRoute) {
+              setShowModal(true);
+            } else {
+              setShowModal(false);
+            }
+          } else {
+            setShowModal(false);
+          }
+        } catch (responseError) {
+          console.error('Error fetching user survey responses:', responseError);
+          // On error, don't block access - allow user to continue
+          setHasIncompleteSurveys(false);
+          setSurveys([]);
           setShowModal(false);
         }
+      } catch (surveyError) {
+        console.error('Error fetching surveys:', surveyError);
+        // On error, don't block access - allow user to continue
+        setHasIncompleteSurveys(false);
+        setSurveys([]);
+        setShowModal(false);
       }
     } catch (error) {
       console.error('Error checking incomplete surveys:', error);

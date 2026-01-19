@@ -45,13 +45,16 @@ export const addSurveyAPI = async (formData: FormData) => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch surveys");
+        // Don't throw error, just return empty structure
+        console.warn("Failed to fetch surveys:", response.status, response.statusText);
+        return { items: [], totalCount: 0 };
       }
 
       const data = await response.json();
       console.log("getSurveyTableData API Response:", data);
       return data;
     } catch (error) {
+      // Log error but don't throw - return empty structure gracefully
       console.error("Error fetching surveys:", error);
       return { items: [], totalCount: 0 }; // Return empty structure in case of an error
     }
