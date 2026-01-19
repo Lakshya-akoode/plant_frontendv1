@@ -24,10 +24,12 @@ const CreateList = () => {
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [logo, setLogo] = useState(null);
   const [logoimage, setLogoImage] = useState(null);
   const [metatitle, setMetatitle] = useState("");
   const [metadescription, setMetaDescription] = useState("");
+  const [isSubmitting, setisSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const uploadLogo = (e) => {
     setLogoImage("")
@@ -83,14 +85,19 @@ const CreateList = () => {
   }, [id]);
   const handleBlogcategoryChange = (e) => {
     setSelectedBlogcategory(e.target.value);
+    setError("");
+    setFieldErrors(prev => ({ ...prev, blogcategory: "" }));
   };
   const handleDescriptionChange = (value) => {
     setDescription(value);
     setError("");
+    setFieldErrors(prev => ({ ...prev, description: "" }));
   };
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
+    setError("");
+    setFieldErrors(prev => ({ ...prev, title: "" }));
 
     // Auto-generate slug from title
     const generatedSlug = e.target.value
@@ -103,8 +110,56 @@ const CreateList = () => {
     setSlug(generatedSlug);
   };
 
+  // Function to scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setisSubmitting(true);
+
+    // Clear previous errors
+    setError("");
+    setFieldErrors({});
+
+    // Collect all validation errors
+    const errors = {};
+    let hasErrors = false;
+
+    // Validate fields first (before making API call)
+    if (!title.trim()) {
+      errors.title = "Title is required";
+      hasErrors = true;
+      toast.error("Title is required");
+    }
+    if (!slug.trim()) {
+      errors.slug = "Slug is required";
+      hasErrors = true;
+      toast.error("Slug is required");
+    }
+    if (!description.trim()) {
+      errors.description = "Description is required";
+      hasErrors = true;
+      toast.error("Description is required");
+    }
+    if (!selectedBlogcategory) {
+      errors.blogcategory = "Blog category is required";
+      hasErrors = true;
+      toast.error("Blog category is required");
+    }
+
+    // If there are validation errors, show them and scroll to top
+    if (hasErrors) {
+      setFieldErrors(errors);
+      setisSubmitting(false);
+      scrollToTop();
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -118,17 +173,26 @@ const CreateList = () => {
       if (logo) {
         formData.append("image", logo);
       }
+
+      // API call - button will show "Updating..." during this
       const res = await updateBlogAPI(id, formData);
-      // alert("Blog updated successfully!");
-      toast.success(res.message);
+
+      // Reset button state after API call completes
+      setisSubmitting(false);
 
       if (res.status == "success") {
+        toast.success(res.message);
         setTimeout(() => {
           router.push("/livetest/cmsadminlogin/my-blog");
         }, 1500);
+      } else {
+        setError(res.message || "Failed to update blog");
       }
     } catch (error) {
-      alert("Failed to update Blog.");
+      // Reset button state on error
+      setisSubmitting(false);
+      setError(error.message || "An error occurred while updating the blog");
+      toast.error(error.message || "Failed to update Blog");
       console.error(error);
     }
   };
@@ -173,10 +237,10 @@ const CreateList = () => {
         {/* End .col */}
         <div className="col-lg-6 col-xl-6">
           <div className="my_profile_setting_input ui_kit_select_search form-group">
-            <label htmlFor="BlogcategorySelect">Select Blog category</label>
+            <label htmlFor="BlogcategorySelect">Select Blog category <span className="text-danger">*</span></label>
             <select
               id="BlogcategorySelect"
-              className="selectpicker form-select"
+              className={`selectpicker form-select ${fieldErrors.blogcategory ? 'border-danger' : ''}`}
               value={selectedBlogcategory}
               onChange={handleBlogcategoryChange}
               data-live-search="true"
@@ -189,36 +253,46 @@ const CreateList = () => {
                 </option>
               ))}
             </select>
+            {fieldErrors.blogcategory && <p className="text-danger text-sm mt-1">{fieldErrors.blogcategory}</p>}
+            {error && !fieldErrors.blogcategory && <p className="text-danger text-sm mt-1">{error}</p>}
           </div>
         </div>
         <div className="col-lg-6 col-xl-6">
           <div className="my_profile_setting_input form-group">
-            <label htmlFor="BlogTitle">Blog Title</label>
+            <label htmlFor="BlogTitle">Blog Title <span className="text-danger">*</span></label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${fieldErrors.title ? 'border-danger' : ''}`}
               id="BlogTitle"
               name="title"
               value={title}
               onChange={handleTitleChange}
             />
+            {fieldErrors.title && <p className="text-danger text-sm mt-1">{fieldErrors.title}</p>}
+            {error && !fieldErrors.title && <p className="text-danger text-sm mt-1">{error}</p>}
           </div>
         </div>
         {/* End .col */}
         <div className="col-lg-6 col-xl-6">
           <div className="my_profile_setting_input form-group">
-            <label htmlFor="BlogSlug">Blog Slug (SEO URL)</label>
+            <label htmlFor="BlogSlug">Blog Slug (SEO URL) <span className="text-danger">*</span></label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${fieldErrors.slug ? 'border-danger' : ''}`}
               id="BlogSlug"
               name="slug"
               value={slug}
-              onChange={(e) => setSlug(e.target.value)}
+              onChange={(e) => {
+                setSlug(e.target.value);
+                setError("");
+                setFieldErrors(prev => ({ ...prev, slug: "" }));
+              }}
               placeholder="Auto-generated from title"
               readOnly
               style={{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
             />
+            {fieldErrors.slug && <p className="text-danger text-sm mt-1">{fieldErrors.slug}</p>}
+            {error && !fieldErrors.slug && <p className="text-danger text-sm mt-1">{error}</p>}
             <small className="text-muted">Auto-generated from title</small>
           </div>
         </div>
@@ -227,7 +301,7 @@ const CreateList = () => {
           <div className="my_profile_setting_input form-group">
             <label htmlFor="blogSource">Blog Source</label>
             <input type="text" className="form-control" id="blogSource" value={source} onChange={(e) => setSource(e.target.value)} />
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-danger text-sm mt-1">{error}</p>}
           </div>
         </div>
         <div className="col-lg-6 col-xl-6">
@@ -245,12 +319,13 @@ const CreateList = () => {
         </div>
         <div className="col-lg-12">
           <div className="my_profile_setting_textarea form-group">
-            <label htmlFor="BlogDescription">Description</label>
+            <label htmlFor="BlogDescription">Description <span className="text-danger">*</span></label>
             <TiptapEditor
               data={description}
               onChange={handleDescriptionChange}
             />
-            {error.description && <span className="text-danger">{error.description}</span>}
+            {fieldErrors.description && <p className="text-danger text-sm mt-1">{fieldErrors.description}</p>}
+            {error && !fieldErrors.description && <p className="text-danger text-sm mt-1">{error}</p>}
           </div>
 
         </div>
@@ -312,7 +387,7 @@ const CreateList = () => {
             <button className="btn-default" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
             <div className="blog-preview-button-group">
               <button className="btn-default" type="button" onClick={() => setShowPreview(true)}>Preview</button>
-              <button className="btn-default" type="submit">Publish</button>
+              <button className="btn-default" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Updating...' : 'Publish'}</button>
             </div>
           </div>
         </div>

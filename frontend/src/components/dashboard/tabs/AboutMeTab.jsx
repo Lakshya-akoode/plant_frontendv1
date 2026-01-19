@@ -54,7 +54,7 @@ const AboutMeTab = ({ userProfile, basicIdentityData, locationHousingData, educa
       // Location & Housing - Updated to match LocationHousingTab fields
       country: locationHousing.country?.name || 'Not specified',
       state: locationHousing.stateOrProvince?.name || 'Not specified',
-      city: locationHousing.city?.name || 'Not specified',
+      // city: locationHousing.city?.name || 'Not specified',
       zipCode: locationHousing.zipCode || 'Not specified',
       livingEnvironment: locationHousing.livingEnvironment || 'Not specified',
       livingEnvironmentOther: locationHousing.livingEnvironmentOther || '',
@@ -86,7 +86,7 @@ const AboutMeTab = ({ userProfile, basicIdentityData, locationHousingData, educa
       // Diet & Nutrition - Updated to match DietNutritionTab fields
       dietStyle: dietNutrition.dietStyle || 'Not specified',
       dietStyleOther: dietNutrition.dietStyleOther || '',
-      primaryProteinSources: dietNutrition.primaryProteinSources || 'Not specified',
+      // primaryProteinSources: dietNutrition.primaryProteinSources || 'Not specified',
       proteinOther: dietNutrition.proteinOther || '',
       cookingHabits: dietNutrition.cookingHabits || 'Not specified',
       cookingOther: dietNutrition.cookingOther || '',
@@ -215,7 +215,7 @@ const percentage = (trueCount / keys.length) * 100;
       fields: [
         { label: 'Country', value: demographics.country },
         { label: 'State/Province', value: demographics.state },
-        { label: 'City', value: demographics.city },
+        // { label: 'City', value: demographics.city },
         { label: 'ZIP/Postal Code', value: demographics.zipCode },
         { label: 'Living Environment', value: demographics.livingEnvironment },
         ...(demographics.livingEnvironmentOther ? [{ label: 'Living Environment (Other)', value: demographics.livingEnvironmentOther }] : []),
@@ -273,7 +273,7 @@ const percentage = (trueCount / keys.length) * 100;
       fields: [
         { label: 'Diet Style', value: demographics.dietStyle },
         ...(demographics.dietStyleOther ? [{ label: 'Diet Style (Other)', value: demographics.dietStyleOther }] : []),
-        { label: 'Primary Protein Sources', value: demographics.primaryProteinSources },
+        // { label: 'Primary Protein Sources', value: demographics.primaryProteinSources },
         ...(demographics.proteinOther ? [{ label: 'Protein Sources (Other)', value: demographics.proteinOther }] : []),
         { label: 'Cooking Habits', value: demographics.cookingHabits },
         ...(demographics.cookingOther ? [{ label: 'Cooking Habits (Other)', value: demographics.cookingOther }] : []),

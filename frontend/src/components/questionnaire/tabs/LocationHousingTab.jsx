@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import { addLocationHousingAPI } from "../../../api/frontend/locationhousing.ts";
 import { getCountryTableData } from "../../../api/frontend/country";
 import { getStateByCountryTableData } from "../../../api/frontend/state";
-import { getCityByStateTableData, getLocationByCityName } from "../../../api/frontend/city";
 
 
 
@@ -14,7 +13,6 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
   const [formData, setFormData] = useState({
     country: '',
     state: '',
-    city: '',
     zipCode: '',
     livingEnvironment: '',
     livingEnvironmentOther: '',
@@ -32,53 +30,72 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [states, setStates] = useState([]);
   const [selectedState, setSelectedState] = useState("");
-  const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [cityName, setCityName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedCountryName, setSelectedCountryName] = useState("");
-  const [selectedStateName, setSelectedStateName] = useState("");
   useEffect(() => {
     if (data && Object.keys(data).length > 0 && countries.length > 0) {
       console.log("Loading data into form:", data);
-      setFormData(data);
-      setSelectedCountry(data.country?._id || '');
-      // setSelectedState(data.state?._id || '');
-      // Handle both 'state' and 'stateOrProvince' field names
-      const stateValue = data.stateOrProvince?._id || '';
-      setSelectedState(stateValue);
-      setSelectedCity(data.city?._id || '');
       
-      // Fetch states if country is selected
-      if (data.country?._id) {
+      // Update form data (excluding country, state which need special handling)
+      const { country, stateOrProvince, state, city, ...otherData } = data;
+      setFormData(prev => ({
+        ...prev,
+        ...otherData
+      }));
+      
+      // Backend returns populated objects: { _id: "...", name: "...", id: ... }
+      // Handle both populated objects and string IDs
+      let countryId = '';
+      let countryName = '';
+      let stateId = '';
+      let stateName = '';
+      let cityId = '';
+      let cityNameValue = '';
+      
+      // Extract country info
+      if (data.country) {
+        if (typeof data.country === 'object' && data.country !== null) {
+          // Populated object
+          countryId = data.country._id || '';
+        } else if (typeof data.country === 'string') {
+          // String ID
+          countryId = data.country;
+        }
+      }
+      
+      // Extract state info
+      const stateData = data.stateOrProvince || data.state;
+      if (stateData) {
+        if (typeof stateData === 'object' && stateData !== null) {
+          // Populated object
+          stateId = stateData._id || '';
+        } else if (typeof stateData === 'string') {
+          // String ID
+          stateId = stateData;
+        }
+      }
+      
+      // Set IDs for dropdowns
+      setSelectedCountry(countryId);
+      setSelectedState(stateId);
+      
+      // Update formData
+      setFormData(prev => ({
+        ...prev,
+        country: countryId,
+        stateOrProvince: stateId
+      }));
+      
+      // Fetch states for dropdown if country is selected
+      if (countryId) {
         const fetchStatesForCountry = async () => {
           try {
-            // Find the country in the countries array
-            const country = countries.find(c => c._id === data.country?._id);
-            console.log("country:", country);
-            if (country && country.id) {
-              // console.log("Found country ID:", country.id);
-              const response = await getStateByCountryTableData(country.id);
-              console.log("Found sate country ID response:", response);
+            const countryObj = countries.find(c => c._id === countryId);
+            if (countryObj && countryObj.id) {
+              const response = await getStateByCountryTableData(countryObj.id);
               setStates(response.data || []);
-              console.log("Loaded states:", response.data);
-              
-              // Fetch cities if state is selected
-              if (stateValue && response.data) {
-                const state = response.data.find(s => s._id === stateValue);
-                if (state && state.id) {
-                  console.log("Found state ID:", state.id);
-                  const cityResponse = await getCityByStateTableData(state.id);
-                  setCities(cityResponse.data || []);
-                  console.log("Loaded cities:", cityResponse.data);
-                }
-              }
-              // setSelectedState(data.state?._id || '');
-            } else {
-              console.warn("Country not found in countries array:", data.country);
             }
           } catch (err) {
-            console.error("Error fetching states/cities:", err);
+            console.error("Error fetching states:", err);
           }
         };
         fetchStatesForCountry();
@@ -123,21 +140,15 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
     // Use data-id if available, otherwise use the value
     const countryId = dataId || selectedValue;
     
-    // console.log("selected value:", selectedValue);
-    // console.log("data-id:", dataId);
-    // console.log("selected countryId:", countryId);
-    
     setSelectedCountry(selectedValue);
     setFormData(prev => ({
       ...prev,
       country: selectedValue,
-      state: '',
-      city: ''
+      stateOrProvince: '',
+      state: ''
     }));
     setSelectedState('');
-    setSelectedCity('');
     setStates([]);
-    setCities([]);
 
     if (dataId) {
       try {
@@ -156,97 +167,9 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
     setSelectedState(stateId);
     setFormData(prev => ({
       ...prev,
-      state: stateId,
-      city: ''
+      stateOrProvince: stateId,
+      state: stateId
     }));
-    setSelectedCity('');
-    setCities([]);
-
-    if (dataId) {
-      try {
-        const response = await getCityByStateTableData(dataId);
-        setCities(response.data || []);
-      } catch (err) {
-        console.error("Error fetching cities:", err);
-      }
-    }
-  };
-
-  const handleCityInputChange = (e) => {
-    const value = e.target.value;
-    setCityName(value);
-  };
-
-  const handleCityBlur = async () => {
-    if (!cityName || cityName.trim() === "") {
-      // Clear values if city name is empty
-      setSelectedCountry("");
-      setSelectedState("");
-      setSelectedCity("");
-      setSelectedCountryName("");
-      setSelectedStateName("");
-      setFormData(prev => ({
-        ...prev,
-        country: '',
-        stateOrProvince: '',
-        city: ''
-      }));
-      return;
-    }
-
-    try {
-      // Fetch location data (state and country) by city name
-      const locationResponse = await getLocationByCityName(cityName.trim());
-      
-      if (locationResponse.success && locationResponse.data) {
-        const { state, country, city } = locationResponse.data;
-        
-        // Set display names
-        if (country && country.name) {
-          setSelectedCountryName(country.name);
-        }
-        if (state && state.name) {
-          setSelectedStateName(state.name);
-        }
-        
-        // Find MongoDB _id values for country and state
-        if (country && country.id) {
-          const countryObj = countries.find(c => c.id === country.id || c.id === String(country.id));
-          if (countryObj && countryObj._id) {
-            setSelectedCountry(countryObj._id);
-            
-            // Fetch states for the country to find the state _id
-            try {
-              const statesResponse = await getStateByCountryTableData(country.id);
-              if (statesResponse.data && state && state.id) {
-                const stateObj = statesResponse.data.find(s => s.id === state.id || s.id === String(state.id));
-                if (stateObj && stateObj._id) {
-                  setSelectedState(stateObj._id);
-                  // Use the city ID from the response if available, otherwise use the city name
-                  const cityId = city && city.id ? city.id : cityName.trim();
-                  setSelectedCity(cityId);
-                  setFormData(prev => ({
-                    ...prev,
-                    country: countryObj._id,
-                    stateOrProvince: stateObj._id,
-                    city: cityId
-                  }));
-                }
-              }
-            } catch (error) {
-              console.error("Error fetching states:", error);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching location by city name:", error);
-      setSelectedCountryName("");
-      setSelectedStateName("");
-      setSelectedCountry("");
-      setSelectedState("");
-      setSelectedCity("");
-    }
   };
 
   const validateForm = () => {
@@ -258,10 +181,6 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
 
     if (!selectedState) {
       newErrors.state = 'State/Province is required';
-    }
-
-    if (!selectedCity) {
-      newErrors.city = 'City is required';
     }
 
     // ZIP/Postal code is optional - no validation required
@@ -332,7 +251,6 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
         apiFormData.append('userId', userId);
         apiFormData.append('country', selectedCountry);
         apiFormData.append('stateOrProvince', selectedState);
-        apiFormData.append('city', selectedCity);
         apiFormData.append('zipCode', formData.zipCode);
         apiFormData.append('livingEnvironment', formData.livingEnvironment);
         apiFormData.append('livingEnvironmentOther', formData.livingEnvironmentOther);
@@ -352,7 +270,11 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
         }
         apiFormData.append('locationHousingCompleted', true);
 
-        console.log('API Data:', apiFormData);
+        // Log the values being sent for debugging
+        console.log('Submitting Location Housing Data:');
+        console.log('- Country:', selectedCountry);
+        console.log('- State:', selectedState);
+        console.log('- Form Data:', Object.fromEntries(apiFormData));
         
         const response = await addLocationHousingAPI(apiFormData);
         console.log('API Response:', response);
@@ -422,44 +344,6 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
         <h4 className="form_title">Location & <span>Housing</span></h4>
         <form onSubmit={handleSubmit} className="signup_form row">
 
-        <div className="form-group col-md-6">
-            <label className="input_title">City</label>
-            <input
-              type="text"
-              className={`form-control ${errors.city ? 'is-invalid' : ''}`}
-              name="city"
-              value={cityName}
-              onChange={handleCityInputChange}
-              onBlur={handleCityBlur}
-              placeholder="Enter city name"
-            />
-            {errors.city && <p className="text-danger">{errors.city}</p>}
-          </div>
-
-          <div className="form-group col-md-6">
-            <label className="input_title">State / Province</label>
-            <input
-              type="text"
-              className={`form-control ${errors.state ? 'is-invalid' : ''}`}
-              value={selectedStateName || ''}
-              readOnly
-              placeholder="Auto-filled when city is selected"
-            />
-            {errors.state && <p className="text-danger">{errors.state}</p>}
-          </div>
-
-          <div className="form-group col-md-6">
-            <label className="input_title">Country</label>
-            <input
-              type="text"
-              className={`form-control ${errors.country ? 'is-invalid' : ''}`}
-              value={selectedCountryName || ''}
-              readOnly
-              placeholder="Auto-filled when city is selected"
-            />
-            {errors.country && <p className="text-danger">{errors.country}</p>}
-          </div>
-
           <div className="form-group col-md-6">
             <label className="input_title">ZIP / Postal Code</label>
             <input 
@@ -471,6 +355,43 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
               onChange={handleInputChange}
             />
             {errors.zipCode && <p className="text-danger">{errors.zipCode}</p>}
+          </div>
+
+          <div className="form-group col-md-6">
+            <label className="input_title">Country</label>
+            <select 
+              className={`form-select ${errors.country ? 'is-invalid' : ''}`}
+              name="country"
+              value={selectedCountry}
+              onChange={handleCountryChange}
+            >
+                  <option value="">Select Country</option>
+              {countries.map(country => (
+                <option key={country._id} value={country._id} data-id={country.id}>
+                      {country.name}
+                    </option>
+                  ))}
+            </select>
+            {errors.country && <p className="text-danger">{errors.country}</p>}
+          </div>
+
+          <div className="form-group col-md-6">
+            <label className="input_title">State / Province</label>
+            <select 
+              className={`form-select ${errors.state ? 'is-invalid' : ''}`}
+              name="state"
+              value={selectedState}
+              onChange={handleStateChange}
+              disabled={!selectedCountry}
+            >
+              <option value="">Select State / Province</option>
+              {states.map(state => (
+                <option key={state._id} value={state._id} data-id={state.id}>
+                  {state.name}
+                </option>
+              ))}
+            </select>
+            {errors.state && <p className="text-danger">{errors.state}</p>}
           </div>
 
           <div className="form-group col-md-6">
@@ -656,3 +577,4 @@ const LocationHousingTab = ({ data, onNext, onPrevious }) => {
 };
 
 export default LocationHousingTab;
+

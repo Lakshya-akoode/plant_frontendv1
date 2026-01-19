@@ -169,14 +169,20 @@ const SurveyHistoryTab = ({ user }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) return 'N/A';
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'N/A';
+    }
   };
 
   return (
@@ -226,14 +232,14 @@ const SurveyHistoryTab = ({ user }) => {
                       <div className="history-header">
                         <span className="history-date">
                           <i className="fas fa-calendar"></i>
-                          {formatDate(item.createdAt || item.date)}
+                          Created: {formatDate((historyData.length-1) === index ? item.createdAt : item.updatedAt)}
                         </span>
-                        {item.updatedAt && item.updatedAt !== item.createdAt && (
-                          <span className="history-updated">
+                        {/* {item.updatedAt && item.createdAt && item.updatedAt !== item.createdAt && (
+                          <span className="history-updated" style={{ marginLeft: '15px', fontSize: '0.9em', color: '#6c757d' }}>
                             <i className="fas fa-edit"></i>
                             Updated: {formatDate(item.updatedAt)}
                           </span>
-                        )}
+                        )} */}
                       </div>
                       
                       <div className="history-details">
