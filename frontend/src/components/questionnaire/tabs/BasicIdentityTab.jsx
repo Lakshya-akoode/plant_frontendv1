@@ -37,7 +37,7 @@ const BasicIdentityTab = ({ data, onNext, onPrevious }) => {
           if (response.status === 'success' && response.data) {
             const apiData = response.data;
             setFormData({
-              fullName: userData.name || '',
+              fullName: apiData.name || '',
               age: apiData.dateOfBirth || '', // dateOfBirth field contains age value
               gender: apiData.genderIdentity || '',
               genderOther: apiData.genderOther || '',

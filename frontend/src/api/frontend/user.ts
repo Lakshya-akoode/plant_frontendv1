@@ -261,6 +261,31 @@ export const changePasswordAPI = async (currentPassword: string, newPassword: st
   return response.json();
 };
 
+export const updateProfileAPI = async (formData: FormData) => {
+  const userData = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = userData.token;
+  
+  if (!token) {
+    throw new Error("User not authenticated!");
+  }
+
+  const response = await fetch(process.env.NEXT_PUBLIC_FRONTEND_API_URL+"api/users/update-profile", {
+    method: "PUT",
+    headers: {
+      // Don't set Content-Type header - let browser set it with boundary for FormData
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update profile");
+  }
+
+  return response.json();
+};
+
 export async function getUserTableData() {
   // Fake delay
   await new Promise((resolve) => setTimeout(resolve, 10));
