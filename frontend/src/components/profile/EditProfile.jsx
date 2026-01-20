@@ -351,7 +351,7 @@ const EditProfile = ({ user }) => {
                       </div>
                       <div className="image-upload-info">
                         <h4>Profile Picture</h4>
-                        <p>Click the camera icon to upload a new photo</p>
+                        <p>Click the camera icon to upload a new photo(The image size is under 1 MB.)</p>
                       </div>
                     </div>
 
