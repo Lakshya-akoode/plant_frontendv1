@@ -423,7 +423,7 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
             {errors.tobaccoUse && <p className="text-danger">{errors.tobaccoUse}</p>}
           </div>
 
-          <div className="form-group col-md-6">
+          {/* <div className="form-group col-md-6">
             <label className="input_title">Caffeine Use</label>
             <input 
               type="text"
@@ -433,7 +433,7 @@ const SocialSubstanceTab = ({ data, onNext, onPrevious }) => {
               value={formData.caffeineUse}
               onChange={handleInputChange}
             />
-          </div>
+          </div> */}
 
           <div className="form-group col-md-6">
             <label className="input_title">Alcohol Use</label>
