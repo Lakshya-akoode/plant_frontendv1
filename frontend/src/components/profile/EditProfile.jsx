@@ -12,6 +12,8 @@ const EditProfile = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
+  // const [profileImage2, setProfileImage2] = useState(null);
+  // const [profileImage3, setProfileImage3] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -186,6 +188,8 @@ const EditProfile = ({ user }) => {
         // Update the displayed profile image if it was uploaded
         if (response.data.profileImage) {
           setProfileImage(response.data.profileImage);
+          // setProfileImage3(response.data.profileImage);
+          // setProfileImage2(response.data.profileImage);
         }
 
         // Clear the file state since it's been uploaded

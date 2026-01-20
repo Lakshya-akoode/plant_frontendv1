@@ -7,7 +7,8 @@ import { logoutUserAPI } from "../../../api/frontend/user";
 export default function Header({ user, userProfile = {}, summaryTags = [] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage2, setProfileImage2] = useState(null);
+  const [profileImage3, setProfileImage3] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -15,7 +16,9 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
     if (localStorage.getItem("user")) {
       // console.log("??????????",JSON.parse(localStorage.getItem("user")));
       setLoggedInUser(JSON.parse(localStorage.getItem("user")));
-      // console.log("??????????",loggedInUser);
+      setProfileImage2(user?.profileImage || null);
+      setProfileImage3(user?.profileImage || null);
+      
      
     }
 
@@ -46,11 +49,19 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
     return "Age not specified";
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload2 = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      setProfileImage2(imageUrl);
+    }
+  };
+
+  const handleImageUpload3 = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage3(imageUrl);
     }
   };
 
@@ -461,9 +472,9 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                     <div className="profile-dropdown">
                       <div className="profile-trigger">
                         <div className="profile-avatar">
-                          {profileImage ? (
+                          {profileImage3 ? (
                             <img
-                              src={profileImage}
+                              src={profileImage3}
                               alt="Profile"
                               className="profile-img"
                             />
@@ -490,9 +501,9 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                         <div className="profile-header-dropdown">
                           <div className="profile-image-container">
                             <div className="profile-image">
-                              {profileImage ? (
+                              {profileImage2 ? (
                                 <img
-                                  src={profileImage}
+                                  src={profileImage2}
                                   alt="Profile"
                                   className="profile-img"
                                 />
@@ -501,21 +512,21 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                                   <i className="fas fa-user"></i>
                                 </div>
                               )}
-                              <div className="image-upload-overlay">
+                              {/* <div className="image-upload-overlay">
                                 <input
                                   type="file"
                                   accept="image/*"
-                                  onChange={handleImageUpload}
+                                  onChange={handleImageUpload2}
                                   className="image-upload-input"
-                                  id="profile-image-upload"
+                                  id="profile-image-upload2"
                                 />
                                 <label
-                                  htmlFor="profile-image-upload"
+                                  htmlFor="profile-image-upload2"
                                   className="upload-btn"
                                 >
                                   <i className="fas fa-camera"></i>
                                 </label>
-                              </div>
+                              </div> */}
                             </div>
                           </div>
 
@@ -626,9 +637,9 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                         <div className="profile-header-dropdown">
                           <div className="profile-image-container">
                             <div className="profile-image">
-                              {profileImage ? (
+                              {profileImage3 ? (
                                 <img
-                                  src={profileImage}
+                                  src={profileImage3}
                                   alt="Profile"
                                   className="profile-img"
                                 />
@@ -641,7 +652,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                                 <input
                                   type="file"
                                   accept="image/*"
-                                  onChange={handleImageUpload}
+                                  onChange={handleImageUpload3}
                                   className="image-upload-input"
                                   id="profile-image-upload-mobile"
                                 />

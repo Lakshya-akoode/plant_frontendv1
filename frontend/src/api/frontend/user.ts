@@ -268,6 +268,8 @@ export const updateProfileAPI = async (formData: FormData) => {
   if (!token) {
     throw new Error("User not authenticated!");
   }
+  console.log("formData", formData);
+  console.log("formData.get('logo')", formData.get('logo'));
 
   const response = await fetch(process.env.NEXT_PUBLIC_FRONTEND_API_URL+"api/users/update-profile", {
     method: "PUT",

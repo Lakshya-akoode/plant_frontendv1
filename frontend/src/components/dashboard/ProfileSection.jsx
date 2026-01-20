@@ -4,15 +4,16 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 const ProfileSection = ({ user, userProfile, summaryTags }) => {
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage1, setProfileImage1] = useState(null);
+  const [logo, setLogo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload1 = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImage(e.target.result);
+        setProfileImage1(e.target.result);
       };
       reader.readAsDataURL(file);
     }
@@ -56,9 +57,9 @@ const ProfileSection = ({ user, userProfile, summaryTags }) => {
       <div className="profile-dropdown">
         <div className="profile-trigger">
           <div className="profile-avatar">
-            {profileImage ? (
+            {profileImage1 ? (
               <img 
-                src={profileImage} 
+                src={profileImage1} 
                 alt="Profile" 
                 className="profile-img"
               />
@@ -83,9 +84,9 @@ const ProfileSection = ({ user, userProfile, summaryTags }) => {
           <div className="profile-header-dropdown">
             <div className="profile-image-container">
               <div className="profile-image">
-                {profileImage ? (
+                {profileImage1 ? (
                   <img 
-                    src={profileImage} 
+                    src={profileImage1} 
                     alt="Profile" 
                     className="profile-img"
                   />
@@ -98,11 +99,11 @@ const ProfileSection = ({ user, userProfile, summaryTags }) => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageUpload}
+                    onChange={handleImageUpload1}
                     className="image-upload-input"
-                    id="profile-image-upload"
+                    id="profile-image-upload1"
                   />
-                  <label htmlFor="profile-image-upload" className="upload-btn">
+                  <label htmlFor="profile-image-upload1" className="upload-btn">
                     <i className="fas fa-camera"></i>
                   </label>
                 </div>
