@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import SigninHeader from '../common/formheader/Header';
 import Footer from '../common/footer/Footer';
-import { changePasswordAPI } from '../../api/frontend/user';
+import { changePasswordAPI, updateProfileAPI } from '../../api/frontend/user';
 
 const EditProfile = ({ user }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -55,6 +56,10 @@ const EditProfile = ({ user }) => {
           instagram: user.socialMedia?.instagram || ''
         }
       });
+      // Set profile image if available
+      if (user.profileImage) {
+        setProfileImage(user.profileImage);
+      }
     }
   }, [user]);
 
@@ -89,11 +94,18 @@ const EditProfile = ({ user }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      console.log('File selected:', file.name, file.type, file.size);
+      // Store the actual file for uploading
+      setProfileImageFile(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setProfileImage(e.target.result);
       };
       reader.readAsDataURL(file);
+    } else {
+      console.log('No file selected');
     }
   };
 
@@ -131,24 +143,72 @@ const EditProfile = ({ user }) => {
 
     setLoading(true);
     try {
-      // Here you would typically make an API call to update the profile
-      console.log('Updating profile with data:', formData);
+      // Create FormData for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append('fullName', formData.fullName);
+      formDataToSend.append('email', formData.email);
+      if (formData.phone) {
+        formDataToSend.append('phone', formData.phone);
+      }
+      
+      // Append profile image file if one was selected
+      if (profileImageFile) {
+        console.log('Appending image file to FormData:', profileImageFile.name, profileImageFile.type);
+        formDataToSend.append('profileImage', profileImageFile);
+        
+        // Log FormData contents for debugging
+        console.log('FormData entries:');
+        for (let pair of formDataToSend.entries()) {
+          console.log(pair[0] + ': ' + (pair[1] instanceof File ? `File(${pair[1].name})` : pair[1]));
+        }
+      } else {
+        console.log('No profile image file to upload');
+      }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the API
+      console.log('Calling updateProfileAPI...');
+      const response = await updateProfileAPI(formDataToSend);
+      console.log('API Response:', response);
 
-      // Update localStorage with new user data
-      const updatedUser = { ...user, ...formData };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (response.status === 'success') {
+        // Update localStorage with new user data
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedUser = {
+          ...userData,
+          name: response.data.name || formData.fullName,
+          fullName: response.data.name || formData.fullName,
+          email: response.data.email,
+          phone: response.data.phone || formData.phone,
+          profileImage: response.data.profileImage || userData.profileImage
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
 
-      // Show success message (you can use toast notification here)
-      alert('Profile updated successfully!');
+        // Update the displayed profile image if it was uploaded
+        if (response.data.profileImage) {
+          setProfileImage(response.data.profileImage);
+        }
 
-      // Redirect to dashboard
-      router.push('/livetest/dashboard');
+        // Clear the file state since it's been uploaded
+        setProfileImageFile(null);
+        
+        // Reset the file input
+        const fileInput = document.getElementById('profile-image-upload');
+        if (fileInput) {
+          fileInput.value = '';
+        }
+
+        toast.success(response.message || 'Profile updated successfully!');
+        
+        // Refresh the page to show updated data
+        setTimeout(() => {
+          router.push('/livetest/dashboard');
+        }, 1000);
+      } else {
+        toast.error(response.message || 'Failed to update profile');
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert('Error updating profile. Please try again.');
+      toast.error(error.message || 'Error updating profile. Please try again.');
     } finally {
       setLoading(false);
     }
