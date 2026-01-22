@@ -2605,7 +2605,8 @@ p.condition_text.col-lg-12.forgot-text {
 
   .log-type-selector {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    justify-content: center;
     gap: 2rem;
     margin-bottom: 2rem;
   }

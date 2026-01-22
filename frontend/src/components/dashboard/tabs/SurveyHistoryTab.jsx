@@ -9,12 +9,15 @@ import { getPlantGrowthlogHistoryById } from "../../../api/frontend/plantgrowthl
 import { getPlantExtractlogHistoryById } from "../../../api/frontend/plantextracthistory";
 import { getParentinglogHistoryById } from "../../../api/frontend/parentinghistory";
 
-
+import {getPlantInteractionById } from "../../../api/frontend/plantinteraction";
+import { getBasicidentityById } from "../../../api/frontend/basicidentity.ts";
 
 const SurveyHistoryTab = ({ user }) => {
   const [activeLogType, setActiveLogType] = useState('diet');
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [getnumberOfChildren, setGetNumberOfChildren] = useState('');
+  const [getplantTypes, setGetPlantTypes] = useState([]);
 
   const logTypes = [
     { id: 'diet', name: 'Diet Log History', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/info-icon/diet.svg', color: '#28a745' },
@@ -25,6 +28,62 @@ const SurveyHistoryTab = ({ user }) => {
     { id: 'parenting', name: 'Parenting History', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/log-icons/parenting.svg', color: '#fd7e14' }
   ];
 
+  useEffect(() => {
+    const fetchPlantInteraction = async () => {
+      setLoading(true);
+      try {
+          const userData = JSON.parse(localStorage.getItem("user") || "{}");
+          const userId = userData._id;
+          
+          if (userId) {
+            // TODO: Add API call when plant interaction API is ready
+            const response = await getPlantInteractionById(userId);
+            if (response.status === 'success' && response.data) {
+              const apiData = response.data;
+              setGetPlantTypes(apiData.plantTypes || []);
+              if(Array.isArray(apiData.plantTypes) &&
+              apiData.plantTypes.includes("Cannabis")){
+              setActiveLogType('plant-growth')
+              }
+              // console.log('Plant interaction data loaded:', apiData);
+            }
+            else {
+              console.log('No plant interaction found for user, using default values:', response.message);
+            }
+          }
+        } catch (error) {
+        console.log('No plant interaction found for user, using default values:', error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    fetchPlantInteraction();
+
+    const fetchBasicIdentity = async () => {
+      setLoading(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const userId = userData._id;
+        // setFullName(userData.name || '');
+        // console.log("response basic identity")
+        
+        if (userId) {
+          // Only fetch from API if no data prop is provided
+          const response = await getBasicidentityById(userId);
+          
+          setGetNumberOfChildren(response.data.numberOfChildren  || 'None');
+          
+        }
+      } catch (error) {
+        console.log('No basic identity data found for user, using default values:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBasicIdentity();
+  }, []);
   useEffect(() => {
     if (activeLogType === 'diet') {
       loadDietLogHistory();
@@ -195,7 +254,29 @@ const SurveyHistoryTab = ({ user }) => {
       <div className="logs-container">
       {/* Log Type Tabs */}
           <div className="log-type-selector">
-            {logTypes.map(type => (
+            {logTypes.filter((type) => {
+    // Parenting condition
+    if (type.id === "parenting" && getnumberOfChildren === "None") {
+      return false;
+    }
+
+    // Plant condition
+    const hasCannabis =
+      Array.isArray(getplantTypes) &&
+      getplantTypes.includes("Cannabis");
+
+    if (
+      (type.id === "plant-growth" || type.id === "plant-extract") &&
+      !hasCannabis
+    ) {
+      return false;
+    } else if ( (type.id === "wellness" || type.id === "lifestyle" || type.id === "diet") &&
+    hasCannabis) {
+      return false;
+    }
+
+    return true;
+  }).map(type => (
               <button
                 key={type.id}
                 className={`log-type-btn ${activeLogType === type.id ? 'active' : ''}`}

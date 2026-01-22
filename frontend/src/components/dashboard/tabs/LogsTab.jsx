@@ -10,10 +10,17 @@ import { addPlantGrowthlogAPI, getPlantGrowthlogById } from "../../../api/fronte
 import { addPlantExtractlogAPI, getPlantExtractlogById } from "../../../api/frontend/plantextract";
 import { addParentinglogAPI, getParentinglogById } from "../../../api/frontend/parenting";
 
+import {getPlantInteractionById } from "../../../api/frontend/plantinteraction";
+import { getBasicidentityById } from "../../../api/frontend/basicidentity.ts";
+
 const LogsTab = ({ user }) => {
+  console.log("user")
+  console.log(user)
   const [activeLogType, setActiveLogType] = useState('diet');
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [getnumberOfChildren, setGetNumberOfChildren] = useState('');
+  const [getplantTypes, setGetPlantTypes] = useState([]);
   const [formData, setFormData] = useState({
     mealType: '',
     dietaryPreference: '',
@@ -135,8 +142,64 @@ const LogsTab = ({ user }) => {
     } else if (activeLogType === 'parenting') {
       loadParentingLogData();
     }
+    
   }, [activeLogType]);
+useEffect(() => {
+    const fetchPlantInteraction = async () => {
+      setLoading(true);
+      try {
+          const userData = JSON.parse(localStorage.getItem("user") || "{}");
+          const userId = userData._id;
+          
+          if (userId) {
+            // TODO: Add API call when plant interaction API is ready
+            const response = await getPlantInteractionById(userId);
+            if (response.status === 'success' && response.data) {
+              const apiData = response.data;
+              setGetPlantTypes(apiData.plantTypes || []);
+              if(Array.isArray(apiData.plantTypes) &&
+              apiData.plantTypes.includes("Cannabis")){
+              setActiveLogType('plant-growth')
+              }
+              // console.log('Plant interaction data loaded:', apiData);
+            }
+            else {
+              console.log('No plant interaction found for user, using default values:', response.message);
+            }
+          }
+        } catch (error) {
+        console.log('No plant interaction found for user, using default values:', error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
 
+    fetchPlantInteraction();
+
+    const fetchBasicIdentity = async () => {
+      setLoading(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const userId = userData._id;
+        // setFullName(userData.name || '');
+        // console.log("response basic identity")
+        
+        if (userId) {
+          // Only fetch from API if no data prop is provided
+          const response = await getBasicidentityById(userId);
+          
+          setGetNumberOfChildren(response.data.numberOfChildren  || 'None');
+          
+        }
+      } catch (error) {
+        console.log('No basic identity data found for user, using default values:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBasicIdentity();
+  }, []);
   const loadDietLogData = async () => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
@@ -146,7 +209,7 @@ const LogsTab = ({ user }) => {
         const response = await getDietlogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
-          console.log('Diet log data loaded:', apiData);
+          // console.log('Diet log data loaded:', apiData);
           
           setFormData({
             mealType: apiData.mealType || '',
@@ -173,7 +236,7 @@ const LogsTab = ({ user }) => {
         const response = await getWellnessSymptomLogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
-          console.log('Wellness symptom log data loaded:', apiData);
+          // console.log('Wellness symptom log data loaded:', apiData);
           
           setWellnessFormData({
             fatigue: apiData.fatigue || '',
@@ -955,7 +1018,29 @@ const LogsTab = ({ user }) => {
       <div className="logs-container">
         {/* Log Type Selector */}
         <div className="log-type-selector">
-          {logTypes.map((type) => (
+          {logTypes.filter((type) => {
+    // Parenting condition
+    if (type.id === "parenting" && getnumberOfChildren === "None") {
+      return false;
+    }
+
+    // Plant condition
+    const hasCannabis =
+      Array.isArray(getplantTypes) &&
+      getplantTypes.includes("Cannabis");
+
+    if (
+      (type.id === "plant-growth" || type.id === "plant-extract") &&
+      !hasCannabis
+    ) {
+      return false;
+    } else if ( (type.id === "wellness" || type.id === "lifestyle" || type.id === "diet") &&
+    hasCannabis) {
+      return false;
+    }
+
+    return true;
+  }).map((type) => (
             <button
               key={type.id}
               className={`log-type-btn ${activeLogType === type.id ? 'active' : ''}`}
