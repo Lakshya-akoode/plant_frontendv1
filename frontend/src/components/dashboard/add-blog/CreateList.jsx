@@ -154,12 +154,12 @@ const CreateList = () => {
         setLogo(null);
         // Redirect after a short delay
         setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-blog");
+          router.push("/cmsadminlogin/my-blog");
         }, 1500);
       }
       else if (data.message == "Not authorized, no token") {
         setError(data.message);
-        router.push("/livetest/cmsadminlogin");
+        router.push("/cmsadminlogin");
       } else {
         // Handle other error responses
         setError(data.message || "Failed to publish blog");

@@ -371,7 +371,7 @@ const ViewSurveyStudies = () => {
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          router.push(`/livetest/cmsadminlogin/view-surveystudies/${userGroup.userId}`);
+                                          router.push(`/cmsadminlogin/view-surveystudies/${userGroup.userId}`);
                                         }}
                                         style={{
                                           background: 'none',

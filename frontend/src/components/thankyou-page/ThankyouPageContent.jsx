@@ -97,7 +97,7 @@ export default function ThankyouPage() {
               {/* End form */}
 
               <Link
-                href="/livetest"
+                href="/"
                 className="btn btn-default hover:text-white"
                 style={{
                   color: "#ffffff",

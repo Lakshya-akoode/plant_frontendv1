@@ -145,7 +145,7 @@ const SurveyStudiesTab = () => {
   }
 
   const handleCompleteSurvey = () => {
-    router.push('/livetest/master-profile-questionnaire#Nine');
+    router.push('/master-profile-questionnaire#Nine');
   };
 
   // Calculate remaining surveys count

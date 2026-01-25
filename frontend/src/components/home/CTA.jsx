@@ -16,7 +16,7 @@ export default function CTA() {
           <div className="col-lg-3">
             {/* Section Button Start */}
             <div className="section-btn wow fadeInUp">
-              <a href="/livetest/signup" className="btn-default btn-highlighted">Create Your Account</a>
+              <a href="/signup" className="btn-default btn-highlighted">Create Your Account</a>
             </div>
             {/* Section Button End */}
           </div>

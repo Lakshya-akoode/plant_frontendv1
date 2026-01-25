@@ -124,7 +124,7 @@ const ViewSurveyStudiesDetail = () => {
                   </h4>
                   <p className="m-0">{surveyData.message || 'An error occurred while loading the survey.'}</p>
                   <button
-                    onClick={() => router.push('/livetest/cmsadminlogin/my-survey')}
+                    onClick={() => router.push('/cmsadminlogin/my-survey')}
                     className="btn btn-primary mt-3"
                     style={{ padding: '10px 20px' }}
                   >
@@ -157,7 +157,7 @@ const ViewSurveyStudiesDetail = () => {
                   <h4 className="mb-4">Survey Not Found</h4>
                   <p className="m-0">The survey you're looking for doesn't exist or has been deleted.</p>
                   <button
-                    onClick={() => router.push('/livetest/cmsadminlogin/my-survey')}
+                    onClick={() => router.push('/cmsadminlogin/my-survey')}
                     className="btn btn-primary mt-3"
                     style={{ padding: '10px 20px' }}
                   >
@@ -337,7 +337,7 @@ const ViewSurveyStudiesDetail = () => {
                           </div>
                         )}
                         <button
-                          onClick={() => router.push('/livetest/cmsadminlogin/my-survey')}
+                          onClick={() => router.push('/cmsadminlogin/my-survey')}
                           className="btn btn-default"
                           style={{ padding: '10px 20px' }}
                         >

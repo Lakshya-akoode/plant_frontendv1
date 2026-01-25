@@ -74,7 +74,7 @@ const TableData = ({locationList,setLocationList}) => {
             data-placement="top"
             title="Edit"
           >
-            <button  onClick={() => router.push(`/livetest/cmsadminlogin/edit-location/${item._id}`)}>
+            <button  onClick={() => router.push(`/cmsadminlogin/edit-location/${item._id}`)}>
               <span className="flaticon-edit"></span>
             </button>
           </li>

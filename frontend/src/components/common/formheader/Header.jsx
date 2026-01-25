@@ -74,12 +74,12 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
       localStorage.removeItem("user");
 
       // Redirect to signin page
-      router.push("/livetest/signin");
+      router.push("/signin");
     } catch (error) {
       console.error("Logout error:", error);
       // Even if API call fails, clear local storage and redirect
       localStorage.removeItem("user");
-      router.push("/livetest/signin");
+      router.push("/signin");
     }
   };
 
@@ -405,7 +405,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
             <div className="container-fluid">
               {/* Logo */}
               <div className="navbar-brand-wrapper">
-                <a className="navbar-brand" href="/livetest">
+                <a className="navbar-brand" href="/">
                   <img
                     src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`}
                     alt="Logo"
@@ -429,37 +429,37 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                 <div className="nav-menu-wrapper">
                   <ul className="navbar-nav mr-auto" id="menu">
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest">
+                      <a className="nav-link" href="/">
                         Home
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/how-to-use">
+                      <a className="nav-link" href="/how-to-use">
                         How to Use
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/about">
+                      <a className="nav-link" href="/about">
                         About
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/research-mission">
+                      <a className="nav-link" href="/research-mission">
                         Research Mission
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/blog">
+                      <a className="nav-link" href="/blog">
                         PC News Blog
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/advanced-education">
+                      <a className="nav-link" href="/advanced-education">
                         Advanced Education
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="/livetest/contact-us">
+                      <a className="nav-link" href="/contact-us">
                         Contact
                       </a>
                     </li>
@@ -572,7 +572,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                           <button
                             className="action-btn"
                             onClick={() =>
-                              (window.location.href = "/livetest/dashboard")
+                              (window.location.href = "/dashboard")
                             }
                           >
                             <i className="fas fa-user-cog"></i> Dashboard
@@ -580,7 +580,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                           <button
                             className="action-btn"
                             onClick={() =>
-                              (window.location.href = "/livetest/edit-profile")
+                              (window.location.href = "/edit-profile")
                             }
                           >
                             <i className="fas fa-edit"></i> Edit Profile
@@ -593,7 +593,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="btn-default header-signin-btn-desktop">
+                    <a href="/signup" className="btn-default header-signin-btn-desktop">
                       Sign In / Create Account
                     </a>
                   )}
@@ -705,7 +705,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                           <button
                             className="action-btn"
                             onClick={() =>
-                              (window.location.href = "/livetest/dashboard")
+                              (window.location.href = "/dashboard")
                             }
                           >
                             <i className="fas fa-user-cog"></i> Dashboard
@@ -713,7 +713,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                           <button
                             className="action-btn"
                             onClick={() =>
-                              (window.location.href = "/livetest/edit-profile")
+                              (window.location.href = "/edit-profile")
                             }
                           >
                             <i className="fas fa-edit"></i> Edit Profile
@@ -725,7 +725,7 @@ export default function Header({ user, userProfile = {}, summaryTags = [] }) {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                    <a href="/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
                       Sign In
                     </a>
                   )}

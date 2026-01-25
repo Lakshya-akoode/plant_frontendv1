@@ -7,7 +7,7 @@ export default function AboutUs() {
         <div className="row align-items-center">
           <div className="col-lg-6">
             {/* About Images Start */}
-            <a href="/livetest/about" className="about-images">
+            <a href="/about" className="about-images">
               {/* About Image Start */}
               <div className="about-image">
                 <figure>
@@ -41,7 +41,7 @@ export default function AboutUs() {
 
               {/* About Content Button Start */}
               <div className="about-content-btn wow fadeInUp" data-wow-delay="0.8s">
-                <a href="/livetest/about" className="btn-default">Learn More About Plant Chat®</a>
+                <a href="/about" className="btn-default">Learn More About Plant Chat®</a>
               </div>
               {/* About Content Button End */}
             </div>

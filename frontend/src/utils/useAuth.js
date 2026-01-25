@@ -7,7 +7,7 @@ export default function useAuth() {
   useEffect(() => {
     const token = localStorage.getItem('user');
     if (!token) {
-      router.replace('/livetest/cmsadminlogin'); // redirect to login if no token
+      router.replace('/cmsadminlogin'); // redirect to login if no token
     }
   }, [router]);
 }

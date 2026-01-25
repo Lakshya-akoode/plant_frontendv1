@@ -4,12 +4,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow access to maintenance page
-  if (pathname === '/maintenance') {
-    return NextResponse.next();
-  }
-
-  // Allow access to static files and API routes
+  // Allow static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -25,34 +20,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow access to /livetest routes
-  if (pathname.startsWith('/livetest')) {
-    return NextResponse.next();
-  }
-
-  // For root path, show maintenance
-  if (pathname === '/') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/maintenance';
-    return NextResponse.rewrite(url);
-  }
-
-  // For all other paths, show maintenance
-  const url = request.nextUrl.clone();
-  url.pathname = '/maintenance';
-  return NextResponse.rewrite(url);
+  // Allow all page routes (root / and rewrites handle /about, /blog, etc.)
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - Static assets (img, css, js, images, assets, public, admin, etc.)
-     */
     '/((?!_next/static|_next/image|favicon.ico|img/|css/|js/|images/|assets/|public/|admin/).*)',
   ],
 };
-

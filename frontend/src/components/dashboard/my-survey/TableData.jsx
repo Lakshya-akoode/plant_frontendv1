@@ -117,8 +117,8 @@ const TableData = ({surveyList, setSurveyList}) => {
           gap: '5px'
         }}>
           <button 
-            // onClick={() => router.push(`/livetest/cmsadminlogin/view-surveystudies/${item._id}`)}
-            onClick={() => router.push(`/livetest/cmsadminlogin/view-survey-studies`)}
+            // onClick={() => router.push(`/cmsadminlogin/view-surveystudies/${item._id}`)}
+            onClick={() => router.push(`/cmsadminlogin/view-survey-studies`)}
             style={{
               // backgroundColor: '#3b82f6',
               border: 'none',
@@ -140,7 +140,7 @@ const TableData = ({surveyList, setSurveyList}) => {
           </button>
 
           <button 
-            onClick={() => router.push(`/livetest/cmsadminlogin/edit-survey/${item._id}`)}
+            onClick={() => router.push(`/cmsadminlogin/edit-survey/${item._id}`)}
             style={{
               backgroundColor: '#f3f4f6',
               border: 'none',

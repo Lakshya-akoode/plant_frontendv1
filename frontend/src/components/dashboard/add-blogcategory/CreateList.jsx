@@ -39,7 +39,7 @@ const CreateList = () => {
       
       if(data.status=="success"){
          setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-blogcategory");
+          router.push("/cmsadminlogin/my-blogcategory");
           }, 1500); 
         }
   
@@ -80,7 +80,7 @@ const CreateList = () => {
 
       <div className="col-xl-12">
         <div className="my_profile_setting_input">
-          <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-dashboard'}>Back</button>
+          <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/cmsadminlogin/my-dashboard'}>Back</button>
           <button type="submit" className="btn-default float-end" disabled={isSubmitting} >{isSubmitting ? 'Sending...' : 'Submit'}</button>
         </div>
       </div>

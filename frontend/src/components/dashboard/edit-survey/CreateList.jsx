@@ -153,7 +153,7 @@ const CreateList = () => {
       
       if(data.status === "success"){
         setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-survey");
+          router.push("/cmsadminlogin/my-survey");
         }, 1500); 
       }
       
@@ -322,7 +322,7 @@ const CreateList = () => {
             <button 
               className="btn-default float-start" 
               type="button" 
-              onClick={() => window.location.href = '/livetest/cmsadminlogin/my-survey'}
+              onClick={() => window.location.href = '/cmsadminlogin/my-survey'}
             >
               Back
             </button>

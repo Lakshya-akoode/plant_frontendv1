@@ -65,7 +65,7 @@ const CreateList = () => {
       {/* End .col */}
       <div className="col-xl-12">
         <div className="my_profile_setting_input">
-          <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-dashboard'}>Back</button>
+          <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/cmsadminlogin/my-dashboard'}>Back</button>
           <button type="submit" className="btn btn2 float-end">Submit</button>
         </div>
       </div>

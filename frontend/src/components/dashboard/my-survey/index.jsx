@@ -136,7 +136,7 @@ const index = () => {
                       <li className="list-inline-item">
                         <button
                           className="btn-default"
-                          onClick={() => router.push("/livetest/cmsadminlogin/add-survey")}
+                          onClick={() => router.push("/cmsadminlogin/add-survey")}
                         >
                           <i className="fa fa-plus mr-1"></i> Create New Survey
                         </button>

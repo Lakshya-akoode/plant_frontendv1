@@ -45,29 +45,29 @@ const SidebarMenu = () => {
   //   { id: 2, name: "Services List", route: "/cmsadminlogin/my-services" }
   // ];
   const myCountry = [
-    // { id: 1, name: "Add Country", route: "/livetest/cmsadminlogin/add-country" },
-    { id: 2, name: "Country List", route: "/livetest/cmsadminlogin/my-country" }
+    // { id: 1, name: "Add Country", route: "/cmsadminlogin/add-country" },
+    { id: 2, name: "Country List", route: "/cmsadminlogin/my-country" }
   ];
   const myState = [
-    // { id: 1, name: "Add State", route: "/livetest/cmsadminlogin/add-state" },
-    { id: 2, name: "State List", route: "/livetest/cmsadminlogin/my-state" }
+    // { id: 1, name: "Add State", route: "/cmsadminlogin/add-state" },
+    { id: 2, name: "State List", route: "/cmsadminlogin/my-state" }
   ];
   const myCity = [
-    // { id: 1, name: "Add City", route: "/livetest/cmsadminlogin/add-city" },
-    { id: 2, name: "City List", route: "/livetest/cmsadminlogin/my-cities" }
+    // { id: 1, name: "Add City", route: "/cmsadminlogin/add-city" },
+    { id: 2, name: "City List", route: "/cmsadminlogin/my-cities" }
   ];
 
   const myLocation = [
-    { id: 1, name: "Add Location", route: "/livetest/cmsadminlogin/add-location" },
-    { id: 2, name: "Location List", route: "/livetest/cmsadminlogin/my-location" }
+    { id: 1, name: "Add Location", route: "/cmsadminlogin/add-location" },
+    { id: 2, name: "Location List", route: "/cmsadminlogin/my-location" }
   ];
   // const myAmenity = [
   //   { id: 1, name: "Add Amenity", route: "/cmsadminlogin/add-amenities" },
   //   { id: 2, name: "Amenity List", route: "/cmsadminlogin/my-amenities" }
   // ];
   const myCategory = [
-    { id: 1, name: "Add Category", route: "/livetest/cmsadminlogin/add-category" },
-    { id: 2, name: "Category List", route: "/livetest/cmsadminlogin/my-category" }
+    { id: 1, name: "Add Category", route: "/cmsadminlogin/add-category" },
+    { id: 2, name: "Category List", route: "/cmsadminlogin/my-category" }
   ];
   // const myPropertytype = [
   //   { id: 1, name: "Add Property type", route: "/cmsadminlogin/add-propertytype" },
@@ -78,12 +78,12 @@ const SidebarMenu = () => {
   //   { id: 2, name: "Builder List", route: "/cmsadminlogin/my-builder" }
   // ];
   const myUser = [
-    // { id: 1, name: "Add User", route: "/livetest/cmsadminlogin/add-user" },
-    { id: 2, name: "User List", route: "/livetest/cmsadminlogin/my-user" }
+    // { id: 1, name: "Add User", route: "/cmsadminlogin/add-user" },
+    { id: 2, name: "User List", route: "/cmsadminlogin/my-user" }
   ];
   // const myCommunity = [
-  //   { id: 1, name: "Add Comment", route: "/livetest/cmsadminlogin/add-community" },
-  //   { id: 2, name: "Comment List", route: "/livetest/cmsadminlogin/my-community" }
+  //   { id: 1, name: "Add Comment", route: "/cmsadminlogin/add-community" },
+  //   { id: 2, name: "Comment List", route: "/cmsadminlogin/my-community" }
   // ];
   // const mySeller = [
   //   { id: 1, name: "Add Seller", route: "/cmsadminlogin/add-seller" },
@@ -96,10 +96,10 @@ const SidebarMenu = () => {
   //   { id: 2, name: "Property List", route: "/cmsadminlogin/my-properties" }
   // ];
   const myBlog = [
-    { id: 1, name: "Add Blog category", route: "/livetest/cmsadminlogin/add-blogcategory" },
-    { id: 2, name: "Blog category List", route: "/livetest/cmsadminlogin/my-blogcategory" },
-    { id: 3, name: "Add Blog", route: "/livetest/cmsadminlogin/add-blog" },
-    { id: 4, name: "Blog List", route: "/livetest/cmsadminlogin/my-blog" },
+    { id: 1, name: "Add Blog category", route: "/cmsadminlogin/add-blogcategory" },
+    { id: 2, name: "Blog category List", route: "/cmsadminlogin/my-blogcategory" },
+    { id: 3, name: "Add Blog", route: "/cmsadminlogin/add-blog" },
+    { id: 4, name: "Blog List", route: "/cmsadminlogin/my-blog" },
 
   ];
   // const myPropertypage = [
@@ -107,37 +107,37 @@ const SidebarMenu = () => {
   //   { id: 2, name: "Property page List", route: "/cmsadminlogin/my-propertypage" }
   // ];
   const myTestimonial = [
-    { id: 1, name: "Add Testimonial", route: "/livetest/cmsadminlogin/add-testimonial" },
-    { id: 2, name: "Testimonial List", route: "/livetest/cmsadminlogin/my-testimonial" }
+    { id: 1, name: "Add Testimonial", route: "/cmsadminlogin/add-testimonial" },
+    { id: 2, name: "Testimonial List", route: "/cmsadminlogin/my-testimonial" }
   ];
 
   const myFaq = [
-    { id: 1, name: "Add FAQ", route: "/livetest/cmsadminlogin/add-faq" },
-    { id: 2, name: "FAQ List", route: "/livetest/cmsadminlogin/my-faq" }
+    { id: 1, name: "Add FAQ", route: "/cmsadminlogin/add-faq" },
+    { id: 2, name: "FAQ List", route: "/cmsadminlogin/my-faq" }
   ];
 
   const mySurvey = [
-    { id: 1, name: "Add Survey Study", route: "/livetest/cmsadminlogin/add-survey" },
-    { id: 2, name: "Survey Studies List", route: "/livetest/cmsadminlogin/my-survey" },
-    { id: 3, name: "View Survey Responses", route: "/livetest/cmsadminlogin/view-survey-studies" }
+    { id: 1, name: "Add Survey Study", route: "/cmsadminlogin/add-survey" },
+    { id: 2, name: "Survey Studies List", route: "/cmsadminlogin/my-survey" },
+    { id: 3, name: "View Survey Responses", route: "/cmsadminlogin/view-survey-studies" }
   ];
   // const myLandingpage = [
   //   { id: 1, name: "Add Landing page", route: "/cmsadminlogin/add-landing" },
   //   { id: 2, name: "Landing page List", route: "/cmsadminlogin/my-landing" }
   // ];
   const reviews = [
-    { id: 1, name: "My Reviews", route: "/livetest/cmsadminlogin/my-review" },
-    { id: 2, name: "Visitor Reviews", route: "/livetest/cmsadminlogin/my-review" },
+    { id: 1, name: "My Reviews", route: "/cmsadminlogin/my-review" },
+    { id: 2, name: "Visitor Reviews", route: "/cmsadminlogin/my-review" },
   ];
   const enquirylist = [
-    { id: 1, name: "My enquiry list", route: "/livetest/cmsadminlogin/my-enquiry" },
+    { id: 1, name: "My enquiry list", route: "/cmsadminlogin/my-enquiry" },
     // { id: 2, name: "My job enquiry list", route: "/cmsadminlogin/my-jobenquiry" },
     // { id: 3, name: "My landing enquiry list", route: "/cmsadminlogin/my-landingenquiry" },
     // { id: 4, name: "My Subscribe enquiry list", route: "/cmsadminlogin/my-subscribeenquiry" },
     // { id: 5, name: "My brochure enquiry list", route: "/cmsadminlogin/my-brochureenquiry" },
   ];
   const mySubscriber = [
-    { id: 1, name: "My Subscribers", route: "/livetest/cmsadminlogin/my-subscriber" },
+    { id: 1, name: "My Subscribers", route: "/cmsadminlogin/my-subscriber" },
   ];
   const manageAccount = [
     {
@@ -159,7 +159,7 @@ const SidebarMenu = () => {
     <>
       <ul className="sidebar-menu">
         <li className="sidebar_header header" >
-          <Link href="/livetest/cmsadminlogin/my-dashboard" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+          <Link href="/cmsadminlogin/my-dashboard" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
             <div style={{
               width: '170px',
               height: '70px',
@@ -204,12 +204,12 @@ const SidebarMenu = () => {
           {/* <span>Main</span> */}
           <ul>
             <li
-              className={`treeview dashboard-tab ${isSinglePageActive("/livetest/cmsadminlogin/my-dashboard", pathname)
+              className={`treeview dashboard-tab ${isSinglePageActive("/cmsadminlogin/my-dashboard", pathname)
                 ? "active"
                 : ""
                 }`}
             >
-              <Link href="/livetest/cmsadminlogin/my-dashboard">
+              <Link href="/cmsadminlogin/my-dashboard">
                 <span> Dashboard</span>
               </Link>
             </li>
@@ -220,7 +220,7 @@ const SidebarMenu = () => {
                   : ""
               }`}
             >
-              <Link href="/livetest/create-listing">
+              <Link href="/create-listing">
                 <i className="flaticon-plus"></i>
                 <span> Create Listing</span>
               </Link>
@@ -232,7 +232,7 @@ const SidebarMenu = () => {
                   : ""
               }`}
             >
-              <Link href="/livetest/my-message">
+              <Link href="/my-message">
                 <i className="flaticon-envelope"></i>
                 <span> Message</span>
               </Link>
@@ -746,7 +746,7 @@ const SidebarMenu = () => {
                   : ""
               }`}
             >
-              <Link href="/livetest/my-favourites">
+              <Link href="/my-favourites">
                 <i className="flaticon-magnifying-glass"></i>
                 <span> My Favorites</span>
               </Link>
@@ -758,7 +758,7 @@ const SidebarMenu = () => {
                   : ""
               }`}
             >
-              <Link href="/livetest/my-saved-search">
+              <Link href="/my-saved-search">
                 <i className="flaticon-magnifying-glass"></i>
                 <span> Saved Search</span>
               </Link>

@@ -96,7 +96,7 @@ export default function Blog() {
           <div className="col-lg-6">
             {/* Section Title Content Start */}
             <div className="section-btn wow fadeInUp" data-wow-delay="0.2s">
-              <Link href="/livetest/blog" className="btn-default">View all news</Link>
+              <Link href="/blog" className="btn-default">View all news</Link>
             </div>
             {/* Section Title Content End */}
           </div>
@@ -135,7 +135,7 @@ export default function Blog() {
               <div className="col-lg-4 col-md-6">
                 <div className="post-item wow fadeInUp">
                   <div className="post-featured-image">
-                    <Link href="/livetest/blog" data-cursor-text="View">
+                    <Link href="/blog" data-cursor-text="View">
                       <figure className="image-anime">
                         <img src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/post-1.webp`} alt="image" className="img-fluid" />
                       </figure>
@@ -143,10 +143,10 @@ export default function Blog() {
                   </div>
                   <div className="post-item-body">
                     <div className="post-item-content">
-                      <h2 className="mb-2"><Link href="/livetest/blog">The Future of Plant-Based Wellness</Link></h2>
+                      <h2 className="mb-2"><Link href="/blog">The Future of Plant-Based Wellness</Link></h2>
                     </div>
                     <div className="post-item-btn">
-                      <Link href="/livetest/blog" className="readmore-btn">read more</Link>
+                      <Link href="/blog" className="readmore-btn">read more</Link>
                     </div>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ export default function Blog() {
                 <div className="post-item wow fadeInUp" data-wow-delay={`${index * 0.2}s`}>
                   {/* Post Featured Image Start*/}
                   <div className="post-featured-image">
-                    <Link href={`/livetest/blog-single/${blog.slug || blog._id}`} data-cursor-text="View">
+                    <Link href={`/blog-single/${blog.slug || blog._id}`} data-cursor-text="View">
                       <figure className="image-anime">
                         {blog.image ? (
                           <img 
@@ -185,7 +185,7 @@ export default function Blog() {
                     {/* Post Item Content Start */}
                     <div className="post-item-content">
                       <h2 className="mb-2">
-                        <Link href={`/livetest/blog-single/${blog.slug || blog._id}`}>
+                        <Link href={`/blog-single/${blog.slug || blog._id}`}>
                           {blog.title || "Untitled Blog Post"}
                         </Link>
                       </h2>
@@ -195,7 +195,7 @@ export default function Blog() {
 
                     {/* Post Item Readmore Button Start*/}
                     <div className="post-item-btn">
-                      <Link href={`/livetest/blog-single/${blog.slug || blog._id}`} className="readmore-btn">read more</Link>
+                      <Link href={`/blog-single/${blog.slug || blog._id}`} className="readmore-btn">read more</Link>
                     </div>
                     {/* Post Item Readmore Button End*/}
                   </div>

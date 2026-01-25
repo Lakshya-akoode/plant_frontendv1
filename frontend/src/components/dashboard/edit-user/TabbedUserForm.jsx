@@ -646,7 +646,7 @@ const TabbedUserForm = () => {
       
       // alert("User and Basic Identity updated successfully!");
       toast.success(data.message);
-      router.push("/livetest/cmsadminlogin/my-user");
+      router.push("/cmsadminlogin/my-user");
     } catch (error) {
       toast.error(error.message);
       // alert("Failed to update User or Basic Identity.");
@@ -1007,7 +1007,7 @@ const TabbedUserForm = () => {
         setTimeout(() => {
           toast.success("All form data has been saved successfully!");
           // Redirect to user listing page
-          router.push('/livetest/cmsadminlogin/my-user');
+          router.push('/cmsadminlogin/my-user');
         }, 1500); 
       }
     } catch (error) {
@@ -1152,7 +1152,7 @@ const TabbedUserForm = () => {
   };
 
   const handleBackToUserList = () => {
-    window.location.href = '/livetest/cmsadminlogin/my-user';
+    window.location.href = '/cmsadminlogin/my-user';
   };
 
   const renderTabContent = () => {

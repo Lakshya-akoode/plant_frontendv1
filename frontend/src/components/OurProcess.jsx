@@ -224,7 +224,7 @@ export default function OurProcess() {
                         {/* Dashboard Button */}
                         <div style={{ marginTop: '1.5rem' }}>
                           <Link 
-                            href="/livetest/dashboard"
+                            href="/dashboard"
                             style={{
                               display: 'inline-block',
                               padding: '0.75rem 2rem',

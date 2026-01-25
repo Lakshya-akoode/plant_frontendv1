@@ -187,20 +187,20 @@ const AllStatistics = () => {
 
   const handleCardClick = (itemId) => {
     if (itemId === 1) {
-      router.push("/livetest/cmsadminlogin/my-user");
+      router.push("/cmsadminlogin/my-user");
     } 
     else if (itemId === 2) {
-      router.push("/livetest/cmsadminlogin/my-survey");
+      router.push("/cmsadminlogin/my-survey");
     }
     else if (itemId === 3) {  
-      router.push("/livetest/cmsadminlogin/view-survey-studies");
+      router.push("/cmsadminlogin/view-survey-studies");
     }
     else if (itemId === 4) {
       // Redirect to users list with MPQ Status filter set to "Not Completed"
-      router.push("/livetest/cmsadminlogin/my-user?mpqStatus=Not%20Completed");
+      router.push("/cmsadminlogin/my-user?mpqStatus=Not%20Completed");
     }
     else if (itemId === 5) {
-      router.push("/livetest/cmsadminlogin/my-enquiry");
+      router.push("/cmsadminlogin/my-enquiry");
     }
   };
 

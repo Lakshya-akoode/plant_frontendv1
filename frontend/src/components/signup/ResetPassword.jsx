@@ -22,7 +22,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (!token) {
       toast.error('Invalid reset link. Please request a new password reset.');
-      router.push('/livetest/forgot-password');
+      router.push('/forgot-password');
     }
   }, [token, router]);
 
@@ -81,7 +81,7 @@ const ResetPassword = () => {
 
     if (!token) {
       toast.error('Invalid reset token. Please request a new password reset.');
-      router.push('/livetest/forgot-password');
+      router.push('/forgot-password');
       return;
     }
 
@@ -114,7 +114,7 @@ const ResetPassword = () => {
         toast.success('Password reset successfully! You can now sign in with your new password.');
         setPasswordReset(true);
         setTimeout(() => {
-          router.push('/livetest/signin');
+          router.push('/signin');
         }, 2000);
       } else {
         toast.error(result.message || 'Failed to reset password');
@@ -139,7 +139,7 @@ const ResetPassword = () => {
           <div className="plant-forms__button">
             <button
               className="btn-default"
-              onClick={() => router.push('/livetest/signin')}
+              onClick={() => router.push('/signin')}
             >
               Go to Sign In
             </button>
@@ -160,7 +160,7 @@ const ResetPassword = () => {
           <div className="plant-forms__button">
             <button
               className="btn-default"
-              onClick={() => router.push('/livetest/forgot-password')}
+              onClick={() => router.push('/forgot-password')}
             >
               Request New Reset Link
             </button>
@@ -261,7 +261,7 @@ const ResetPassword = () => {
               <p className="plant-forms__text plant-mg-top-10">
                 Remember your password?{' '}
                 <a
-                  href="/livetest/signin"
+                  href="/signin"
                   className="switch-link"
                 >
                   Sign In

@@ -113,7 +113,7 @@ const ConsentModal = ({ show, onClose, formData }) => {
         }
         toast.success(response.message);
         setErrorMessage(response.message);
-        router.push('/livetest/email-otp');
+        router.push('/email-otp');
         
         
        
@@ -213,7 +213,7 @@ const ConsentModal = ({ show, onClose, formData }) => {
                 }
               `}</style>
               <label className="form-check-label" htmlFor="consentCheck">
-                I agree to the <a href="/livetest/terms-conditions"><strong>Terms of Use: Data Consent</strong></a> and consent to the sharing of my anonymized data in Plant Chat research initiatives on the Master Regulator, the Endocannabinoid System, Lifestyle, Plants, Wellness, and in other ways deemed suitable in Plant Chat's Get Balanced Research Initiative by Nanobles Corporation.
+                I agree to the <a href="/terms-conditions"><strong>Terms of Use: Data Consent</strong></a> and consent to the sharing of my anonymized data in Plant Chat research initiatives on the Master Regulator, the Endocannabinoid System, Lifestyle, Plants, Wellness, and in other ways deemed suitable in Plant Chat's Get Balanced Research Initiative by Nanobles Corporation.
               </label>
               <div 
                 className="text-danger"

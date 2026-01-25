@@ -80,7 +80,7 @@ export default function Header() {
       localStorage.removeItem('user');
       setIsProfileOpen(false);
       checkLoginStatus();
-      router.push('/livetest/signin');
+      router.push('/signin');
     }
   };
 
@@ -91,7 +91,7 @@ export default function Header() {
             <div className="container-fluid">
               {/* Logo Start */}
               <div className="navbar-brand-wrapper">
-                <a className="navbar-brand" href="/livetest">
+                <a className="navbar-brand" href="/">
                   <img src={`${process.env.NEXT_PUBLIC_SITE_URL}public/img/plant-chat-logo-transparent.svg`} alt="Logo" className="img-fluid" />
                 </a>
                 {/* Sign In/Profile for Mobile/Tablet - outside menu */}
@@ -106,15 +106,15 @@ export default function Header() {
                 </button>
                 <div className="nav-menu-wrapper">
                   <ul className="navbar-nav mr-auto" id="menu">
-                    <li className="nav-item"><a className="nav-link" href="/livetest" onClick={closeMenu}>Home</a></li> 
-                    <li className="nav-item"><a className="nav-link" href="/livetest/how-to-use" onClick={closeMenu}>How to Use</a></li>       
-                    <li className="nav-item"><a className="nav-link" href="/livetest/about" onClick={closeMenu}>About</a></li>
+                    <li className="nav-item"><a className="nav-link" href="/" onClick={closeMenu}>Home</a></li> 
+                    <li className="nav-item"><a className="nav-link" href="/how-to-use" onClick={closeMenu}>How to Use</a></li>       
+                    <li className="nav-item"><a className="nav-link" href="/about" onClick={closeMenu}>About</a></li>
                     
-                    <li className="nav-item"><a className="nav-link" href="/livetest/research-mission" onClick={closeMenu}>Research Mission</a></li>
-                    <li className="nav-item"><a className="nav-link" href="/livetest/blog" onClick={closeMenu}>PC News Blog</a></li>
-                    <li className="nav-item"><a className="nav-link" href="/livetest/advanced-education" onClick={closeMenu}>Advanced Education</a></li>
+                    <li className="nav-item"><a className="nav-link" href="/research-mission" onClick={closeMenu}>Research Mission</a></li>
+                    <li className="nav-item"><a className="nav-link" href="/blog" onClick={closeMenu}>PC News Blog</a></li>
+                    <li className="nav-item"><a className="nav-link" href="/advanced-education" onClick={closeMenu}>Advanced Education</a></li>
                    
-                    <li className="nav-item"><a className="nav-link" href="/livetest/contact-us" onClick={closeMenu}>Contact</a></li>         
+                    <li className="nav-item"><a className="nav-link" href="/contact-us" onClick={closeMenu}>Contact</a></li>         
                   </ul>
                 </div>
                 
@@ -127,7 +127,7 @@ export default function Header() {
                       onMouseLeave={() => setIsProfileOpen(false)}
                     >
                       <a 
-                        href="/livetest/dashboard" 
+                        href="/dashboard" 
                         className="profile-button-custom"
                         onClick={(e) => {
                           e.preventDefault();
@@ -146,11 +146,11 @@ export default function Header() {
                         <i className="fa-solid fa-chevron-down profile-chevron"></i>
                       </a>
                       <div className={`profile-dropdown-menu ${isProfileOpen ? 'active' : ''}`}>
-                        <a href="/livetest/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                        <a href="/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
                           <i className="fa-solid fa-user-cog"></i>
                           Dashboard
                         </a>
-                        <a href="/livetest/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                        <a href="/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
                           <i className="fa-solid fa-edit"></i>
                           Edit Profile
                         </a>
@@ -162,7 +162,7 @@ export default function Header() {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="btn-default header-signin-btn-desktop" onClick={closeMenu}>Sign In / Create Account</a>
+                    <a href="/signup" className="btn-default header-signin-btn-desktop" onClick={closeMenu}>Sign In / Create Account</a>
                   )}
                 </div>
                 {/* Header Contact Btn End */}
@@ -179,7 +179,7 @@ export default function Header() {
                       }}
                     >
                       <a 
-                        href="/livetest/dashboard" 
+                        href="/dashboard" 
                         className="profile-button-custom-mobile"
                         onClick={(e) => {
                           e.preventDefault();
@@ -198,11 +198,11 @@ export default function Header() {
                         <i className="fa-solid fa-chevron-down profile-chevron"></i>
                       </a>
                       <div className={`profile-dropdown-menu ${isProfileOpen ? 'active' : ''}`}>
-                        <a href="/livetest/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                        <a href="/dashboard" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
                           <i className="fa-solid fa-user-cog"></i>
                           Dashboard
                         </a>
-                        <a href="/livetest/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
+                        <a href="/edit-profile" className="profile-menu-item" onClick={() => { closeMenu(); setIsProfileOpen(false); }}>
                           <i className="fa-solid fa-edit"></i>
                           Edit Profile
                         </a>
@@ -214,7 +214,7 @@ export default function Header() {
                       </div>
                     </div>
                   ) : (
-                    <a href="/livetest/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
+                    <a href="/signup" className="navbar-signin-btn-mobile btn-default" onClick={closeMenu}>
                       Sign In
                     </a>
                   )}

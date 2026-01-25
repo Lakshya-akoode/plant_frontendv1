@@ -36,7 +36,7 @@ const CreateList = () => {
     try {
       await updateUserAPI(id, agent);
       alert("User updated successfully!");
-      router.push("/livetest/cmsadminlogin/my-user");
+      router.push("/cmsadminlogin/my-user");
     } catch (error) {
       alert("Failed to update User.");
       console.error(error);
@@ -93,7 +93,7 @@ const CreateList = () => {
         {/* End .col */}
         <div className="col-xl-12">
           <div className="my_profile_setting_input">
-            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-user'}>Back</button>
+            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/cmsadminlogin/my-user'}>Back</button>
             <button className="btn-default float-end">Submit</button>
           </div>
         </div>

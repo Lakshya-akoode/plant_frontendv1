@@ -183,7 +183,7 @@ const CreateList = () => {
       if (res.status == "success") {
         toast.success(res.message);
         setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-blog");
+          router.push("/cmsadminlogin/my-blog");
         }, 1500);
       } else {
         setError(res.message || "Failed to update blog");
@@ -384,7 +384,7 @@ const CreateList = () => {
 
         <div className="col-xl-12">
           <div className="my_profile_setting_input blog-preview-button-container">
-            <button className="btn-default" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-blog'}>Back</button>
+            <button className="btn-default" type="button" onClick={() => window.location.href = '/cmsadminlogin/my-blog'}>Back</button>
             <div className="blog-preview-button-group">
               <button className="btn-default" type="button" onClick={() => setShowPreview(true)}>Preview</button>
               <button className="btn-default" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Updating...' : 'Publish'}</button>

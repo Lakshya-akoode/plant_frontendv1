@@ -86,7 +86,7 @@ const TableData = ({
         <button 
           className="btn btn-sm"
           style={{ backgroundColor: '#5cb85c', color: 'white', border: 'none' }}
-          onClick={() => router.push(`/livetest/cmsadminlogin/edit-logs/${item._id}`)}
+          onClick={() => router.push(`/cmsadminlogin/edit-logs/${item._id}`)}
           title="View Logs"
         >
           View
@@ -96,7 +96,7 @@ const TableData = ({
         <button 
           className="btn btn-sm"
           style={{ backgroundColor: '#5cb85c', color: 'white', border: 'none' }}
-          onClick={() => router.push(`/livetest/cmsadminlogin/view-loghistory/${item._id}`)}
+          onClick={() => router.push(`/cmsadminlogin/view-loghistory/${item._id}`)}
           title="View Logs"
         >
           View
@@ -106,7 +106,7 @@ const TableData = ({
         <button 
           className="btn btn-sm"
           style={{ backgroundColor: '#5cb85c', color: 'white', border: 'none' }}
-          onClick={() => router.push(`/livetest/cmsadminlogin/view-surveystudies/${item._id}`)}
+          onClick={() => router.push(`/cmsadminlogin/view-surveystudies/${item._id}`)}
           title="View Logs"
         >
           View
@@ -117,7 +117,7 @@ const TableData = ({
         <div className="d-flex align-items-center">
           <button 
             className="btn btn-sm btn-outline-secondary"  style={{ backgroundColor: '#34aa54', color: 'white', border: 'none' }}
-            onClick={() => router.push(`/livetest/cmsadminlogin/edit-user/${item._id}`)}
+            onClick={() => router.push(`/cmsadminlogin/edit-user/${item._id}`)}
             title="Edit"
           >
             <span className="flaticon-edit"></span>

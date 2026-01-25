@@ -60,13 +60,13 @@ export default function Footer() {
             <div className="footer-links">
               <h3>Quick link</h3>
               <ul>
-                <li><a href="/livetest">Home</a></li>
-                <li><a href="/livetest/how-to-use">How to Use</a></li>
-                <li><a href="/livetest/about">About</a></li>
-                <li><a href="/livetest/research-mission">Research Mission</a></li>
-                <li><a href="/livetest/blog">PC News Blog</a></li>
-                <li><a href="/livetest/advanced-education">Advanced Education</a></li>
-                <li><a href="/livetest/contact-us">Contact</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/how-to-use">How to Use</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/research-mission">Research Mission</a></li>
+                <li><a href="/blog">PC News Blog</a></li>
+                <li><a href="/advanced-education">Advanced Education</a></li>
+                <li><a href="/contact-us">Contact</a></li>
               </ul>
             </div>
             {/* Footer Links End */}
@@ -97,9 +97,9 @@ export default function Footer() {
               {/* Footer Privacy Policy Start */}
               <div className="footer-privacy-policy">
                 <ul>
-                  <li><a href="/livetest/privacy-policy">Privacy policy</a></li>
-                  <li><a href="/livetest/terms-conditions">Terms & condition</a></li>
-                  <li><a href="/livetest/disclosures">Disclosure</a></li>
+                  <li><a href="/privacy-policy">Privacy policy</a></li>
+                  <li><a href="/terms-conditions">Terms & condition</a></li>
+                  <li><a href="/disclosures">Disclosure</a></li>
                 </ul>
               </div>
               {/* Footer Privacy Policy End */}

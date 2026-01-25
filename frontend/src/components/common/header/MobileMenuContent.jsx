@@ -547,7 +547,7 @@ const MobileMenuContent = () => {
 
           <MenuItem>
             <div
-            onClick={()=>router.push("/livetest/contact-us")}
+            onClick={()=>router.push("/contact-us")}
              
               className={
                 pathname === "/contact" ? "ui-active" : 'inactive-mobile-menu'

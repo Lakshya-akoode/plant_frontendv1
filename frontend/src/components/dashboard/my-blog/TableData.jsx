@@ -71,7 +71,7 @@ const TableData = () => {
       <td style={{padding: '15px'}}>
         <div style={{display: 'flex', gap: '8px'}}>
           <button 
-            onClick={() => router.push(`/livetest/cmsadminlogin/edit-blog/${item._id}`)}
+            onClick={() => router.push(`/cmsadminlogin/edit-blog/${item._id}`)}
             style={{
               backgroundColor: '#f3f4f6',
               border: 'none',

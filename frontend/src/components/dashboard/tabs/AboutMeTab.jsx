@@ -184,7 +184,7 @@ const percentage = (trueCount / keys.length) * 100;
 
   const handleEditSection = (tabId) => {
     // Navigate to master-profile-questionnaire page with the specific tab
-    window.location.href = `/livetest/master-profile-questionnaire#${tabId}`;
+    window.location.href = `/master-profile-questionnaire#${tabId}`;
   };
 
   const sections = [

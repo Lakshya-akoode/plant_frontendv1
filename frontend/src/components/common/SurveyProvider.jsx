@@ -52,10 +52,8 @@ const SurveyProvider = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   
-  // Normalize pathname by removing /livetest prefix if present
-  const normalizedPathname = pathname?.startsWith('/livetest') 
-    ? pathname.replace('/livetest', '') || '/' 
-    : pathname;
+  // Paths are at root: /about, /dashboard, /cmsadminlogin/..., etc.
+  const normalizedPathname = pathname || '/';
 
   const refreshSurveys = async () => {
     try {

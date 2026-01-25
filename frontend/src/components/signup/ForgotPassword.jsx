@@ -108,7 +108,7 @@ const ForgotPassword = () => {
           <div className="plant-forms__button">
             <button 
               className="btn-default" 
-              onClick={() => router.push('/livetest/signin')}
+              onClick={() => router.push('/signin')}
             >
               Back to Sign In
             </button>
@@ -159,7 +159,7 @@ const ForgotPassword = () => {
               <p className="plant-forms__text plant-mg-top-10">
                 Remember your password?{' '}
                 <a 
-                  href="/livetest/signin"
+                  href="/signin"
                   className="switch-link"
                 >
                   Sign In

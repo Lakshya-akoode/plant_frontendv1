@@ -118,7 +118,7 @@ const handleCountryChange = (e) => {
       toast.success(data.message);
       if(data.status=="success"){
          setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-location");
+          router.push("/cmsadminlogin/my-location");
           }, 1500); 
       }
       setTitle("");
@@ -298,7 +298,7 @@ const handleCountryChange = (e) => {
       </div>
         <div className="col-xl-12">
           <div className="my_profile_setting_input">
-            <button type="button" className="btn-default float-start" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-dashboard'}>Back</button>
+            <button type="button" className="btn-default float-start" onClick={() => window.location.href = '/cmsadminlogin/my-dashboard'}>Back</button>
             <button type="submit" className="btn-default float-end" disabled={isSubmitting} >{isSubmitting ? 'Sending...' : 'Submit'}</button>
           </div>
         </div>

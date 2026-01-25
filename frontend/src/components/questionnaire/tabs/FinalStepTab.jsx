@@ -355,7 +355,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
                 setShowSurvey(true);
               } else {
                 // No surveys, go directly to dashboard
-                router.push('/livetest/dashboard');
+                router.push('/dashboard');
               }
             }, 500);
           } else {
@@ -446,7 +446,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             // No more incomplete surveys, close modal and go to dashboard
             setShowSurvey(false);
             setTimeout(() => {
-              router.push("/livetest/dashboard");
+              router.push("/dashboard");
             }, 500);
             return;
           }
@@ -513,7 +513,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
           if (isNewUser) {
             setShowSurvey(false);
             setTimeout(() => {
-              router.push("/livetest/dashboard");
+              router.push("/dashboard");
             }, 500);
             return;
           }
@@ -525,7 +525,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
             // All surveys completed
             setShowSurvey(false);
             setTimeout(() => {
-              router.push("/livetest/dashboard");
+              router.push("/dashboard");
             }, 500);
           }
         } catch (error) {
@@ -537,7 +537,7 @@ const FinalStepTab = ({ data, onComplete, onPrevious }) => {
           // All surveys completed
           setShowSurvey(false);
           setTimeout(() => {
-            router.push("/livetest/dashboard");
+            router.push("/dashboard");
           }, 500);
           }
         }

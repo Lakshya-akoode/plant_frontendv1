@@ -209,7 +209,7 @@ const AccountCreation = ({ onSwitchToSignIn, onShowConsentModal }) => {
               <p className="plant-forms__text plant-mg-top-10">
                 Already have a Plant Chat account?{' '}
                 <a 
-                  href="/livetest/signin"
+                  href="/signin"
                   className="switch-link"
                 >
                   Sign in now!

@@ -174,7 +174,7 @@ export default function BlogPage() {
                     data-wow-delay={`${index * 0.2}s`}
                   >
                      <div className="post-featured-image">
-                        <Link href={`/livetest/blog-single/${blog.slug || blog._id}`} data-cursor-text="View">
+                        <Link href={`/blog-single/${blog.slug || blog._id}`} data-cursor-text="View">
                          <figure className="image-anime">
                           {blog.image ? (
                                             (() => {
@@ -241,13 +241,13 @@ export default function BlogPage() {
                      </div>
                     <div className="post-item-content">
                       <h2>
-                         <Link href={`/livetest/blog-single/${blog.slug || blog._id}`}>
+                         <Link href={`/blog-single/${blog.slug || blog._id}`}>
                           {blog.title || "Untitled Blog Post"}
                         </Link>
                       </h2>
                     </div>
                     <div className="blog-item-btn">
-                       <Link href={`/livetest/blog-single/${blog.slug || blog._id}`} className="readmore-btn">
+                       <Link href={`/blog-single/${blog.slug || blog._id}`} className="readmore-btn">
                         view details
                       </Link>
                     </div>
@@ -323,7 +323,7 @@ export default function BlogPage() {
               </div>
             )}
             <div className="hero-btn text-center">
-                <a href="/livetest/signup" className="btn-default">Sign Up</a>
+                <a href="/signup" className="btn-default">Sign Up</a>
             </div>
           </div>
         </div>

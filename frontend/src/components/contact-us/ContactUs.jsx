@@ -43,7 +43,7 @@ export default function ContactPage() {
       await createEnquiry(enquiryData);
       
       // Redirect to thankyou page after successful submission
-      router.push('/livetest/thankyou');
+      router.push('/thankyou');
     } catch (error) {
       console.error('Error submitting enquiry:', error);
       setSubmitStatus('error');

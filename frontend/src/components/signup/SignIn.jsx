@@ -90,11 +90,11 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
       
       toast.success('Successfully signed in!');
       if(!response.data.isEmailVerified){
-        router.push('/livetest/email-otp');
+        router.push('/email-otp');
         return;
       } 
       // else if(!response.data.isPhoneVerified){
-      //   router.push('/livetest/phone-signup');
+      //   router.push('/phone-signup');
       // } 
       
       // First check if at least one survey study is completed
@@ -137,7 +137,7 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
       
       // If at least one survey is completed, go directly to dashboard
       if (hasCompletedSurvey) {
-        router.push('/livetest/dashboard');
+        router.push('/dashboard');
         return;
       }
       
@@ -210,7 +210,7 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
 
         // If all tabs are completed, redirect to final tab
         if (allTabsCompleted) {
-          router.push('/livetest/master-profile-questionnaire#Nine');
+          router.push('/master-profile-questionnaire#Nine');
           return;
         }
 
@@ -235,7 +235,7 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
         // Default to first tab if there's an error
       }
       
-      router.push(`/livetest/master-profile-questionnaire#${redirectTab}`);
+      router.push(`/master-profile-questionnaire#${redirectTab}`);
       
     } catch (error) {
       console.error('Sign in error:', error);
@@ -293,7 +293,7 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
                 {errors.password && <p className="text-danger">{errors.password.message}</p>}
                 <div className="text-end plant-mg-top-10">
                   <a 
-                    href="/livetest/forgot-password"
+                    href="/forgot-password"
                     className="forgot-password-link"
                     style={{ fontSize: '14px', color: '#007bff', textDecoration: 'none' }}
                   >
@@ -318,7 +318,7 @@ const SignIn = ({ onSwitchToRegister, onShowConsentModal }) => {
               <p className="plant-forms__text plant-mg-top-10">
                 Don't have a Plant Chat account?{' '}
                 <a 
-                  href="/livetest/signup"
+                  href="/signup"
                   className="switch-link"
                 >
                   Create Account

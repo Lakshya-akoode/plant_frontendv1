@@ -123,7 +123,7 @@ const CreateList = () => {
       toast.success(data.message);
       if (data.status == "success") {
         setTimeout(() => {
-          router.push("/livetest/cmsadminlogin/my-cities");
+          router.push("/cmsadminlogin/my-cities");
         }, 1500);
       }
     } catch (error) {
@@ -349,7 +349,7 @@ const CreateList = () => {
 
         <div className="col-xl-12">
           <div className="my_profile_setting_input">
-            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/livetest/cmsadminlogin/my-cities'}>Back</button>
+            <button className="btn-default float-start" type="button" onClick={() => window.location.href = '/cmsadminlogin/my-cities'}>Back</button>
             <button className="btn-default float-end">Submit</button>
           </div>
         </div>

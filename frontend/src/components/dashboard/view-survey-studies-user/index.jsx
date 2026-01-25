@@ -97,7 +97,7 @@ const ViewSurveyStudiesUser = () => {
                   <h4 className="mb-4">User Not Found</h4>
                   <p className="m-0">The user you're looking for doesn't exist or has been deleted.</p>
                   <button
-                    onClick={() => router.push('/livetest/cmsadminlogin/view-survey-studies')}
+                    onClick={() => router.push('/cmsadminlogin/view-survey-studies')}
                     className="btn btn-primary mt-3"
                   >
                     Back to Survey Responses
@@ -215,7 +215,7 @@ const ViewSurveyStudiesUser = () => {
                           </div>
                         )}
                         <button
-                          onClick={() => router.push('/livetest/cmsadminlogin/view-survey-studies')}
+                          onClick={() => router.push('/cmsadminlogin/view-survey-studies')}
                           className="user-survey-btn-back"
                         >
                           <i className="fa fa-arrow-left mr-2"></i> Back to All Responses

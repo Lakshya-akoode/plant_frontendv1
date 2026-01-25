@@ -205,7 +205,7 @@ const EditProfile = ({ user }) => {
         
         // Refresh the page to show updated data
         setTimeout(() => {
-          router.push('/livetest/dashboard');
+          router.push('/dashboard');
         }, 1000);
       } else {
         toast.error(response.message || 'Failed to update profile');
@@ -219,7 +219,7 @@ const EditProfile = ({ user }) => {
   };
 
   const handleCancel = () => {
-    router.push('/livetest/dashboard');
+    router.push('/dashboard');
   };
 
   const handlePasswordChange = (e) => {

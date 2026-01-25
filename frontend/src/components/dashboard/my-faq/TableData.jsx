@@ -92,7 +92,7 @@ const TableData = ({faqList,setFaqList}) => {
           gap: '5px'
         }}>
           <button 
-            onClick={() => router.push(`/livetest/cmsadminlogin/edit-faq/${item._id}`)}
+            onClick={() => router.push(`/cmsadminlogin/edit-faq/${item._id}`)}
             style={{
               backgroundColor: '#f3f4f6',
               border: 'none',

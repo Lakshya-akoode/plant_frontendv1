@@ -13,66 +13,66 @@ const SidebarMenu = () => {
   const pathname = usePathname()
 
   const myCountry = [
-    { id: 1, name: "Add Country", route: "/livetest/cmsadminlogin/add-country" },
-    { id: 2, name: "Country List", route: "/livetest/cmsadminlogin/my-country" }
+    { id: 1, name: "Add Country", route: "/cmsadminlogin/add-country" },
+    { id: 2, name: "Country List", route: "/cmsadminlogin/my-country" }
   ];
   const myState = [
-    { id: 1, name: "Add State", route: "/livetest/cmsadminlogin/add-state" },
-    { id: 2, name: "State List", route: "/livetest/cmsadminlogin/my-state" }
+    { id: 1, name: "Add State", route: "/cmsadminlogin/add-state" },
+    { id: 2, name: "State List", route: "/cmsadminlogin/my-state" }
   ];
   const myCity = [
-    { id: 1, name: "Add City", route: "/livetest/cmsadminlogin/add-city" },
-    { id: 2, name: "City List", route: "/livetest/cmsadminlogin/my-cities" }
+    { id: 1, name: "Add City", route: "/cmsadminlogin/add-city" },
+    { id: 2, name: "City List", route: "/cmsadminlogin/my-cities" }
   ];
  
   const myLocation = [
-    { id: 1, name: "Add Location", route: "/livetest/cmsadminlogin/add-location" },
-    { id: 2, name: "Location List", route: "/livetest/cmsadminlogin/my-location" }
+    { id: 1, name: "Add Location", route: "/cmsadminlogin/add-location" },
+    { id: 2, name: "Location List", route: "/cmsadminlogin/my-location" }
   ];
   const myAmenity = [
-    { id: 1, name: "Add Amenity", route: "/livetest/cmsadminlogin/add-amenities" },
-    { id: 2, name: "Amenity List", route: "/livetest/cmsadminlogin/my-amenities" }
+    { id: 1, name: "Add Amenity", route: "/cmsadminlogin/add-amenities" },
+    { id: 2, name: "Amenity List", route: "/cmsadminlogin/my-amenities" }
   ];
   const myPropertytype = [
-    { id: 1, name: "Add Property type", route: "/livetest/cmsadminlogin/add-propertytype" },
-    { id: 2, name: "Property type List", route: "/livetest/cmsadminlogin/my-propertytype" }
+    { id: 1, name: "Add Property type", route: "/cmsadminlogin/add-propertytype" },
+    { id: 2, name: "Property type List", route: "/cmsadminlogin/my-propertytype" }
   ];
   const myBuilder = [
-    { id: 1, name: "Add Builder", route: "/livetest/cmsadminlogin/add-builder" },
-    { id: 2, name: "Builder List", route: "/livetest/cmsadminlogin/my-builder" }
+    { id: 1, name: "Add Builder", route: "/cmsadminlogin/add-builder" },
+    { id: 2, name: "Builder List", route: "/cmsadminlogin/my-builder" }
   ];
   const myAgent = [
-    { id: 1, name: "Add Agent", route: "/livetest/cmsadminlogin/add-agent" },
-    { id: 2, name: "Agent List", route: "/livetest/cmsadminlogin/my-agent" }
+    { id: 1, name: "Add Agent", route: "/cmsadminlogin/add-agent" },
+    { id: 2, name: "Agent List", route: "/cmsadminlogin/my-agent" }
   ];
   
   const myProperties = [
-    { id: 1, name: "Add Property", route: "/livetest/cmsadminlogin/create-listing" },
-    { id: 2, name: "Property List", route: "/livetest/cmsadminlogin/my-properties" }
+    { id: 1, name: "Add Property", route: "/cmsadminlogin/create-listing" },
+    { id: 2, name: "Property List", route: "/cmsadminlogin/my-properties" }
   ];
   const myBlog = [
-    { id: 1, name: "Add Blog category", route: "/livetest/cmsadminlogin/add-blogcategory" },
-    { id: 2, name: "Blog category List", route: "/livetest/cmsadminlogin/my-blogcategory" },
-    { id: 3, name: "Add Blog", route: "/livetest/cmsadminlogin/add-blog" },
-    { id: 4, name: "Blog List", route: "/livetest/cmsadminlogin/my-blog" },
+    { id: 1, name: "Add Blog category", route: "/cmsadminlogin/add-blogcategory" },
+    { id: 2, name: "Blog category List", route: "/cmsadminlogin/my-blogcategory" },
+    { id: 3, name: "Add Blog", route: "/cmsadminlogin/add-blog" },
+    { id: 4, name: "Blog List", route: "/cmsadminlogin/my-blog" },
     
   ];
   const myPropertypage = [
-    { id: 1, name: "Add Property page", route: "/livetest/cmsadminlogin/add-propertypage" },
-    { id: 2, name: "Property page List", route: "/livetest/cmsadminlogin/my-propertypage" }
+    { id: 1, name: "Add Property page", route: "/cmsadminlogin/add-propertypage" },
+    { id: 2, name: "Property page List", route: "/cmsadminlogin/my-propertypage" }
   ];
   const myTestimonial = [
-    { id: 1, name: "Add Testimonial", route: "/livetest/cmsadminlogin/add-testimonial" },
-    { id: 2, name: "Testimonial List", route: "/livetest/cmsadminlogin/my-testimonial" }
+    { id: 1, name: "Add Testimonial", route: "/cmsadminlogin/add-testimonial" },
+    { id: 2, name: "Testimonial List", route: "/cmsadminlogin/my-testimonial" }
   ];
   
   const myFaq = [
-    { id: 1, name: "Add FAQ", route: "/livetest/cmsadminlogin/add-faq" },
-    { id: 2, name: "FAQ List", route: "/livetest/cmsadminlogin/my-faq" }
+    { id: 1, name: "Add FAQ", route: "/cmsadminlogin/add-faq" },
+    { id: 2, name: "FAQ List", route: "/cmsadminlogin/my-faq" }
   ];
   const reviews = [
-    { id: 1, name: "My Reviews", route: "/akoolivetest/cmsadminlogindeadmin/my-review" },
-    { id: 2, name: "Visitor Reviews", route: "/livetest/cmsadminlogin/my-review" },
+    { id: 1, name: "My Reviews", route: "/cmsadminlogin/my-review" },
+    { id: 2, name: "Visitor Reviews", route: "/cmsadminlogin/my-review" },
   ];
   const manageAccount = [
     {
@@ -117,7 +117,7 @@ const SidebarMenu = () => {
                   : ""
               }`}
             >
-              <Link href="/livetest/cmsadminlogin/my-dashboard">
+              <Link href="/cmsadminlogin/my-dashboard">
                 <i className="flaticon-layers"></i>
                 <span> Dashboard</span>
               </Link>

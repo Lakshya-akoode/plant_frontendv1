@@ -13,7 +13,7 @@ const MyAccount = () => {
   const router = useRouter();
   const handleLogout = () => {
     localStorage.removeItem('user');
-    router.push('/livetest/cmsadminlogin');
+    router.push('/cmsadminlogin');
   };
   const pathname = usePathname()
   const profileMenuItems = [

@@ -542,7 +542,7 @@ const TabbedQuestionnaireForm = ({ currentTab, onTabChange }) => {
         return (
           <FinalStepTab 
             data={formData}
-            onComplete={() => router.push('/livetest/dashboard')}
+            onComplete={() => router.push('/dashboard')}
             onPrevious={(data) => handlePreviousTab('Nine',data)}
           />
         );

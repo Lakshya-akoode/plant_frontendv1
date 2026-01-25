@@ -152,7 +152,7 @@ export default function HowItWorks() {
             <div className="swiper-button-prev service-slider-prev"></div>
             <div className="swiper-button-next service-slider-next"></div>
           </div>
-          <p><a href="/livetest/signup" className="btn-default">Be Part Of Our Journey!</a></p>
+          <p><a href="/signup" className="btn-default">Be Part Of Our Journey!</a></p>
         </div>
       </div>
     </section>
