@@ -1,32 +1,22 @@
-'use client';
+import BlogPageContent from "@/components/pages/BlogPageContent";
 
-import { useEffect, useState } from 'react';
-import Header from '@/components/home/Header';
-import Blog from '@/components/blog/Blog';
-import Footer from '@/components/common/footer/Footer';
-import GetNewsletter from '@/components/home/GetNewsletter';
+export const metadata = {
+  title: "PC News Blog - Plant Chat®",
+  description: "Stay informed with the latest research, botanical science, and data-driven wellness innovation from Plant Chat®.",
+  openGraph: {
+    title: "PC News Blog - Plant Chat®",
+    description: "Stay informed with the latest research, botanical science, and data-driven wellness innovation from Plant Chat®.",
+    images: ["/img/plant-leaf.webp"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PC News Blog - Plant Chat®",
+    description: "Stay informed with the latest research, botanical science, and data-driven wellness innovation from Plant Chat®.",
+    images: ["/img/plant-leaf.webp"],
+  },
+};
 
 export default function BlogPage() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-   
-    // Initialize animations when component mounts
-    if (typeof window !== 'undefined') {
-      // Initialize WOW.js for animations
-      if (window.WOW) {
-        new window.WOW().init();
-      }
-    }
-  }, []);
-
-  return (
-    <main className="main">
-      <Header />
-      <Blog />
-      <GetNewsletter/>
-      <Footer />
-    </main>
-  );
+  return <BlogPageContent />;
 }

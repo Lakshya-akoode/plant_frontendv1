@@ -18,6 +18,29 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Plant Chat® - Plant-Based Wellness Platform",
   description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
+  keywords: "plant-based wellness, herbal medicine, AI-driven insights, holistic health",
+  authors: [{ name: "Plant Chat®" }],
+  openGraph: {
+    title: "Plant Chat® - Plant-Based Wellness Platform",
+    description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
+    url: "https://plantchat.akoodedemo.com",
+    siteName: "Plant Chat®",
+    images: [
+      {
+        url: "/img/plant-chat-logo.svg",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plant Chat® - Plant-Based Wellness Platform",
+    description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
+    images: ["/img/plant-chat-logo.svg"],
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -32,9 +55,6 @@ export default function RootLayout({ children }) {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-        <meta name="description" content="Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness." />
-        <meta name="keywords" content="plant-based wellness, herbal medicine, AI-driven insights, holistic health" />
-        <meta name="author" content="Plant Chat®" />
         <link rel="shortcut icon" type="image/png" href={`${process.env.NEXT_PUBLIC_API_URL}public/images/favicon.png`} />
         <link rel="icon" type="image/png" sizes="32x32" href={`${process.env.NEXT_PUBLIC_API_URL}public/images/favicon.png`} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
