@@ -5,6 +5,8 @@ import "./globals.css";
 // import ToastProvider from '../components/common/ToastProvider';
 import SurveyProvider from "../components/common/SurveyProvider";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://plantchat.akoodedemo.com";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Plant Chat® - Plant-Based Wellness Platform",
   description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
   keywords: "plant-based wellness, herbal medicine, AI-driven insights, holistic health",
@@ -23,7 +26,7 @@ export const metadata = {
   openGraph: {
     title: "Plant Chat® - Plant-Based Wellness Platform",
     description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
-    url: "https://plantchat.akoodedemo.com",
+    url: siteUrl,
     siteName: "Plant Chat®",
     images: [
       {

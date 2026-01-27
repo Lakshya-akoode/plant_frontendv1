@@ -6,7 +6,7 @@ export const metadata = {
   openGraph: {
     title: "Plant Chat® - Plant-Based Wellness Platform",
     description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
-    url: "https://plantchat.akoodedemo.com",
+    url: "/",
     siteName: "Plant Chat®",
     images: [
       {
