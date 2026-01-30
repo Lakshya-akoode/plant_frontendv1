@@ -8,7 +8,7 @@ export const convertToCSV = (data, headers) => {
 
   // Create header row
   const headerRow = headers.map(h => `"${h.label}"`).join(',');
-  
+
   // Create data rows
   const dataRows = data.map(row => {
     return headers.map(header => {
@@ -34,11 +34,11 @@ export const downloadCSV = (csvContent, filename) => {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  
+
   link.setAttribute('href', url);
   link.setAttribute('download', filename || 'export.csv');
   link.style.visibility = 'hidden';
-  
+
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -50,10 +50,10 @@ export const downloadCSV = (csvContent, filename) => {
 export const downloadExcel = (data, headers, filename) => {
   // Create Excel XML format (works with Excel and other spreadsheet software)
   const xmlHeader = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n xmlns:o="urn:schemas-microsoft-com:office:office"\n xmlns:x="urn:schemas-microsoft-com:office:excel"\n xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\n xmlns:html="http://www.w3.org/TR/REC-html40">\n<Worksheet ss:Name="Sheet1">\n<Table>\n';
-  
+
   // Create header row
   const headerRow = '<Row>\n' + headers.map(h => `<Cell><Data ss:Type="String">${escapeXml(h.label)}</Data></Cell>`).join('\n') + '\n</Row>\n';
-  
+
   // Create data rows
   const dataRows = data.map(row => {
     const cells = headers.map(header => {
@@ -66,18 +66,18 @@ export const downloadExcel = (data, headers, filename) => {
     }).join('\n');
     return `<Row>\n${cells}\n</Row>\n`;
   }).join('');
-  
+
   const xmlFooter = '</Table>\n</Worksheet>\n</Workbook>';
   const excelContent = xmlHeader + headerRow + dataRows + xmlFooter;
-  
+
   const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  
+
   link.setAttribute('href', url);
   link.setAttribute('download', filename || 'export.xls');
   link.style.visibility = 'hidden';
-  
+
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -102,7 +102,7 @@ const escapeXml = (str) => {
 const prepareSurveyResponsesData = (responsesData) => {
   // Handle different response structures
   const groupedByUser = responsesData?.groupedByUser || responsesData?.data?.groupedByUser || (Array.isArray(responsesData?.data) ? null : responsesData?.data);
-  
+
   if (!groupedByUser || (Array.isArray(groupedByUser) && groupedByUser.length === 0)) {
     return { headers: null, flatData: [] };
   }
@@ -120,7 +120,7 @@ const prepareSurveyResponsesData = (responsesData) => {
   // Flatten the nested structure
   const flatData = [];
   const userGroups = Array.isArray(groupedByUser) ? groupedByUser : [groupedByUser];
-  
+
   userGroups.forEach(userGroup => {
     if (userGroup && userGroup.surveys && Array.isArray(userGroup.surveys)) {
       userGroup.surveys.forEach(survey => {
@@ -149,7 +149,7 @@ const prepareSurveyResponsesData = (responsesData) => {
  */
 export const exportSurveyResponsesToCSV = (responsesData, surveyName = 'Survey') => {
   const { headers, flatData } = prepareSurveyResponsesData(responsesData);
-  
+
   if (!headers || flatData.length === 0) {
     console.warn('No data to export');
     return;
@@ -165,7 +165,7 @@ export const exportSurveyResponsesToCSV = (responsesData, surveyName = 'Survey')
  */
 export const exportSurveyResponsesToExcel = (responsesData, surveyName = 'Survey') => {
   const { headers, flatData } = prepareSurveyResponsesData(responsesData);
-  
+
   if (!headers || flatData.length === 0) {
     console.warn('No data to export');
     return;
@@ -213,7 +213,7 @@ const prepareUserSurveyResponsesData = (userData) => {
  */
 export const exportUserSurveyResponsesToCSV = (userData) => {
   const { headers, flatData } = prepareUserSurveyResponsesData(userData);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -229,7 +229,7 @@ export const exportUserSurveyResponsesToCSV = (userData) => {
  */
 export const exportUserSurveyResponsesToExcel = (userData) => {
   const { headers, flatData } = prepareUserSurveyResponsesData(userData);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -272,7 +272,7 @@ const prepareSingleSurveyResponseData = (user, survey) => {
  */
 export const exportSingleSurveyResponseToCSV = (user, survey) => {
   const { headers, flatData } = prepareSingleSurveyResponseData(user, survey);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -289,7 +289,7 @@ export const exportSingleSurveyResponseToCSV = (user, survey) => {
  */
 export const exportSingleSurveyResponseToExcel = (user, survey) => {
   const { headers, flatData } = prepareSingleSurveyResponseData(user, survey);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -342,7 +342,7 @@ const prepareSurveyDetailResponsesData = (surveyData) => {
  */
 export const exportSurveyDetailResponsesToCSV = (surveyData) => {
   const { headers, flatData } = prepareSurveyDetailResponsesData(surveyData);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -358,7 +358,7 @@ export const exportSurveyDetailResponsesToCSV = (surveyData) => {
  */
 export const exportSurveyDetailResponsesToExcel = (surveyData) => {
   const { headers, flatData } = prepareSurveyDetailResponsesData(surveyData);
-  
+
   if (!headers || flatData.length === 0) {
     return;
   }
@@ -406,7 +406,7 @@ const prepareUserListData = (usersData) => {
  */
 export const exportUserListToCSV = (usersData) => {
   const { headers, flatData } = prepareUserListData(usersData);
-  
+
   if (!headers || flatData.length === 0) {
     console.warn('No user data to export');
     return;
@@ -422,7 +422,7 @@ export const exportUserListToCSV = (usersData) => {
  */
 export const exportUserListToExcel = (usersData) => {
   const { headers, flatData } = prepareUserListData(usersData);
-  
+
   if (!headers || flatData.length === 0) {
     console.warn('No user data to export');
     return;
@@ -432,3 +432,202 @@ export const exportUserListToExcel = (usersData) => {
   downloadExcel(flatData, headers, filename);
 };
 
+/**
+ * Prepare individual user response data for export
+ * Used for exporting a single user's all survey responses from the User Responses tab
+ */
+const prepareIndividualUserResponseData = (userGroup) => {
+  if (!userGroup || !userGroup.surveys || userGroup.surveys.length === 0) {
+    return { headers: null, flatData: [] };
+  }
+
+  const headers = [
+    { label: 'User Name', accessor: (row) => row.userName || 'N/A' },
+    { label: 'User Email', accessor: (row) => row.userEmail || 'N/A' },
+    { label: 'User Phone', accessor: (row) => row.userPhone || 'N/A' },
+    { label: 'Survey Name', accessor: (row) => row.surveyName || 'N/A' },
+    { label: 'Question', accessor: (row) => row.question || 'N/A' },
+    { label: 'Answer', accessor: (row) => row.answer || 'N/A' },
+    { label: 'Completed At', accessor: (row) => row.completedAt ? new Date(row.completedAt).toLocaleString() : 'N/A' },
+  ];
+
+  // Flatten the nested structure for this user
+  const flatData = [];
+  userGroup.surveys.forEach(survey => {
+    if (survey && survey.questionAnswerPairs && Array.isArray(survey.questionAnswerPairs)) {
+      survey.questionAnswerPairs.forEach(qa => {
+        flatData.push({
+          userName: userGroup.userName,
+          userEmail: userGroup.userEmail,
+          userPhone: userGroup.userPhone,
+          surveyName: survey.surveyName,
+          question: qa.question,
+          answer: qa.answer,
+          completedAt: survey.completedAt,
+        });
+      });
+    }
+  });
+
+  return { headers, flatData };
+};
+
+/**
+ * Export individual user's survey responses to CSV
+ * Used in User Responses tab to export per-user data
+ */
+export const exportIndividualUserResponseToCSV = (userGroup) => {
+  const { headers, flatData } = prepareIndividualUserResponseData(userGroup);
+
+  if (!headers || flatData.length === 0) {
+    console.warn('No data to export for this user');
+    return;
+  }
+
+  const csvContent = convertToCSV(flatData, headers);
+  const userName = userGroup.userName ? userGroup.userName.replace(/[^a-z0-9]/gi, '_') : 'Unknown_User';
+  const filename = `${userName}_survey_responses_${new Date().toISOString().split('T')[0]}.csv`;
+  downloadCSV(csvContent, filename);
+};
+
+/**
+ * Export individual user's survey responses to Excel
+ * Used in User Responses tab to export per-user data
+ */
+export const exportIndividualUserResponseToExcel = (userGroup) => {
+  const { headers, flatData } = prepareIndividualUserResponseData(userGroup);
+
+  if (!headers || flatData.length === 0) {
+    console.warn('No data to export for this user');
+    return;
+  }
+
+  const userName = userGroup.userName ? userGroup.userName.replace(/[^a-z0-9]/gi, '_') : 'Unknown_User';
+  const filename = `${userName}_survey_responses_${new Date().toISOString().split('T')[0]}.xls`;
+  downloadExcel(flatData, headers, filename);
+};
+
+// ============================================================================
+// Country, State, City Export Functions
+// ============================================================================
+
+/**
+ * Export country list to CSV
+ */
+export const exportCountryListToCSV = (countries) => {
+  if (!countries || countries.length === 0) {
+    console.warn('No countries to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'Country Name', accessor: (row) => row.name || row.title || 'N/A' },
+    { label: 'Phone Code', accessor: (row) => row.phonecode || 'N/A' },
+    { label: 'Currency Code', accessor: (row) => row.currency || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const csvContent = convertToCSV(countries, headers);
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadCSV(csvContent, `countries_${timestamp}.csv`);
+};
+
+/**
+ * Export country list to Excel
+ */
+export const exportCountryListToExcel = (countries) => {
+  if (!countries || countries.length === 0) {
+    console.warn('No countries to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'Country Name', accessor: (row) => row.name || row.title || 'N/A' },
+    { label: 'Phone Code', accessor: (row) => row.phonecode || 'N/A' },
+    { label: 'Currency Code', accessor: (row) => row.currency || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadExcel(countries, headers, `countries_${timestamp}.xls`);
+};
+
+/**
+ * Export state list to CSV
+ */
+export const exportStateListToCSV = (states) => {
+  if (!states || states.length === 0) {
+    console.warn('No states to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'State Name', accessor: (row) => row.name || 'N/A' },
+    { label: 'Country Name', accessor: (row) => row.countryName || row.country_name || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const csvContent = convertToCSV(states, headers);
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadCSV(csvContent, `states_${timestamp}.csv`);
+};
+
+/**
+ * Export state list to Excel
+ */
+export const exportStateListToExcel = (states) => {
+  if (!states || states.length === 0) {
+    console.warn('No states to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'State Name', accessor: (row) => row.name || 'N/A' },
+    { label: 'Country Name', accessor: (row) => row.countryName || row.country_name || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadExcel(states, headers, `states_${timestamp}.xls`);
+};
+
+/**
+ * Export city list to CSV
+ */
+export const exportCityListToCSV = (cities) => {
+  if (!cities || cities.length === 0) {
+    console.warn('No cities to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'City Name', accessor: (row) => row.name || 'N/A' },
+    { label: 'State Name', accessor: (row) => row.state_name || row.stateName || 'N/A' },
+    { label: 'Country Name', accessor: (row) => row.country_name || row.countryName || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const csvContent = convertToCSV(cities, headers);
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadCSV(csvContent, `cities_${timestamp}.csv`);
+};
+
+/**
+ * Export city list to Excel
+ */
+export const exportCityListToExcel = (cities) => {
+  if (!cities || cities.length === 0) {
+    console.warn('No cities to export');
+    return;
+  }
+
+  const headers = [
+    { label: 'City Name', accessor: (row) => row.name || 'N/A' },
+    { label: 'State Name', accessor: (row) => row.state_name || row.stateName || 'N/A' },
+    { label: 'Country Name', accessor: (row) => row.country_name || row.countryName || 'N/A' },
+    { label: 'Total Users', accessor: (row) => row.totalUsers || row.userCount || 0 }
+  ];
+
+  const timestamp = new Date().toISOString().split('T')[0];
+  downloadExcel(cities, headers, `cities_${timestamp}.xls`);
+};

@@ -7,7 +7,14 @@ import CopyRight from "../../common/footer/CopyRight";
 import { useState, useEffect } from "react";
 import { getSurveyResponsesByUser } from "@/api/survey";
 import { useRouter } from "next/navigation";
-import { exportSurveyResponsesToCSV, exportSurveyResponsesToExcel } from "@/utils/exportUtils";
+import {
+  exportSurveyResponsesToCSV,
+  exportSurveyResponsesToExcel,
+  exportIndividualUserResponseToCSV,
+  exportIndividualUserResponseToExcel,
+  exportSingleSurveyResponseToCSV,
+  exportSingleSurveyResponseToExcel
+} from "@/utils/exportUtils";
 
 const ViewSurveyStudies = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +24,9 @@ const ViewSurveyStudies = () => {
   const [expandedUsers, setExpandedUsers] = useState({});
   const [expandedSurveys, setExpandedSurveys] = useState({});
   const [pageSize] = useState(10);
-  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false); // For global export
+  const [userExportDropdowns, setUserExportDropdowns] = useState({}); // For individual user exports
+  const [surveyExportDropdowns, setSurveyExportDropdowns] = useState({}); // For individual survey response exports
   const [exporting, setExporting] = useState(false);
   const router = useRouter();
 
@@ -29,7 +38,7 @@ const ViewSurveyStudies = () => {
       const totalCount = firstPageData?.totalCount || 0;
       const pageSize = 100; // Use larger page size for efficiency
       const totalPages = firstPageData?.totalPages || Math.ceil(totalCount / pageSize);
-      
+
       if (totalCount === 0) {
         return { data: { groupedByUser: [] }, totalCount: 0 };
       }
@@ -39,12 +48,12 @@ const ViewSurveyStudies = () => {
       for (let page = 1; page <= totalPages; page++) {
         pagePromises.push(getSurveyResponsesByUser({ limit: pageSize, page }));
       }
-      
+
       const allPagesData = await Promise.all(pagePromises);
-      
+
       // Combine all groupedByUser data
       const userMap = new Map(); // Use Map for efficient user merging
-      
+
       allPagesData.forEach(pageData => {
         const groupedByUser = pageData?.data?.groupedByUser || pageData?.groupedByUser || [];
         if (Array.isArray(groupedByUser)) {
@@ -91,9 +100,9 @@ const ViewSurveyStudies = () => {
         limit: pageSize,
         page: currentPage
       };
-      
+
       const data = await getSurveyResponsesByUser(filter);
-      
+
       if (data && data.data) {
         setResponsesData(data.data);
         setTotalCount(data.totalCount || 0);
@@ -126,6 +135,14 @@ const ViewSurveyStudies = () => {
     setExpandedSurveys(prev => ({
       ...prev,
       [key]: !prev[key]
+    }));
+  };
+
+  // Toggle individual user export dropdown
+  const toggleUserExportDropdown = (userId) => {
+    setUserExportDropdowns(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
     }));
   };
 
@@ -186,59 +203,33 @@ const ViewSurveyStudies = () => {
                             fetchResponsesData();
                           }}
                           // className="btn btn-default"
-                          style={{ padding: '10px 20px',
+                          style={{
+                            padding: '10px 20px',
                             backgroundColor: '#fff',
                             border: 'none',
                             // color: '#fff',
-                           }}
+                          }}
                           title="Refresh Data"
                         >
                           <i className="fa fa-refresh mr-2"></i> Refresh
                         </button>
                         {responsesData && ((responsesData.groupedByUser && responsesData.groupedByUser.length > 0) || (responsesData.data && responsesData.data.groupedByUser && responsesData.data.groupedByUser.length > 0)) && (
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <div className="user-survey-dropdown-wrapper">
                             <button
                               onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
-                              style={{ padding: '10px 20px',
-                                backgroundColor: '#5cb85c',
-                                border: 'none',
-                                color: '#fff',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                              }}
+                              className="user-survey-btn-export"
                               title="Export Data"
                             >
                               <i className="fa fa-download mr-2"></i> Export
-                              <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '12px' }}></i>
+                              <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`}></i>
                             </button>
                             {exportDropdownOpen && (
                               <>
-                                <div 
-                                  style={{ 
-                                    position: 'fixed', 
-                                    top: 0, 
-                                    left: 0, 
-                                    right: 0, 
-                                    bottom: 0, 
-                                    zIndex: 998 
-                                  }} 
+                                <div
+                                  className="user-survey-dropdown-overlay"
                                   onClick={() => setExportDropdownOpen(false)}
                                 />
-                                <div style={{
-                                  position: 'absolute',
-                                  top: '100%',
-                                  right: 0,
-                                  marginTop: '4px',
-                                  backgroundColor: '#fff',
-                                  border: '1px solid #e5e7eb',
-                                  borderRadius: '6px',
-                                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                  zIndex: 999,
-                                  minWidth: '160px',
-                                  overflow: 'hidden'
-                                }}>
+                                <div className="user-survey-dropdown-menu">
                                   <button
                                     onClick={async () => {
                                       setExporting(true);
@@ -256,21 +247,7 @@ const ViewSurveyStudies = () => {
                                       }
                                     }}
                                     disabled={exporting}
-                                    style={{
-                                      width: '100%',
-                                      padding: '10px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'transparent',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      color: '#374151',
-                                      fontSize: '14px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '8px'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    className="user-survey-dropdown-item"
                                   >
                                     <i className="fa fa-file-text-o"></i> Export as CSV
                                   </button>
@@ -291,22 +268,7 @@ const ViewSurveyStudies = () => {
                                       }
                                     }}
                                     disabled={exporting}
-                                    style={{
-                                      width: '100%',
-                                      padding: '10px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'transparent',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      color: '#374151',
-                                      fontSize: '14px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '8px',
-                                      borderTop: '1px solid #e5e7eb'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    className="user-survey-dropdown-item"
                                   >
                                     <i className="fa fa-file-excel-o"></i> Export as Excel
                                   </button>
@@ -346,25 +308,21 @@ const ViewSurveyStudies = () => {
                                   marginBottom: userIndex < responsesData.groupedByUser.length - 1 ? '24px' : '0',
                                   border: '1px solid #e5e7eb',
                                   borderRadius: '8px',
-                                  overflow: 'hidden',
+                                  // overflow: 'hidden',
                                   backgroundColor: '#fff'
                                 }}
                               >
                                 {/* User Header */}
                                 <div
-                                  onClick={() => toggleUser(userGroup.userId)}
                                   style={{
                                     padding: '16px 20px',
                                     backgroundColor: '#f9fafb',
                                     borderBottom: '1px solid #e5e7eb',
-                                    cursor: 'pointer',
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
                                     transition: 'background-color 0.2s'
                                   }}
-                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
-                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                                 >
                                   <div style={{ flex: 1 }}>
                                     <h5 style={{ margin: 0, color: '#1f2937', fontWeight: '600', fontSize: '18px' }}>
@@ -376,15 +334,11 @@ const ViewSurveyStudies = () => {
                                         style={{
                                           background: 'none',
                                           border: 'none',
-                                          // color: '#3b82f6',
                                           cursor: 'pointer',
                                           padding: 0,
-                                          // textDecoration: 'underline',
                                           fontSize: '18px',
                                           fontWeight: '600'
                                         }}
-                                        // onMouseEnter={(e) => e.currentTarget.style.color = '#2563eb'}
-                                        // onMouseLeave={(e) => e.currentTarget.style.color = '#3b82f6'}
                                       >
                                         {userGroup.userName || 'Unknown User'}
                                       </button>
@@ -397,14 +351,78 @@ const ViewSurveyStudies = () => {
                                       {userGroup.surveys.length} survey{userGroup.surveys.length !== 1 ? 's' : ''} completed
                                     </p>
                                   </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '14px' }}>
-                                      {expandedUsers[userGroup.userId] ? 'Hide' : 'Show'} Surveys
-                                    </span>
-                                    <i
-                                      className={`fa fa-chevron-${expandedUsers[userGroup.userId] ? 'up' : 'down'}`}
-                                      style={{ color: '#6b7280' }}
-                                    ></i>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    {/* Individual User Export Button */}
+                                    {userGroup.surveys && userGroup.surveys.length > 0 && (
+                                      <div className="user-survey-dropdown-wrapper">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleUserExportDropdown(userGroup.userId);
+                                          }}
+                                          className="user-survey-btn-export-small"
+                                          title="Export user responses"
+                                        >
+                                          <i className="fa fa-download"></i> Export
+                                          <i className={`fa fa-chevron-${userExportDropdowns[userGroup.userId] ? 'up' : 'down'}`}></i>
+                                        </button>
+                                        {userExportDropdowns[userGroup.userId] && (
+                                          <>
+                                            {/* Backdrop overlay */}
+                                            <div
+                                              className="user-survey-dropdown-overlay"
+                                              onClick={() => toggleUserExportDropdown(userGroup.userId)}
+                                            />
+                                            {/* Export dropdown menu */}
+                                            <div className="user-survey-dropdown-menu">
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  exportIndividualUserResponseToCSV(userGroup);
+                                                  toggleUserExportDropdown(userGroup.userId);
+                                                }}
+                                                className="user-survey-dropdown-item"
+                                              >
+                                                <i className="fa fa-file-text-o"></i> Export as CSV
+                                              </button>
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  exportIndividualUserResponseToExcel(userGroup);
+                                                  toggleUserExportDropdown(userGroup.userId);
+                                                }}
+                                                className="user-survey-dropdown-item"
+                                              >
+                                                <i className="fa fa-file-excel-o"></i> Export as Excel
+                                              </button>
+                                            </div>
+                                          </>
+                                        )}
+                                      </div>
+                                    )}
+                                    {/* Show/Hide Surveys Toggle */}
+                                    <div
+                                      onClick={() => toggleUser(userGroup.userId)}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        cursor: 'pointer',
+                                        padding: '8px 12px',
+                                        borderRadius: '4px',
+                                        transition: 'background-color 0.2s'
+                                      }}
+                                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    >
+                                      <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                                        {expandedUsers[userGroup.userId] ? 'Hide' : 'Show'} Surveys
+                                      </span>
+                                      <i
+                                        className={`fa fa-chevron-${expandedUsers[userGroup.userId] ? 'up' : 'down'}`}
+                                        style={{ color: '#6b7280' }}
+                                      ></i>
+                                    </div>
                                   </div>
                                 </div>
 
@@ -424,7 +442,6 @@ const ViewSurveyStudies = () => {
                                       >
                                         {/* Survey Header */}
                                         <div
-                                          onClick={() => toggleSurvey(userGroup.userId, survey.surveyId)}
                                           style={{
                                             padding: '12px 16px',
                                             backgroundColor: '#fff',
@@ -439,6 +456,7 @@ const ViewSurveyStudies = () => {
                                           }}
                                           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                                          onClick={() => toggleSurvey(userGroup.userId, survey.surveyId)}
                                         >
                                           <div>
                                             <h6 style={{ margin: '0 0 4px 0', color: '#1f2937', fontWeight: '600', fontSize: '16px' }}>
@@ -457,14 +475,88 @@ const ViewSurveyStudies = () => {
                                               {survey.questionAnswerPairs?.length || 0} question{survey.questionAnswerPairs?.length !== 1 ? 's' : ''} answered
                                             </p>
                                           </div>
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <span style={{ color: '#6b7280', fontSize: '13px' }}>
-                                              {expandedSurveys[`${userGroup.userId}-${survey.surveyId}`] ? 'Hide' : 'Show'} Details
-                                            </span>
-                                            <i
-                                              className={`fa fa-chevron-${expandedSurveys[`${userGroup.userId}-${survey.surveyId}`] ? 'up' : 'down'}`}
-                                              style={{ color: '#6b7280', fontSize: '12px' }}
-                                            ></i>
+
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                            <div className="user-survey-dropdown-wrapper">
+                                              {/* <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  setSurveyExportDropdowns(prev => ({
+                                                    ...prev,
+                                                    [`${userGroup.userId}-${survey.surveyId}`]: !prev[`${userGroup.userId}-${survey.surveyId}`]
+                                                  }));
+                                                }}
+                                                className="user-survey-btn-export-small"
+                                                title="Export Survey"
+                                              >
+                                                <i className="fa fa-download"></i> Export
+                                                <i className={`fa fa-chevron-${surveyExportDropdowns[`${userGroup.userId}-${survey.surveyId}`] ? 'up' : 'down'}`}></i>
+                                              </button> */}
+                                              {surveyExportDropdowns[`${userGroup.userId}-${survey.surveyId}`] && (
+                                                <>
+                                                  <div
+                                                    className="user-survey-dropdown-overlay"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      setSurveyExportDropdowns(prev => ({
+                                                        ...prev,
+                                                        [`${userGroup.userId}-${survey.surveyId}`]: false
+                                                      }));
+                                                    }}
+                                                  />
+                                                  <div className="user-survey-dropdown-menu">
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Create a user object for the export function
+                                                        const user = {
+                                                          name: userGroup.userName,
+                                                          email: userGroup.userEmail,
+                                                          phone: userGroup.userPhone
+                                                        };
+                                                        exportSingleSurveyResponseToCSV(user, survey);
+                                                        setSurveyExportDropdowns(prev => ({
+                                                          ...prev,
+                                                          [`${userGroup.userId}-${survey.surveyId}`]: false
+                                                        }));
+                                                      }}
+                                                      className="user-survey-dropdown-item"
+                                                    >
+                                                      <i className="fa fa-file-text-o"></i> Export as CSV
+                                                    </button>
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Create a user object for the export function
+                                                        const user = {
+                                                          name: userGroup.userName,
+                                                          email: userGroup.userEmail,
+                                                          phone: userGroup.userPhone
+                                                        };
+                                                        exportSingleSurveyResponseToExcel(user, survey);
+                                                        setSurveyExportDropdowns(prev => ({
+                                                          ...prev,
+                                                          [`${userGroup.userId}-${survey.surveyId}`]: false
+                                                        }));
+                                                      }}
+                                                      className="user-survey-dropdown-item"
+                                                    >
+                                                      <i className="fa fa-file-excel-o"></i> Export as Excel
+                                                    </button>
+                                                  </div>
+                                                </>
+                                              )}
+                                            </div>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                              <span style={{ color: '#6b7280', fontSize: '13px' }}>
+                                                {expandedSurveys[`${userGroup.userId}-${survey.surveyId}`] ? 'Hide' : 'Show'} Details
+                                              </span>
+                                              <i
+                                                className={`fa fa-chevron-${expandedSurveys[`${userGroup.userId}-${survey.surveyId}`] ? 'up' : 'down'}`}
+                                                style={{ color: '#6b7280', fontSize: '12px' }}
+                                              ></i>
+                                            </div>
                                           </div>
                                         </div>
 
@@ -476,16 +568,10 @@ const ViewSurveyStudies = () => {
                                                 {survey.questionAnswerPairs.map((qa, qaIndex) => (
                                                   <div
                                                     key={qaIndex}
-                                                    style={{
-                                                      marginBottom: qaIndex < survey.questionAnswerPairs.length - 1 ? '16px' : '0',
-                                                      padding: '16px',
-                                                      backgroundColor: '#fff',
-                                                      borderRadius: '4px',
-                                                      borderLeft: '4px solid #5cb85c'
-                                                    }}
+                                                    className="user-survey-question-item"
                                                   >
-                                                    <div style={{ marginBottom: '12px' }}>
-                                                      <strong style={{ color: '#1f2937', fontSize: '15px', display: 'block', marginBottom: '4px' }}>
+                                                    <div className="user-survey-question-wrapper">
+                                                      <strong className="user-survey-question-text">
                                                         Q{qa.questionIndex}: {qa.question}
                                                       </strong>
                                                       {/* {qa.questionId && (
@@ -498,20 +584,13 @@ const ViewSurveyStudies = () => {
                                                         </span>
                                                       )} */}
                                                       {qa.options && qa.options.length > 0 && (
-                                                        <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
+                                                        <div className="user-survey-question-options">
                                                           <strong>Available Options:</strong> {qa.options.join(', ')}
                                                         </div>
                                                       )}
                                                     </div>
-                                                    <div style={{ 
-                                                      color: '#374151', 
-                                                      fontSize: '14px', 
-                                                      padding: '12px',
-                                                      backgroundColor: '#f9fafb',
-                                                      borderRadius: '4px',
-                                                      border: '1px solid #e5e7eb'
-                                                    }}>
-                                                      <strong style={{ color: '#5cb85c' }}>User's Answer:</strong> <span style={{ marginLeft: '8px' }}>{qa.answer || 'No answer provided'}</span>
+                                                    <div className="user-survey-answer-box">
+                                                      <strong className="user-survey-answer-label">User's Answer:</strong> <span className="user-survey-answer-text">{qa.answer || 'No answer provided'}</span>
                                                     </div>
                                                   </div>
                                                 ))}
@@ -585,7 +664,7 @@ const ViewSurveyStudies = () => {
                 {/* End .col */}
               </div>
               {/* End .row */}
-              <CopyRight/>
+              <CopyRight />
             </div>
             {/* End .col */}
           </div>

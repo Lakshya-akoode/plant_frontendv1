@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
 import MobileMenu from "../../common/header/MobileMenu";
@@ -6,15 +7,18 @@ import Filtering from "./Filtering";
 import Pagination from "./Pagination";
 import SearchBox from "./SearchBox";
 import CopyRight from "../../common/footer/CopyRight";
+import { exportCountryListToCSV, exportCountryListToExcel } from "../../../utils/exportUtils";
 
 const index = () => {
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [countryList, setCountryList] = useState([]);
   return (
     <>
       {/* <!-- Main Header Nav --> */}
       <Header />
 
       {/* <!--  Mobile Menu --> */}
-      
+
 
       <div className="dashboard_sidebar_menu">
         <div
@@ -63,17 +67,47 @@ const index = () => {
                 <div className="col-lg-8 col-xl-8">
                   <div className="candidate_revew_select style2 text-end mb30-991">
                     <ul className="mb0">
-                      {/* <li className="list-inline-item">
-                        <div className="candidate_revew_search_box course fn-520">
-                          <SearchBox />
-                        </div>
-                      </li> */}
-                      {/* End li */}
+                      <li className="list-inline-item">
+                        <div className="location-export-wrapper">
+                          <button
+                            onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                            disabled={!countryList || countryList.length === 0}
+                            className="location-export-btn"
+                          >
+                            <i className="fa fa-download"></i> Export
+                            <i className={`fa fa-chevron-${exportDropdownOpen ? 'up' : 'down'}`}></i>
+                          </button>
 
-                      {/* <li className="list-inline-item">
-                        <Filtering />
-                      </li> */}
-                      {/* End li */}
+                          {exportDropdownOpen && (
+                            <>
+                              <div
+                                style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 998 }}
+                                onClick={() => setExportDropdownOpen(false)}
+                              />
+                              <div className="location-export-dropdown">
+                                <button
+                                  onClick={() => {
+                                    exportCountryListToCSV(countryList);
+                                    setExportDropdownOpen(false);
+                                  }}
+                                  className="location-export-item"
+                                >
+                                  <i className="fa fa-file-text-o"></i> Export as CSV
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    exportCountryListToExcel(countryList);
+                                    setExportDropdownOpen(false);
+                                  }}
+                                  className="location-export-item"
+                                >
+                                  <i className="fa fa-file-excel-o"></i> Export as Excel
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -83,8 +117,8 @@ const index = () => {
                   <div className="my_dashboard_review mb40" style={{ marginTop: '10px' }}>
                     <div className="property_table">
                       <div className="table-responsive mt0" style={{
-                        border: 'none', 
-                        boxShadow: 'none', 
+                        border: 'none',
+                        boxShadow: 'none',
                         overflow: 'hidden',
                         scrollbarWidth: 'none',
                         msOverflowStyle: 'none'
@@ -94,7 +128,7 @@ const index = () => {
                             display: none;
                           }
                         `}</style>
-                        <TableData />
+                        <TableData onDataUpdate={setCountryList} />
                       </div>
                       {/* End .table-responsive */}
 
@@ -109,7 +143,7 @@ const index = () => {
                 {/* End .col */}
               </div>
               {/* End .row */}
-<CopyRight/>
+              <CopyRight />
               {/* <div className="row mt50">
                 <div className="col-lg-12">
                   <div className="copyright-widget text-center">
