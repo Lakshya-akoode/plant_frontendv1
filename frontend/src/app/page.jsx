@@ -22,7 +22,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Plant Chat® - Plant-Based Wellness Platform",
     description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
-    images: ["/img/plant-chat-logo.svg"],
+    images: ["/public/images/plant-chat-logo.svg"],
   },
 };
 
