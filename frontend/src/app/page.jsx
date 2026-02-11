@@ -10,7 +10,7 @@ export const metadata = {
     siteName: "Plant Chat®",
     images: [
       {
-        url: "/images/plant-chat-logo.svg",
+        url: "/public/images/plant-chat-logo.svg",
         width: 1200,
         height: 630,
       },
