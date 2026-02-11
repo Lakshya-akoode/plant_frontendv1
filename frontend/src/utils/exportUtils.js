@@ -476,7 +476,7 @@ const prepareIndividualUserResponseData = (userGroup) => {
  * Export individual user's survey responses to CSV
  * Used in User Responses tab to export per-user data
  */
-export const exportIndividualUserResponseToCSV = (userGroup) => {
+export const exportIndividualUserResponseToCSV = (userGroup) =>  {
   const { headers, flatData } = prepareIndividualUserResponseData(userGroup);
 
   if (!headers || flatData.length === 0) {
