@@ -1,28 +1,72 @@
-"use client";
+import Link from "next/link";
 import Image from "next/image";
-import { deleteSurveyAPI } from "../../../api/survey";
-import { useState, useEffect } from "react";
+import { deleteSurveyAPI, getSurveyResponsesBySurveyId } from "../../../api/survey";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
+import { exportSurveyDetailResponsesToCSV, exportSurveyDetailResponsesToExcel } from "@/utils/exportUtils";
 
-const TableData = ({surveyList, setSurveyList}) => {
-    const router = useRouter();
-    
-    const deleteSurvey = async (id) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this survey study?");
-        if (!isConfirmed) return;
-    
-        try {
-          const data = await deleteSurveyAPI(id);
-          
-          toast.success(data.message);
-          setSurveyList((prevSurveyList) => prevSurveyList.filter((survey) => survey._id !== id));
-        } catch (error) {
-          toast.error(error.message || "Failed to delete Survey");
-          console.error("Delete error:", error);
+const TableData = ({ surveyList, setSurveyList }) => {
+  const router = useRouter();
+  const [exportLoading, setExportLoading] = useState({});
+  const [exportDropdown, setExportDropdown] = useState({});
+
+  // Toggle export dropdown (closed via overlay click, same as user response section)
+  const toggleExportDropdown = (id) => {
+    setExportDropdown(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const deleteSurvey = async (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this survey study?");
+    if (!isConfirmed) return;
+
+    try {
+      const data = await deleteSurveyAPI(id);
+
+      toast.success(data.message);
+      setSurveyList((prevSurveyList) => prevSurveyList.filter((survey) => survey._id !== id));
+    } catch (error) {
+      toast.error(error.message || "Failed to delete Survey");
+      console.error("Delete error:", error);
+    }
+  };
+
+  const handleExport = async (e, id, type) => {
+    e.stopPropagation();
+    // Close dropdown
+    setExportDropdown(prev => ({ ...prev, [id]: false }));
+
+    // Set loading state for this specific survey
+    setExportLoading(prev => ({ ...prev, [id]: true }));
+
+    try {
+      const response = await getSurveyResponsesBySurveyId(id);
+
+      if (response.status === 'success' && response.data) {
+        if (response.data.responses && response.data.responses.length > 0) {
+          if (type === 'csv') {
+            exportSurveyDetailResponsesToCSV(response.data);
+          } else {
+            exportSurveyDetailResponsesToExcel(response.data);
+          }
+          toast.success("Export downloaded successfully");
+        } else {
+          toast.info("No responses found for this survey");
         }
-      };
-  
+      } else {
+        toast.error("Failed to fetch survey data");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export survey data");
+    } finally {
+      setExportLoading(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
   let theadConent = [
     "Study Name",
     "Questions Count",
@@ -30,13 +74,13 @@ const TableData = ({surveyList, setSurveyList}) => {
     "Status",
     "Action",
   ];
-  
+
   let tbodyContent = surveyList?.slice(0, 10)?.map((item) => (
-    <tr key={item._id} style={{ 
+    <tr key={item._id} style={{
       backgroundColor: '#f8f9fa',
       borderBottom: '1px solid #e5e7eb'
     }}>
-      <td scope="row" style={{ 
+      <td scope="row" style={{
         padding: '12px 15px',
         border: 'none',
         color: '#374151',
@@ -49,7 +93,7 @@ const TableData = ({surveyList, setSurveyList}) => {
       </td>
       {/* End td */}
 
-      <td style={{ 
+      <td style={{
         padding: '12px 15px',
         border: 'none',
         color: '#374151',
@@ -70,7 +114,7 @@ const TableData = ({surveyList, setSurveyList}) => {
       </td>
       {/* End td */}
 
-      <td style={{ 
+      <td style={{
         padding: '12px 15px',
         border: 'none',
         color: '#374151',
@@ -86,7 +130,7 @@ const TableData = ({surveyList, setSurveyList}) => {
       </td>
       {/* End td */}
 
-      <td style={{ 
+      <td style={{
         padding: '12px 15px',
         border: 'none',
         textAlign: 'center',
@@ -105,7 +149,7 @@ const TableData = ({surveyList, setSurveyList}) => {
       </td>
       {/* End td */}
 
-      <td style={{ 
+      <td style={{
         padding: '12px 15px',
         border: 'none',
         textAlign: 'center',
@@ -116,7 +160,7 @@ const TableData = ({surveyList, setSurveyList}) => {
           justifyContent: 'center',
           gap: '5px'
         }}>
-          <button 
+          <button
             // onClick={() => router.push(`/cmsadminlogin/view-surveystudies/${item._id}`)}
             onClick={() => router.push(`/cmsadminlogin/view-survey-studies`)}
             style={{
@@ -139,7 +183,7 @@ const TableData = ({surveyList, setSurveyList}) => {
             }}></span>
           </button>
 
-          <button 
+          <button
             onClick={() => router.push(`/cmsadminlogin/edit-survey/${item._id}`)}
             style={{
               backgroundColor: '#f3f4f6',
@@ -160,8 +204,8 @@ const TableData = ({surveyList, setSurveyList}) => {
               fontSize: '16px'
             }}></span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => deleteSurvey(item._id)}
             style={{
               backgroundColor: '#f3f4f6',
@@ -182,6 +226,56 @@ const TableData = ({surveyList, setSurveyList}) => {
               fontSize: '16px'
             }}></span>
           </button>
+
+          {/* Export Dropdown - same UI as user response section */}
+          <div className="user-survey-dropdown-wrapper">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExportDropdown(item._id);
+              }}
+              className="user-survey-btn-export-small"
+              title="Export all responses for this survey study"
+              disabled={exportLoading[item._id]}
+              style={{ opacity: exportLoading[item._id] ? 0.7 : 1, cursor: exportLoading[item._id] ? 'wait' : 'pointer' }}
+            >
+              {exportLoading[item._id] ? (
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{ width: '1rem', height: '1rem', marginRight: '6px' }}></span>
+              ) : (
+                <i className="fa fa-download"></i>
+              )}
+              Export
+              <i className={`fa fa-chevron-${exportDropdown[item._id] ? 'up' : 'down'}`}></i>
+            </button>
+            {exportDropdown[item._id] && (
+              <>
+                <div
+                  className="user-survey-dropdown-overlay"
+                  onClick={() => toggleExportDropdown(item._id)}
+                />
+                <div className="user-survey-dropdown-menu">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExport(e, item._id, 'csv');
+                    }}
+                    className="user-survey-dropdown-item"
+                  >
+                    <i className="fa fa-file-text-o"></i> Export as CSV
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExport(e, item._id, 'excel');
+                    }}
+                    className="user-survey-dropdown-item"
+                  >
+                    <i className="fa fa-file-excel-o"></i> Export as Excel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </td>
       {/* End td */}
