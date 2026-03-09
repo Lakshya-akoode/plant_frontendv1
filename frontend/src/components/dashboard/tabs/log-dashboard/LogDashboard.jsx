@@ -12,7 +12,6 @@ import WeeklyStats from './WeeklyStats';
 import ActivityCharts from './ActivityCharts';
 import StreakCard from './StreakCard';
 import InsightsPanel from './InsightsPanel';
-import GenericDashboard from './GenericDashboard';
 
 export default function LogDashboard({ refreshKey = 0, isCannabisUser = false }) {
     const [growthLogs, setGrowthLogs] = useState([]);
@@ -27,7 +26,6 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
             const userId = userData._id;
 
             if (isCannabisUser && userId) {
-                // Cannabis users: fetch growth + extract specific history
                 const [growth, extract] = await Promise.all([
                     getPlantGrowthLogHistory(userId),
                     getPlantExtractLogHistory(userId),
@@ -36,11 +34,9 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
                 setExtractLogs(extract);
             }
 
-            // Always load universal cache (works for all users)
             setUniversalLogs(getUniversalLogs());
         } catch (err) {
-            console.log('Dashboard data load error:', err?.message);
-            // Fallback: still load universal logs
+            console.log('Dashboard load error:', err?.message);
             setUniversalLogs(getUniversalLogs());
         } finally {
             setLoading(false);
@@ -53,7 +49,6 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
 
     return (
         <div className="log-dashboard">
-            {/* Header */}
             <LogDashboardHeader isCannabisUser={isCannabisUser} />
 
             {loading ? (
@@ -61,36 +56,55 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
                     <div className="log-dashboard__spinner" />
                     <span>Loading your dashboard…</span>
                 </div>
-            ) : isCannabisUser ? (
-                <>
-                    {/* Cannabis user: full plant analytics */}
-                    <TodaySummary growthLogs={growthLogs} extractLogs={extractLogs} />
-                    <WeeklyStats growthLogs={growthLogs} extractLogs={extractLogs} />
-                    <ActivityCharts growthLogs={growthLogs} extractLogs={extractLogs} />
-                    <StreakCard growthLogs={growthLogs} extractLogs={extractLogs} />
-                    <InsightsPanel growthLogs={growthLogs} extractLogs={extractLogs} />
-                </>
             ) : (
                 <>
-                    {/* Non-cannabis user: generic activity dashboard */}
-                    <GenericDashboard universalLogs={universalLogs} />
+                    {/* Same layout for ALL users — data source adapts by type */}
+                    <TodaySummary
+                        growthLogs={growthLogs}
+                        extractLogs={extractLogs}
+                        universalLogs={universalLogs}
+                        isCannabisUser={isCannabisUser}
+                    />
+                    <WeeklyStats
+                        growthLogs={growthLogs}
+                        extractLogs={extractLogs}
+                        universalLogs={universalLogs}
+                        isCannabisUser={isCannabisUser}
+                    />
+                    <ActivityCharts
+                        growthLogs={growthLogs}
+                        extractLogs={extractLogs}
+                        universalLogs={universalLogs}
+                        isCannabisUser={isCannabisUser}
+                    />
+                    <StreakCard
+                        growthLogs={growthLogs}
+                        extractLogs={extractLogs}
+                        universalLogs={universalLogs}
+                        isCannabisUser={isCannabisUser}
+                    />
+                    <InsightsPanel
+                        growthLogs={growthLogs}
+                        extractLogs={extractLogs}
+                        universalLogs={universalLogs}
+                        isCannabisUser={isCannabisUser}
+                    />
+
+                    <div className="dashboard-section">
+                        <div className="add-log-cta">
+                            <div className="add-log-cta__text">
+                                <span className="add-log-cta__title">📝 Ready to log?</span>
+                                <span className="add-log-cta__sub">
+                                    {isCannabisUser
+                                        ? 'Use the forms below to record your plant growth or extract use.'
+                                        : 'Use the forms below to record your daily health and activity logs.'}
+                                </span>
+                            </div>
+                            <div className="add-log-cta__arrow">↓</div>
+                        </div>
+                    </div>
                 </>
             )}
-
-            {/* Section 6: Add Log CTA — always shown */}
-            <div className="dashboard-section">
-                <div className="add-log-cta">
-                    <div className="add-log-cta__text">
-                        <span className="add-log-cta__title">📝 Ready to log?</span>
-                        <span className="add-log-cta__sub">
-                            {isCannabisUser
-                                ? 'Use the forms below to record your plant growth or extract use.'
-                                : 'Use the forms below to record your daily health and activity logs.'}
-                        </span>
-                    </div>
-                    <div className="add-log-cta__arrow">↓</div>
-                </div>
-            </div>
         </div>
     );
 }
