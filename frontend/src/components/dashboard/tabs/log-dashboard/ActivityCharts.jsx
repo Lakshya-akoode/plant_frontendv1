@@ -14,26 +14,14 @@ import {
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 function getLast7Days() {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
+    return Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
-        d.setDate(d.getDate() - i);
-        days.push(d);
-    }
-    return days;
+        d.setDate(d.getDate() - (6 - i));
+        return d;
+    });
 }
 
 function dateLabel(d) {
@@ -41,11 +29,7 @@ function dateLabel(d) {
 }
 
 function isSameDay(a, b) {
-    return (
-        a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate()
-    );
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
 const commonOptions = {
@@ -76,107 +60,139 @@ const commonOptions = {
     },
 };
 
-export default function ActivityCharts({ growthLogs = [], extractLogs = [] }) {
+const ratingOptions = {
+    ...commonOptions,
+    scales: {
+        ...commonOptions.scales,
+        y: { ...commonOptions.scales.y, min: 0, max: 10, ticks: { ...commonOptions.scales.y.ticks, stepSize: 2 } },
+    },
+};
+
+export default function ActivityCharts({ growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     const last7 = getLast7Days();
     const labels = last7.map(dateLabel);
 
-    // Chart 1: Entries per day (bar)
-    const growthPerDay = last7.map(day =>
-        growthLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length
-    );
-    const extractPerDay = last7.map(day =>
-        extractLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length
-    );
+    if (isCannabisUser) {
+        // --- Cannabis: bar (growth vs extract) + 2 line charts ---
+        const growthPerDay = last7.map(day => growthLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length);
+        const extractPerDay = last7.map(day => extractLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length);
 
-    const entriesData = {
+        const entriesData = {
+            labels,
+            datasets: [
+                { label: 'Plant Growth', data: growthPerDay, backgroundColor: 'rgba(40,167,69,0.75)', borderRadius: 6, borderSkipped: false },
+                { label: 'Extract Use', data: extractPerDay, backgroundColor: 'rgba(111,66,193,0.75)', borderRadius: 6, borderSkipped: false },
+            ],
+        };
+
+        const recentGrowth = [...growthLogs].sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)).slice(-7);
+        const recentExtract = [...extractLogs].sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)).slice(-7);
+
+        const growthRatingData = {
+            labels: recentGrowth.map(l => l.createdAt ? new Date(l.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '?'),
+            datasets: [{ label: 'Growth Rating', data: recentGrowth.map(l => Number(l.growthSuccessRating) || 0), borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.12)', tension: 0.4, fill: true, pointRadius: 5, pointBackgroundColor: '#28a745', pointBorderColor: '#fff', pointBorderWidth: 2 }],
+        };
+
+        const extractDeltaData = {
+            labels: recentExtract.map(l => l.createdAt ? new Date(l.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '?'),
+            datasets: [{ label: 'Improvement Score', data: recentExtract.map(l => Number(l.beforeAfterDeltaScores) || 0), borderColor: '#6f42c1', backgroundColor: 'rgba(111,66,193,0.12)', tension: 0.4, fill: true, pointRadius: 5, pointBackgroundColor: '#6f42c1', pointBorderColor: '#fff', pointBorderWidth: 2 }],
+        };
+
+        return (
+            <div className="dashboard-section">
+                <div className="dashboard-section__heading">
+                    <span className="dashboard-section__tag">ACTIVITY</span>
+                    <h3 className="dashboard-section__title">Visual Activity Charts</h3>
+                </div>
+                <div className="charts-grid">
+                    <div className="chart-card">
+                        <div className="chart-card__header"><span className="chart-card__title">📅 Entries Per Day — Last 7 Days</span></div>
+                        <div className="chart-card__legend"><span style={{ color: '#28a745' }}>■ Plant Growth</span><span style={{ color: '#6f42c1', marginLeft: '12px' }}>■ Extract Use</span></div>
+                        <div className="chart-card__body"><Bar data={entriesData} options={commonOptions} /></div>
+                    </div>
+                    <div className="chart-card">
+                        <div className="chart-card__header"><span className="chart-card__title">🌱 Growth Success Rating Trend</span></div>
+                        <div className="chart-card__body">
+                            {recentGrowth.length > 0 ? <Line data={growthRatingData} options={ratingOptions} /> : <div className="chart-empty"><span>🌱 Submit plant growth logs to see your rating trend</span></div>}
+                        </div>
+                    </div>
+                    <div className="chart-card">
+                        <div className="chart-card__header"><span className="chart-card__title">💊 Extract Improvement Score Trend</span></div>
+                        <div className="chart-card__body">
+                            {recentExtract.length > 0 ? <Line data={extractDeltaData} options={ratingOptions} /> : <div className="chart-empty"><span>💊 Submit extract use logs to see your improvement trend</span></div>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Non-cannabis: bar chart per log type per day (from universalLogs) ---
+    const LOG_TYPES = ['diet', 'wellness', 'lifestyle', 'parenting'];
+    const LOG_COLORS = {
+        diet: 'rgba(245,158,11,0.75)',
+        wellness: 'rgba(59,130,246,0.75)',
+        lifestyle: 'rgba(16,185,129,0.75)',
+        parenting: 'rgba(236,72,153,0.75)',
+    };
+
+    const presentTypes = [...new Set(universalLogs.map(l => l.type))].filter(t => LOG_TYPES.includes(t));
+
+    const allPerDay = last7.map(day => universalLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length);
+
+    const barData = {
         labels,
-        datasets: [
-            {
-                label: 'Plant Growth',
-                data: growthPerDay,
-                backgroundColor: 'rgba(40,167,69,0.75)',
+        datasets: presentTypes.length > 0
+            ? presentTypes.map(type => ({
+                label: type.charAt(0).toUpperCase() + type.slice(1),
+                data: last7.map(day => universalLogs.filter(l => l.type === type && l.createdAt && isSameDay(new Date(l.createdAt), day)).length),
+                backgroundColor: LOG_COLORS[type] || 'rgba(91,106,240,0.75)',
                 borderRadius: 6,
                 borderSkipped: false,
-            },
-            {
-                label: 'Extract Use',
-                data: extractPerDay,
-                backgroundColor: 'rgba(111,66,193,0.75)',
+            }))
+            : [{
+                label: 'All Logs',
+                data: allPerDay,
+                backgroundColor: 'rgba(91,106,240,0.75)',
                 borderRadius: 6,
                 borderSkipped: false,
-            },
-        ],
+            }],
     };
 
-    // Chart 2: Growth success rating trend (last 7 entries)
-    const recentGrowth = [...growthLogs]
-        .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0))
-        .slice(-7);
-
-    const growthRatingData = {
-        labels: recentGrowth.map(l =>
-            l.createdAt
-                ? new Date(l.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                : '?'
-        ),
-        datasets: [
-            {
-                label: 'Growth Rating',
-                data: recentGrowth.map(l => Number(l.growthSuccessRating) || 0),
-                borderColor: '#28a745',
-                backgroundColor: 'rgba(40,167,69,0.12)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 5,
-                pointBackgroundColor: '#28a745',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-            },
-        ],
+    // Activity frequency line (total entries per day as a trend)
+    const frequencyData = {
+        labels,
+        datasets: [{
+            label: 'Total Entries',
+            data: allPerDay,
+            borderColor: '#5b6af0',
+            backgroundColor: 'rgba(91,106,240,0.12)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointBackgroundColor: '#5b6af0',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+        }],
     };
 
-    // Chart 3: Extract improvement scores trend (last 7 entries)
-    const recentExtract = [...extractLogs]
-        .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0))
-        .slice(-7);
-
-    const extractDeltaData = {
-        labels: recentExtract.map(l =>
-            l.createdAt
-                ? new Date(l.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                : '?'
-        ),
-        datasets: [
-            {
-                label: 'Improvement Score',
-                data: recentExtract.map(l => Number(l.beforeAfterDeltaScores) || 0),
-                borderColor: '#6f42c1',
-                backgroundColor: 'rgba(111,66,193,0.12)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 5,
-                pointBackgroundColor: '#6f42c1',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-            },
-        ],
+    // Weekly cumulative trend
+    const cumulative = allPerDay.reduce((acc, val, i) => { acc.push((acc[i - 1] || 0) + val); return acc; }, []);
+    const cumulativeData = {
+        labels,
+        datasets: [{
+            label: 'Cumulative Logs',
+            data: cumulative,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16,185,129,0.12)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+        }],
     };
-
-    const ratingOptions = {
-        ...commonOptions,
-        scales: {
-            ...commonOptions.scales,
-            y: {
-                ...commonOptions.scales.y,
-                min: 0,
-                max: 10,
-                ticks: { ...commonOptions.scales.y.ticks, stepSize: 2 },
-            },
-        },
-    };
-
-    const hasGrowthData = recentGrowth.length > 0;
-    const hasExtractData = recentExtract.length > 0;
 
     return (
         <div className="dashboard-section">
@@ -184,51 +200,28 @@ export default function ActivityCharts({ growthLogs = [], extractLogs = [] }) {
                 <span className="dashboard-section__tag">ACTIVITY</span>
                 <h3 className="dashboard-section__title">Visual Activity Charts</h3>
             </div>
-
             <div className="charts-grid">
-                {/* Bar chart */}
                 <div className="chart-card">
-                    <div className="chart-card__header">
-                        <span className="chart-card__title">📅 Entries Per Day — Last 7 Days</span>
-                    </div>
-                    <div className="chart-card__legend">
-                        <span style={{ color: '#28a745' }}>■ Plant Growth</span>
-                        <span style={{ color: '#6f42c1', marginLeft: '12px' }}>■ Extract Use</span>
-                    </div>
+                    <div className="chart-card__header"><span className="chart-card__title">📅 Entries Per Day — Last 7 Days</span></div>
+                    {presentTypes.length > 1 && (
+                        <div className="chart-card__legend">
+                            {presentTypes.map(t => <span key={t} style={{ color: LOG_COLORS[t], marginRight: '10px' }}>■ {t.charAt(0).toUpperCase() + t.slice(1)}</span>)}
+                        </div>
+                    )}
                     <div className="chart-card__body">
-                        <Bar data={entriesData} options={{ ...commonOptions, plugins: { ...commonOptions.plugins, legend: { display: false } } }} />
+                        {universalLogs.length > 0 ? <Bar data={barData} options={commonOptions} /> : <div className="chart-empty"><span>📋 Submit logs to see your daily activity chart</span></div>}
                     </div>
                 </div>
-
-                {/* Growth rating line chart */}
                 <div className="chart-card">
-                    <div className="chart-card__header">
-                        <span className="chart-card__title">🌱 Growth Success Rating Trend</span>
-                    </div>
+                    <div className="chart-card__header"><span className="chart-card__title">📈 Daily Logging Frequency</span></div>
                     <div className="chart-card__body">
-                        {hasGrowthData ? (
-                            <Line data={growthRatingData} options={ratingOptions} />
-                        ) : (
-                            <div className="chart-empty">
-                                <span>🌱 Submit plant growth logs to see your rating trend</span>
-                            </div>
-                        )}
+                        {universalLogs.length > 0 ? <Line data={frequencyData} options={commonOptions} /> : <div className="chart-empty"><span>📈 Log entries to see your daily frequency trend</span></div>}
                     </div>
                 </div>
-
-                {/* Extract delta line chart */}
                 <div className="chart-card">
-                    <div className="chart-card__header">
-                        <span className="chart-card__title">💊 Extract Improvement Score Trend</span>
-                    </div>
+                    <div className="chart-card__header"><span className="chart-card__title">📊 Cumulative Logs This Week</span></div>
                     <div className="chart-card__body">
-                        {hasExtractData ? (
-                            <Line data={extractDeltaData} options={ratingOptions} />
-                        ) : (
-                            <div className="chart-empty">
-                                <span>💊 Submit extract use logs to see your improvement trend</span>
-                            </div>
-                        )}
+                        {universalLogs.length > 0 ? <Line data={cumulativeData} options={commonOptions} /> : <div className="chart-empty"><span>📊 Start logging to see your cumulative progress</span></div>}
                     </div>
                 </div>
             </div>
