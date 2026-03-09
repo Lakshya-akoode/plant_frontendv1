@@ -10,8 +10,10 @@ import { addPlantGrowthlogAPI, getPlantGrowthlogById } from "../../../api/fronte
 import { addPlantExtractlogAPI, getPlantExtractlogById } from "../../../api/frontend/plantextract";
 import { addParentinglogAPI, getParentinglogById } from "../../../api/frontend/parenting";
 
-import {getPlantInteractionById } from "../../../api/frontend/plantinteraction";
+import { getPlantInteractionById } from "../../../api/frontend/plantinteraction";
 import { getBasicidentityById } from "../../../api/frontend/basicidentity.ts";
+import { appendGrowthLogEntry, appendExtractLogEntry, appendUniversalLogEntry } from "../../../api/frontend/logDashboard";
+import LogDashboard from './log-dashboard/LogDashboard';
 
 const LogsTab = ({ user }) => {
   console.log("user")
@@ -20,6 +22,7 @@ const LogsTab = ({ user }) => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [getnumberOfChildren, setGetNumberOfChildren] = useState('');
+  const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [getplantTypes, setGetPlantTypes] = useState([]);
   const [formData, setFormData] = useState({
     mealType: '',
@@ -91,12 +94,12 @@ const LogsTab = ({ user }) => {
   const [parentingErrors, setParentingErrors] = useState({});
 
   const logTypes = [
-    { id: 'diet', name: 'Diet Log', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/info-icon/diet.svg', color: '#28a745' },
-    { id: 'wellness', name: 'Wellness Symptoms', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/log-icons/wellness.svg', color: '#dc3545' },
-    { id: 'lifestyle', name: 'Lifestyle Activities', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/info-icon/lifestyle.svg', color: '#007bff' },
-    { id: 'plant-growth', name: 'Plant Growth', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/info-icon/plant.svg', color: '#28a745' },
-    { id: 'plant-extract', name: 'Plant Extract Use', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/log-icons/plant-extract.svg', color: '#6f42c1' },
-    { id: 'parenting', name: 'Parenting & Family', icon: process.env.NEXT_PUBLIC_SITE_URL+'public/img/log-icons/parenting.svg', color: '#fd7e14' }
+    { id: 'diet', name: 'Diet Log', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/info-icon/diet.svg', color: '#28a745' },
+    { id: 'wellness', name: 'Wellness Symptoms', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/log-icons/wellness.svg', color: '#dc3545' },
+    { id: 'lifestyle', name: 'Lifestyle Activities', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/info-icon/lifestyle.svg', color: '#007bff' },
+    { id: 'plant-growth', name: 'Plant Growth', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/info-icon/plant.svg', color: '#28a745' },
+    { id: 'plant-extract', name: 'Plant Extract Use', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/log-icons/plant-extract.svg', color: '#6f42c1' },
+    { id: 'parenting', name: 'Parenting & Family', icon: process.env.NEXT_PUBLIC_SITE_URL + 'public/img/log-icons/parenting.svg', color: '#fd7e14' }
   ];
 
   const mockLogs = {
@@ -142,37 +145,37 @@ const LogsTab = ({ user }) => {
     } else if (activeLogType === 'parenting') {
       loadParentingLogData();
     }
-    
+
   }, [activeLogType]);
-useEffect(() => {
+  useEffect(() => {
     const fetchPlantInteraction = async () => {
       setLoading(true);
       try {
-          const userData = JSON.parse(localStorage.getItem("user") || "{}");
-          const userId = userData._id;
-          
-          if (userId) {
-            // TODO: Add API call when plant interaction API is ready
-            const response = await getPlantInteractionById(userId);
-            if (response.status === 'success' && response.data) {
-              const apiData = response.data;
-              setGetPlantTypes(apiData.plantTypes || []);
-              if(Array.isArray(apiData.plantTypes) &&
-              apiData.plantTypes.includes("Cannabis")){
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const userId = userData._id;
+
+        if (userId) {
+          // TODO: Add API call when plant interaction API is ready
+          const response = await getPlantInteractionById(userId);
+          if (response.status === 'success' && response.data) {
+            const apiData = response.data;
+            setGetPlantTypes(apiData.plantTypes || []);
+            if (Array.isArray(apiData.plantTypes) &&
+              apiData.plantTypes.includes("Cannabis")) {
               setActiveLogType('plant-growth')
-              }
-              // console.log('Plant interaction data loaded:', apiData);
             }
-            else {
-              console.log('No plant interaction found for user, using default values:', response.message);
-            }
+            // console.log('Plant interaction data loaded:', apiData);
           }
-        } catch (error) {
-        console.log('No plant interaction found for user, using default values:', error.message);
-        } finally {
-          setLoading(false);
+          else {
+            console.log('No plant interaction found for user, using default values:', response.message);
+          }
         }
-      };
+      } catch (error) {
+        console.log('No plant interaction found for user, using default values:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchPlantInteraction();
 
@@ -183,13 +186,13 @@ useEffect(() => {
         const userId = userData._id;
         // setFullName(userData.name || '');
         // console.log("response basic identity")
-        
+
         if (userId) {
           // Only fetch from API if no data prop is provided
           const response = await getBasicidentityById(userId);
-          
-          setGetNumberOfChildren(response.data.numberOfChildren  || 'None');
-          
+
+          setGetNumberOfChildren(response.data.numberOfChildren || 'None');
+
         }
       } catch (error) {
         console.log('No basic identity data found for user, using default values:', error.message);
@@ -204,13 +207,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getDietlogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           // console.log('Diet log data loaded:', apiData);
-          
+
           setFormData({
             mealType: apiData.mealType || '',
             dietaryPreference: apiData.dietaryPreference || '',
@@ -231,13 +234,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getWellnessSymptomLogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           // console.log('Wellness symptom log data loaded:', apiData);
-          
+
           setWellnessFormData({
             fatigue: apiData.fatigue || '',
             pain: apiData.pain || '',
@@ -259,13 +262,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getLifestylelogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           console.log('Lifestyle activity log data loaded:', apiData);
-          
+
           setLifestyleFormData({
             exerciseType: apiData.exerciseType || '',
             exerciseTypeOther: apiData.exerciseTypeOther || '',
@@ -289,13 +292,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getPlantGrowthlogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           console.log('Plant growth log data loaded:', apiData);
-          
+
           setPlantGrowthFormData({
             plantType: apiData.plantType || '',
             environmentType: apiData.environmentType || '',
@@ -321,13 +324,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getPlantExtractlogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           console.log('Plant extract use log data loaded:', apiData);
-          
+
           setPlantExtractFormData({
             extractType: apiData.extractType || '',
             extractTypeOther: apiData.extractTypeOther || '',
@@ -351,13 +354,13 @@ useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData._id;
-      
+
       if (userId) {
         const response = await getParentinglogById(userId);
         if (response.status === 'success' && response.data) {
           const apiData = response.data;
           console.log('Parenting family log data loaded:', apiData);
-          
+
           setParentingFormData({
             numberOfChildren: apiData.numberOfChildren || '',
             ageRanges: apiData.ageRanges || '',
@@ -391,15 +394,15 @@ useEffect(() => {
         ...prev,
         [name]: value
       };
-      
+
       // Clear supplementUseOther when supplementUse changes away from 'other'
       if (name === 'supplementUse' && value !== 'other') {
         newData.supplementUseOther = '';
       }
-      
+
       return newData;
     });
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -414,7 +417,7 @@ useEffect(() => {
       ...prev,
       [name]: value
     }));
-    
+
     if (wellnessErrors[name]) {
       setWellnessErrors(prev => ({
         ...prev,
@@ -430,15 +433,15 @@ useEffect(() => {
         ...prev,
         [name]: value
       };
-      
+
       // Clear exerciseTypeOther when exerciseType changes away from 'other'
       if (name === 'exerciseType' && value !== 'other') {
         newData.exerciseTypeOther = '';
       }
-      
+
       return newData;
     });
-    
+
     if (lifestyleErrors[name]) {
       setLifestyleErrors(prev => ({
         ...prev,
@@ -453,7 +456,7 @@ useEffect(() => {
       ...prev,
       [name]: value
     }));
-    
+
     if (plantGrowthErrors[name]) {
       setPlantGrowthErrors(prev => ({
         ...prev,
@@ -469,7 +472,7 @@ useEffect(() => {
         ...prev,
         [name]: value
       };
-      
+
       // Clear "Other" detail fields when switching away from 'other'
       if (name === 'extractType' && value !== 'other') {
         newData.extractTypeOther = '';
@@ -486,10 +489,10 @@ useEffect(() => {
       if (name === 'postuseSymptoms' && value !== 'other') {
         newData.postuseSymptomsOther = '';
       }
-      
+
       return newData;
     });
-    
+
     if (plantExtractErrors[name]) {
       setPlantExtractErrors(prev => ({
         ...prev,
@@ -504,7 +507,7 @@ useEffect(() => {
       ...prev,
       [name]: value
     }));
-    
+
     if (parentingErrors[name]) {
       setParentingErrors(prev => ({
         ...prev,
@@ -542,12 +545,12 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setLoading(true);
       try {
         console.log('Diet log submitted:', formData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
@@ -555,18 +558,20 @@ useEffect(() => {
             formDataToSend.append(key, formData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addDietlogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Diet log saved successfully!');
+          appendUniversalLogEntry('diet');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadDietLogData();
         } else {
@@ -622,12 +627,12 @@ useEffect(() => {
 
   const handleWellnessSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateWellnessForm()) {
       setLoading(true);
       try {
         console.log('Wellness symptom log submitted:', wellnessFormData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(wellnessFormData).forEach(key => {
@@ -635,18 +640,20 @@ useEffect(() => {
             formDataToSend.append(key, wellnessFormData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addWellnessSymptomLogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Wellness symptom log saved successfully!');
+          appendUniversalLogEntry('wellness');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadWellnessLogData();
         } else {
@@ -710,12 +717,12 @@ useEffect(() => {
 
   const handleLifestyleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateLifestyleForm()) {
       setLoading(true);
       try {
         console.log('Lifestyle activity log submitted:', lifestyleFormData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(lifestyleFormData).forEach(key => {
@@ -723,18 +730,20 @@ useEffect(() => {
             formDataToSend.append(key, lifestyleFormData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addLifestylelogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Lifestylelog activity log saved successfully!');
+          appendUniversalLogEntry('lifestyle');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadLifestyleLogData();
         } else {
@@ -794,12 +803,12 @@ useEffect(() => {
 
   const handlePlantGrowthSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validatePlantGrowthForm()) {
       setLoading(true);
       try {
         console.log('Plant growth log submitted:', plantGrowthFormData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(plantGrowthFormData).forEach(key => {
@@ -807,18 +816,22 @@ useEffect(() => {
             formDataToSend.append(key, plantGrowthFormData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addPlantGrowthlogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Plant growth log saved successfully!');
+          // Append to local dashboard cache and refresh dashboard
+          appendGrowthLogEntry(plantGrowthFormData);
+          appendUniversalLogEntry('plant-growth');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadPlantGrowthLogData();
         } else {
@@ -885,12 +898,12 @@ useEffect(() => {
 
   const handlePlantExtractSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validatePlantExtractForm()) {
       setLoading(true);
       try {
         console.log('Plant extract use log submitted:', plantExtractFormData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(plantExtractFormData).forEach(key => {
@@ -898,18 +911,22 @@ useEffect(() => {
             formDataToSend.append(key, plantExtractFormData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addPlantExtractlogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Plant extract use log saved successfully!');
+          // Append to local dashboard cache and refresh dashboard
+          appendExtractLogEntry(plantExtractFormData);
+          appendUniversalLogEntry('plant-extract');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadPlantExtractLogData();
         } else {
@@ -945,12 +962,12 @@ useEffect(() => {
 
   const handleParentingSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateParentingForm()) {
       setLoading(true);
       try {
         console.log('Parenting & family log submitted:', parentingFormData);
-        
+
         // Convert form data to FormData
         const formDataToSend = new FormData();
         Object.keys(parentingFormData).forEach(key => {
@@ -958,18 +975,20 @@ useEffect(() => {
             formDataToSend.append(key, parentingFormData[key]);
           }
         });
-        
+
         // Add userId
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData._id) {
           formDataToSend.append('userId', userData._id);
         }
-        
+
         // Call API
         const response = await addParentinglogAPI(formDataToSend);
-        
+
         if (response.status === 'success') {
           toast.success('Parenting & family log saved successfully!');
+          appendUniversalLogEntry('parenting');
+          setDashboardRefreshKey(k => k + 1);
           // Reload the saved data to display in form
           await loadParentingLogData();
         } else {
@@ -1008,6 +1027,9 @@ useEffect(() => {
     return dataMap[activeLogType] || [];
   };
 
+  const hasCannabisUser =
+    Array.isArray(getplantTypes) && getplantTypes.includes('Cannabis');
+
   return (
     <div className="logs-tab">
       <div className="tab-header">
@@ -1015,39 +1037,42 @@ useEffect(() => {
         <p>Track your daily activities, health, and plant interactions</p>
       </div>
 
+      {/* ── Log Dashboard — shown for all users, adapts by log type ── */}
+      <LogDashboard refreshKey={dashboardRefreshKey} isCannabisUser={hasCannabisUser} />
+
       <div className="logs-container">
         {/* Log Type Selector */}
         <div className="log-type-selector">
           {logTypes.filter((type) => {
-    // Parenting condition
-    if (type.id === "parenting" && getnumberOfChildren === "None") {
-      return false;
-    }
+            // Parenting condition
+            if (type.id === "parenting" && getnumberOfChildren === "None") {
+              return false;
+            }
 
-    // Plant condition
-    const hasCannabis =
-      Array.isArray(getplantTypes) &&
-      getplantTypes.includes("Cannabis");
+            // Plant condition
+            const hasCannabis =
+              Array.isArray(getplantTypes) &&
+              getplantTypes.includes("Cannabis");
 
-    if (
-      (type.id === "plant-growth" || type.id === "plant-extract") &&
-      !hasCannabis
-    ) {
-      return false;
-    } else if ( (type.id === "wellness" || type.id === "lifestyle" || type.id === "diet") &&
-    hasCannabis) {
-      return false;
-    }
+            if (
+              (type.id === "plant-growth" || type.id === "plant-extract") &&
+              !hasCannabis
+            ) {
+              return false;
+            } else if ((type.id === "wellness" || type.id === "lifestyle" || type.id === "diet") &&
+              hasCannabis) {
+              return false;
+            }
 
-    return true;
-  }).map((type) => (
+            return true;
+          }).map((type) => (
             <button
               key={type.id}
               className={`log-type-btn ${activeLogType === type.id ? 'active' : ''}`}
               onClick={() => setActiveLogType(type.id)}
               style={{ '--color': type.color }}
             >
-              <span className="log-icon"><Image src={type.icon} alt="" width={32} height={32} className="img-fluid"/></span>
+              <span className="log-icon"><Image src={type.icon} alt="" width={32} height={32} className="img-fluid" /></span>
               <span className="log-name">{type.name}</span>
             </button>
           ))}
@@ -1067,7 +1092,7 @@ useEffect(() => {
             <div className="diet-log-form">
               <form onSubmit={handleSubmit} className="signup_form">
                 <h4 className="form_title">Diet <span>Log</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -1090,7 +1115,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1114,7 +1139,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1135,7 +1160,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {formData.supplementUse === 'other' && (
                     <div className="col-md-6">
                       <div className="form-group">
@@ -1153,7 +1178,7 @@ useEffect(() => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1171,7 +1196,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1184,7 +1209,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10</option>
                           ))}
                         </select>
@@ -1192,7 +1217,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1205,7 +1230,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select score</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10</option>
                           ))}
                         </select>
@@ -1213,7 +1238,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -1230,7 +1255,7 @@ useEffect(() => {
             <div className="wellness-log-form">
               <form onSubmit={handleWellnessSubmit} className="signup_form">
                 <h4 className="form_title">Wellness <span>Symptoms</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -1244,7 +1269,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select fatigue level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1252,7 +1277,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1265,7 +1290,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select pain level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Mild' : num <= 6 ? 'Moderate' : 'Severe'}</option>
                           ))}
                         </select>
@@ -1273,7 +1298,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1286,7 +1311,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select anxiety level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1294,7 +1319,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1314,7 +1339,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1327,7 +1352,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select digestion rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Poor' : num <= 6 ? 'Fair' : 'Good'}</option>
                           ))}
                         </select>
@@ -1335,7 +1360,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1348,7 +1373,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select inflammation level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1356,7 +1381,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1369,7 +1394,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select skin condition rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Poor' : num <= 6 ? 'Fair' : 'Good'}</option>
                           ))}
                         </select>
@@ -1377,7 +1402,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1390,7 +1415,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select stress tolerance rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1398,7 +1423,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -1415,7 +1440,7 @@ useEffect(() => {
             <div className="lifestyle-log-form">
               <form onSubmit={handleLifestyleSubmit} className="signup_form">
                 <h4 className="form_title">Lifestyle <span>Activities</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -1440,7 +1465,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {lifestyleFormData.exerciseType === 'other' && (
                     <div className="col-md-6">
                       <div className="form-group">
@@ -1459,7 +1484,7 @@ useEffect(() => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1478,7 +1503,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1491,7 +1516,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select exertion level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Very Light' : num <= 5 ? 'Light' : num <= 7 ? 'Moderate' : num <= 9 ? 'Hard' : 'Very Hard'}</option>
                           ))}
                         </select>
@@ -1499,7 +1524,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1512,7 +1537,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select stress level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1520,7 +1545,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1533,7 +1558,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select stress level</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1541,7 +1566,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1554,7 +1579,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select sleep quality</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Poor' : num <= 6 ? 'Fair' : 'Good'}</option>
                           ))}
                         </select>
@@ -1562,7 +1587,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1582,7 +1607,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1600,7 +1625,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1613,7 +1638,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select activity load</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Low' : num <= 6 ? 'Moderate' : 'High'}</option>
                           ))}
                         </select>
@@ -1621,7 +1646,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -1638,7 +1663,7 @@ useEffect(() => {
             <div className="plant-growth-log-form">
               <form onSubmit={handlePlantGrowthSubmit} className="signup_form">
                 <h4 className="form_title">Plant <span>Growth</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -1662,7 +1687,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1682,7 +1707,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1700,7 +1725,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1716,7 +1741,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1733,7 +1758,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1755,7 +1780,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1773,7 +1798,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1793,7 +1818,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1812,7 +1837,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1827,7 +1852,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1840,7 +1865,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select success rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'Poor' : num <= 6 ? 'Fair' : 'Good'}</option>
                           ))}
                         </select>
@@ -1848,7 +1873,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1861,7 +1886,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select stress vs yield rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'High stress, low yield' : num <= 6 ? 'Moderate impact' : 'Low stress, good yield'}</option>
                           ))}
                         </select>
@@ -1869,7 +1894,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -1886,7 +1911,7 @@ useEffect(() => {
             <div className="plant-extract-log-form">
               <form onSubmit={handlePlantExtractSubmit} className="signup_form">
                 <h4 className="form_title">Plant <span>Extract Use</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -1911,7 +1936,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {plantExtractFormData.extractType === 'other' && (
                     <div className="col-md-6">
                       <div className="form-group">
@@ -1930,7 +1955,7 @@ useEffect(() => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1948,7 +1973,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -1972,7 +1997,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {plantExtractFormData.purpose === 'other' && (
                     <div className="col-md-6">
                       <div className="form-group">
@@ -1991,7 +2016,7 @@ useEffect(() => {
                       </div>
                     </div>
                   )}
-                  
+
                   {plantExtractFormData.purpose === 'other' && (
                     <>
                       <div className="col-md-6">
@@ -2016,7 +2041,7 @@ useEffect(() => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {plantExtractFormData.preuseSymptoms === 'other' && (
                         <div className="col-md-6">
                           <div className="form-group">
@@ -2037,7 +2062,7 @@ useEffect(() => {
                       )}
                     </>
                   )}
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -2059,7 +2084,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {plantExtractFormData.postuseSymptoms === 'other' && (
                     <div className="col-md-6">
                       <div className="form-group">
@@ -2078,7 +2103,7 @@ useEffect(() => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -2091,7 +2116,7 @@ useEffect(() => {
                           required
                         >
                           <option value="">Select improvement rating</option>
-                          {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                             <option key={num} value={num}>{num}/10 - {num <= 3 ? 'No improvement' : num <= 6 ? 'Moderate improvement' : 'Significant improvement'}</option>
                           ))}
                         </select>
@@ -2099,7 +2124,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -2116,7 +2141,7 @@ useEffect(() => {
             <div className="parenting-log-form">
               <form onSubmit={handleParentingSubmit} className="signup_form">
                 <h4 className="form_title">Parenting & <span>Family</span></h4>
-                
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -2137,7 +2162,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -2160,7 +2185,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group">
                       <div className="plant-forms__input">
@@ -2178,7 +2203,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="col-12">
                     <div className="form-group plant-mg-top-20">
                       <div className="plant-forms__button">
@@ -2246,7 +2271,7 @@ useEffect(() => {
         </div>
       </div>
 
-      
+
     </div>
   );
 };

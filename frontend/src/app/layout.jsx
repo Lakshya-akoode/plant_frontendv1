@@ -30,7 +30,7 @@ export const metadata = {
     siteName: "Plant Chat®",
     images: [
       {
-        url: "/img/plant-chat-logo.svg",
+        url: "/img/plant-chat-media.png",
         width: 800,
         height: 600,
       },
@@ -42,7 +42,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Plant Chat® - Plant-Based Wellness Platform",
     description: "Nourishing the Master Regulator: Real-time, evidence-informed guidance on plant-based wellness.",
-    images: ["/img/plant-chat-logo.svg"],
+    images: ["/img/plant-chat-media.png"],
   },
   icons: {
     icon: "/favicon.ico",
