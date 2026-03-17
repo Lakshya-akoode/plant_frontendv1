@@ -114,6 +114,31 @@ export function getUniversalLogs(): UniversalLogEntry[] {
     }
 }
 
+// ---- Dashboard stats (persistent, from backend) ----
+export interface DashboardStats {
+    todayCount: number;
+    weeklyCount: number;
+    monthlyCount: number;
+    currentStreak: number;
+    longestStreak: number;
+    lastLoginDate: string | null;
+}
+
+export async function getDashboardStats(): Promise<DashboardStats | null> {
+    try {
+        const response = await fetch(`${BASE_URL}api/dashboard/stats`, {
+            method: 'GET',
+            headers: getAuthHeaders(),
+        });
+        if (!response.ok) return null;
+        const json = await response.json();
+        if (json.status === 'success' && json.data) return json.data as DashboardStats;
+        return null;
+    } catch {
+        return null;
+    }
+}
+
 // ---- Remote API fetchers (supplement local cache when available) ----
 
 export async function getPlantGrowthLogHistory(userId: string): Promise<PlantGrowthHistoryEntry[]> {

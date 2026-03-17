@@ -20,11 +20,11 @@ const LOG_META = {
     'plant-extract': { icon: '💊', label: 'Extract Logs This Week', color: '#6f42c1', bg: 'rgba(111,66,193,0.08)' },
 };
 
-export default function WeeklyStats({ growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
+export default function WeeklyStats({ stats = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     if (isCannabisUser) {
         const weekGrowth = growthLogs.filter(l => isThisWeek(l.createdAt)).length;
         const weekExtract = extractLogs.filter(l => isThisWeek(l.createdAt)).length;
-        const weekTotal = weekGrowth + weekExtract;
+        const weekTotal = stats != null ? stats.weeklyCount : weekGrowth + weekExtract;
 
         const cards = [
             { icon: '🌱', label: 'Plant Growth Logs This Week', value: weekGrowth, color: '#28a745', bg: 'rgba(40,167,69,0.08)' },
@@ -54,9 +54,9 @@ export default function WeeklyStats({ growthLogs = [], extractLogs = [], univers
         );
     }
 
-    // Non-cannabis: group universalLogs by type for the current week
+    // Non-cannabis: use API stats when available
     const weekLogs = universalLogs.filter(l => isThisWeek(l.createdAt));
-    const weekTotal = weekLogs.length;
+    const weekTotal = stats != null ? stats.weeklyCount : weekLogs.length;
     const byType = {};
     weekLogs.forEach(l => { byType[l.type] = (byType[l.type] || 0) + 1; });
     const typeEntries = Object.entries(byType);

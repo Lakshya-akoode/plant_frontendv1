@@ -35,13 +35,12 @@ function computeCurrentStreak(dates) {
     return current;
 }
 
-export default function InsightsPanel({ growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
+export default function InsightsPanel({ stats = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     const insights = [];
 
     if (isCannabisUser) {
-        // --- Cannabis insights (original logic) ---
         const allDates = [...growthLogs.map(l => l.createdAt), ...extractLogs.map(l => l.createdAt)];
-        const streak = computeCurrentStreak(allDates);
+        const streak = stats != null ? stats.currentStreak : computeCurrentStreak(allDates);
 
         if (streak >= 5) insights.push({ icon: '🔥', text: `You've logged ${streak} days in a row — incredible consistency!`, type: 'positive' });
         else if (streak >= 3) insights.push({ icon: '🔥', text: `You're on a ${streak}-day logging streak. Keep it going!`, type: 'positive' });
@@ -63,15 +62,14 @@ export default function InsightsPanel({ growthLogs = [], extractLogs = [], unive
         if (!allDates.some(isToday)) insights.push({ icon: '⏰', text: "You haven't logged anything yet today. A quick log keeps your streak alive!", type: 'reminder' });
 
     } else {
-        // --- Non-cannabis insights (from universalLogs) ---
         const dates = universalLogs.map(l => l.createdAt);
-        const streak = computeCurrentStreak(dates);
+        const streak = stats != null ? stats.currentStreak : computeCurrentStreak(dates);
 
         if (streak >= 5) insights.push({ icon: '🔥', text: `You've logged ${streak} days in a row — amazing consistency!`, type: 'positive' });
         else if (streak >= 3) insights.push({ icon: '🔥', text: `You're on a ${streak}-day logging streak. Keep building that habit!`, type: 'positive' });
         else if (streak === 0) insights.push({ icon: '💡', text: 'Log today to start a new streak and build consistency.', type: 'info' });
 
-        const todayCount = universalLogs.filter(l => isToday(l.createdAt)).length;
+        const todayCount = stats != null ? stats.todayCount : universalLogs.filter(l => isToday(l.createdAt)).length;
         if (todayCount === 0) insights.push({ icon: '⏰', text: "You haven't logged anything yet today. Tap a form below to get started!", type: 'reminder' });
         else insights.push({ icon: '✅', text: `Great job — you've logged ${todayCount} entr${todayCount === 1 ? 'y' : 'ies'} today!`, type: 'positive' });
 
