@@ -122,6 +122,9 @@ export interface DashboardStats {
     currentStreak: number;
     longestStreak: number;
     lastLoginDate: string | null;
+    lastActivityAt: string | null;
+    todayByCategory: Record<string, number>;
+    daysLoggedThisMonth?: number;
 }
 
 export async function getDashboardStats(): Promise<DashboardStats | null> {
@@ -133,6 +136,28 @@ export async function getDashboardStats(): Promise<DashboardStats | null> {
         if (!response.ok) return null;
         const json = await response.json();
         if (json.status === 'success' && json.data) return json.data as DashboardStats;
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+export interface DashboardActivitySeries {
+    last7Days: { date: string; count: number; byCategory?: Record<string, number> }[];
+    weeklyCumulative: number[];
+    weekStart: string;
+    weeklyByCategory?: Record<string, number>;
+}
+
+export async function getDashboardActivitySeries(): Promise<DashboardActivitySeries | null> {
+    try {
+        const response = await fetch(`${BASE_URL}api/dashboard/activity-series`, {
+            method: 'GET',
+            headers: getAuthHeaders(),
+        });
+        if (!response.ok) return null;
+        const json = await response.json();
+        if (json.status === 'success' && json.data) return json.data as DashboardActivitySeries;
         return null;
     } catch {
         return null;
@@ -155,10 +180,8 @@ export async function getPlantGrowthLogHistory(userId: string): Promise<PlantGro
                 : data?.data
                     ? [data.data]
                     : [];
-            // Merge with local cache, dedup by timestamp
-            const local = getLocalGrowthLogs();
-            const merged = mergeAndDeduplicate([...local, ...remote]);
-            return merged;
+            // Use only API data so dashboard counts match DB (no duplicate from local merge)
+            return deduplicateById(remote);
         }
     } catch {
         // fall back to local
@@ -179,9 +202,8 @@ export async function getPlantExtractLogHistory(userId: string): Promise<PlantEx
                 : data?.data
                     ? [data.data]
                     : [];
-            const local = getLocalExtractLogs();
-            const merged = mergeAndDeduplicate([...local, ...remote]);
-            return merged;
+            // Use only API data so dashboard counts match DB (no duplicate from local merge)
+            return deduplicateById(remote);
         }
     } catch {
         // fall back to local
@@ -189,18 +211,19 @@ export async function getPlantExtractLogHistory(userId: string): Promise<PlantEx
     return getLocalExtractLogs();
 }
 
-function mergeAndDeduplicate<T extends { createdAt?: string }>(entries: T[]): T[] {
-    const seen = new Set<string>();
-    return entries
-        .filter(e => {
-            if (!e.createdAt) return true;
-            if (seen.has(e.createdAt)) return false;
-            seen.add(e.createdAt);
-            return true;
-        })
-        .sort((a, b) => {
-            const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-            const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-            return ta - tb;
-        });
+/** Deduplicate by _id so the same log is not counted twice; sort by createdAt. */
+function deduplicateById<T extends { _id?: string; createdAt?: string }>(entries: T[]): T[] {
+    const byId = new Map<string, T>();
+    let fallbackIdx = 0;
+    for (const e of entries) {
+        const id = (e._id != null ? String(e._id) : null) as string | null;
+        const key = id ?? `_no_id_${fallbackIdx++}`;
+        if (id && byId.has(key)) continue; // already have this doc
+        byId.set(key, e);
+    }
+    return Array.from(byId.values()).sort((a, b) => {
+        const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return ta - tb;
+    });
 }

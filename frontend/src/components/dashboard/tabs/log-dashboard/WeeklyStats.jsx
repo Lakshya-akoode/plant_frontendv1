@@ -14,17 +14,19 @@ function isThisWeek(dateStr) {
 const LOG_META = {
     diet: { icon: '🥗', label: 'Diet Logs This Week', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
     wellness: { icon: '💉', label: 'Wellness Logs This Week', color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
-    lifestyle: { icon: '🏃', label: 'Activity Logs This Week', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
+    lifestyle: { icon: '🏃', label: 'Lifestyle Logs This Week', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
     parenting: { icon: '👨‍👩‍👧', label: 'Parenting Logs This Week', color: '#ec4899', bg: 'rgba(236,72,153,0.08)' },
     'plant-growth': { icon: '🌱', label: 'Growth Logs This Week', color: '#28a745', bg: 'rgba(40,167,69,0.08)' },
     'plant-extract': { icon: '💊', label: 'Extract Logs This Week', color: '#6f42c1', bg: 'rgba(111,66,193,0.08)' },
+    login: { icon: '🔐', label: 'Logins This Week', color: '#64748b', bg: 'rgba(100,116,139,0.08)' },
 };
 
-export default function WeeklyStats({ stats = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
+export default function WeeklyStats({ stats = null, activitySeries = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     if (isCannabisUser) {
         const weekGrowth = growthLogs.filter(l => isThisWeek(l.createdAt)).length;
         const weekExtract = extractLogs.filter(l => isThisWeek(l.createdAt)).length;
-        const weekTotal = stats != null ? stats.weeklyCount : weekGrowth + weekExtract;
+        // Use only plant growth + extract so total matches breakdown and is consistent across browsers
+        const weekTotal = weekGrowth + weekExtract;
 
         const cards = [
             { icon: '🌱', label: 'Plant Growth Logs This Week', value: weekGrowth, color: '#28a745', bg: 'rgba(40,167,69,0.08)' },
@@ -54,12 +56,18 @@ export default function WeeklyStats({ stats = null, growthLogs = [], extractLogs
         );
     }
 
-    // Non-cannabis: use API stats when available
+    // Non-cannabis: use API stats for totals; type breakdown is still best-effort from local cache.
     const weekLogs = universalLogs.filter(l => isThisWeek(l.createdAt));
     const weekTotal = stats != null ? stats.weeklyCount : weekLogs.length;
+
+    const weeklyByCategory = activitySeries?.weeklyByCategory || null;
     const byType = {};
-    weekLogs.forEach(l => { byType[l.type] = (byType[l.type] || 0) + 1; });
-    const typeEntries = Object.entries(byType);
+    if (weeklyByCategory) {
+        Object.keys(weeklyByCategory).forEach(k => { byType[k] = weeklyByCategory[k]; });
+    } else {
+        weekLogs.forEach(l => { byType[l.type] = (byType[l.type] || 0) + 1; });
+    }
+    const typeEntries = Object.entries(byType).filter(([type]) => type !== 'other');
 
     // Always show at least 3 cards; pad with "total" if fewer categories
     const cards = typeEntries.map(([type, count]) => {
@@ -68,11 +76,10 @@ export default function WeeklyStats({ stats = null, growthLogs = [], extractLogs
     });
 
     if (cards.length === 0) {
-        cards.push({ icon: '📊', label: 'Total Logs This Week', value: 0, color: '#5b6af0', bg: 'rgba(91,106,240,0.08)' });
+        cards.push({ icon: '📊', label: 'Total Logs This Week', value: weekTotal, color: '#5b6af0', bg: 'rgba(91,106,240,0.08)' });
+    } else {
+        cards.push({ icon: '📊', label: 'Total Logs This Week', value: weekTotal, color: '#5b6af0', bg: 'rgba(91,106,240,0.08)' });
     }
-
-    // Append total card
-    cards.push({ icon: '📊', label: 'Total Logs This Week', value: weekTotal, color: '#5b6af0', bg: 'rgba(91,106,240,0.08)' });
 
     return (
         <div className="dashboard-section">
