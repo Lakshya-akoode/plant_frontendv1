@@ -5,6 +5,7 @@ import {
     getPlantGrowthLogHistory,
     getPlantExtractLogHistory,
     getUniversalLogs,
+    getDashboardStats,
 } from '../../../../api/frontend/logDashboard';
 import LogDashboardHeader from './LogDashboardHeader';
 import TodaySummary from './TodaySummary';
@@ -17,6 +18,7 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
     const [growthLogs, setGrowthLogs] = useState([]);
     const [extractLogs, setExtractLogs] = useState([]);
     const [universalLogs, setUniversalLogs] = useState([]);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const loadDashboardData = useCallback(async () => {
@@ -25,15 +27,16 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = userData._id;
 
+            const [statsRes, growth, extract] = await Promise.all([
+                getDashboardStats(),
+                isCannabisUser && userId ? getPlantGrowthLogHistory(userId) : Promise.resolve([]),
+                isCannabisUser && userId ? getPlantExtractLogHistory(userId) : Promise.resolve([]),
+            ]);
+            setStats(statsRes || null);
             if (isCannabisUser && userId) {
-                const [growth, extract] = await Promise.all([
-                    getPlantGrowthLogHistory(userId),
-                    getPlantExtractLogHistory(userId),
-                ]);
-                setGrowthLogs(growth);
-                setExtractLogs(extract);
+                setGrowthLogs(growth || []);
+                setExtractLogs(extract || []);
             }
-
             setUniversalLogs(getUniversalLogs());
         } catch (err) {
             console.log('Dashboard load error:', err?.message);
@@ -47,9 +50,15 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
         loadDashboardData();
     }, [loadDashboardData, refreshKey]);
 
+    useEffect(() => {
+        const onFocus = () => loadDashboardData();
+        window.addEventListener('focus', onFocus);
+        return () => window.removeEventListener('focus', onFocus);
+    }, [loadDashboardData]);
+
     return (
         <div className="log-dashboard">
-            <LogDashboardHeader isCannabisUser={isCannabisUser} />
+            <LogDashboardHeader isCannabisUser={isCannabisUser} lastLoginDate={stats?.lastLoginDate} />
 
             {loading ? (
                 <div className="log-dashboard__loading">
@@ -60,12 +69,14 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
                 <>
                     {/* Same layout for ALL users — data source adapts by type */}
                     <TodaySummary
+                        stats={stats}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}
                         isCannabisUser={isCannabisUser}
                     />
                     <WeeklyStats
+                        stats={stats}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}
@@ -78,12 +89,14 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
                         isCannabisUser={isCannabisUser}
                     />
                     <StreakCard
+                        stats={stats}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}
                         isCannabisUser={isCannabisUser}
                     />
                     <InsightsPanel
+                        stats={stats}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}

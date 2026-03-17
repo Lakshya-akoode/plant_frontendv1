@@ -29,13 +29,14 @@ function computeStreak(dates) {
     return { current, longest };
 }
 
-export default function StreakCard({ growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
-    // Use type-specific dates for cannabis, universal dates for others
+export default function StreakCard({ stats = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     const dates = isCannabisUser
         ? [...growthLogs.map(l => l.createdAt), ...extractLogs.map(l => l.createdAt)]
         : universalLogs.map(l => l.createdAt);
 
-    const { current, longest } = computeStreak(dates);
+    const { current, longest } = stats != null
+        ? { current: stats.currentStreak, longest: stats.longestStreak }
+        : computeStreak(dates);
 
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
