@@ -27,11 +27,14 @@ export default function TodaySummary({ stats = null, growthLogs = [], extractLog
             ...extractLogs.map(l => ({ ...l, type: 'extract' })),
         ];
         const todayAll = allLogs.filter(l => isToday(l.createdAt));
-        const todayCount = stats != null ? stats.todayCount : todayAll.length;
         const todayGrowth = todayAll.filter(l => l.type === 'growth').length;
         const todayExtract = todayAll.filter(l => l.type === 'extract').length;
-        const sorted = [...allLogs].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-        const lastEntry = sorted[0]?.createdAt;
+        // Use only plant growth + extract count so totals match the breakdown and are consistent across browsers
+        const todayCount = todayGrowth + todayExtract;
+        const lastEntry = stats?.lastActivityAt != null ? stats.lastActivityAt : (() => {
+            const sorted = [...allLogs].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            return sorted[0]?.createdAt;
+        })();
 
         return (
             <div className="dashboard-section">
@@ -73,36 +76,24 @@ export default function TodaySummary({ stats = null, growthLogs = [], extractLog
         );
     }
 
-    // Non-cannabis: use API stats when available, else fall back to universalLogs
-    const todayAll = universalLogs.filter(l => isToday(l.createdAt));
-    const sorted = [...universalLogs].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    const lastEntry = sorted[0]?.createdAt;
-    const todayCount = stats != null ? stats.todayCount : todayAll.length;
-    const weekLogs = universalLogs.filter(l => {
-        const d = new Date(l.createdAt);
-        const now = new Date();
-        const day = now.getDay();
-        const start = new Date(now);
-        start.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
-        start.setHours(0, 0, 0, 0);
-        return d >= start;
-    });
-    const weeklyCount = stats != null ? stats.weeklyCount : weekLogs.length;
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const monthlyCount = stats != null ? stats.monthlyCount : universalLogs.filter(l => l.createdAt && new Date(l.createdAt) >= monthStart).length;
+    // Non-cannabis: all from DB (stats) so both browsers show the same
+    const todayCount = stats != null ? stats.todayCount : 0;
+    const monthlyCount = stats != null ? stats.monthlyCount : 0;
+    const lastEntry = stats?.lastActivityAt || null;
+    const todayByCategory = stats?.todayByCategory || {};
 
     const LOG_META = {
-        diet: { icon: '🥗', label: 'Diet Logs' },
-        wellness: { icon: '💉', label: 'Wellness Logs' },
-        lifestyle: { icon: '🏃', label: 'Activity Logs' },
-        parenting: { icon: '👨‍👩‍👧', label: 'Parenting Logs' },
-        'plant-growth': { icon: '🌱', label: 'Growth Logs' },
-        'plant-extract': { icon: '💊', label: 'Extract Logs' },
+        diet: { icon: '🥗', label: 'Diet Logs Today' },
+        wellness: { icon: '💉', label: 'Wellness Logs Today' },
+        lifestyle: { icon: '🏃', label: 'Lifestyle Logs Today' },
+        parenting: { icon: '👨‍👩‍👧', label: 'Parenting Logs Today' },
+        'plant-growth': { icon: '🌱', label: 'Growth Logs Today' },
+        'plant-extract': { icon: '💊', label: 'Extract Logs Today' },
     };
 
-    const typeCounts = {};
-    todayAll.forEach(l => { typeCounts[l.type] = (typeCounts[l.type] || 0) + 1; });
-    const topTypes = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]).slice(0, 2);
+    const categoryEntries = Object.entries(todayByCategory)
+        .filter(([cat, n]) => cat !== 'other' && n > 0);
+    const topTypes = categoryEntries.sort((a, b) => b[1] - a[1]).slice(0, 3);
 
     return (
         <div className="dashboard-section">
@@ -125,33 +116,25 @@ export default function TodaySummary({ stats = null, growthLogs = [], extractLog
                         <div className="dashboard-stat-card__label">Last Entry</div>
                     </div>
                 </div>
-                <div className="dashboard-stat-card" style={{ '--card-color': '#f59e0b' }}>
-                    <div className="dashboard-stat-card__icon">📅</div>
-                    <div className="dashboard-stat-card__body">
-                        <div className="dashboard-stat-card__value">{weeklyCount}</div>
-                        <div className="dashboard-stat-card__label">Total entries this week</div>
-                    </div>
-                </div>
-                {topTypes.length > 0 ? topTypes.map(([type, count]) => {
-                    const meta = LOG_META[type] || { icon: '📋', label: type };
+                {topTypes.map(([type, count]) => {
+                    const meta = LOG_META[type] || { icon: '📋', label: `${type} Today` };
                     return (
                         <div key={type} className="dashboard-stat-card" style={{ '--card-color': '#ea580c' }}>
                             <div className="dashboard-stat-card__icon">{meta.icon}</div>
                             <div className="dashboard-stat-card__body">
                                 <div className="dashboard-stat-card__value">{count}</div>
-                                <div className="dashboard-stat-card__label">{meta.label} Today</div>
+                                <div className="dashboard-stat-card__label">{meta.label}</div>
                             </div>
                         </div>
                     );
-                }) : (
-                    <div className="dashboard-stat-card" style={{ '--card-color': '#ea580c' }}>
-                        <div className="dashboard-stat-card__icon">📅</div>
-                        <div className="dashboard-stat-card__body">
-                            <div className="dashboard-stat-card__value">{monthlyCount}</div>
-                            <div className="dashboard-stat-card__label">Total this month</div>
-                        </div>
+                })}
+                <div className="dashboard-stat-card" style={{ '--card-color': '#ea580c' }}>
+                    <div className="dashboard-stat-card__icon">📅</div>
+                    <div className="dashboard-stat-card__body">
+                        <div className="dashboard-stat-card__value">{monthlyCount}</div>
+                        <div className="dashboard-stat-card__label">Total this month</div>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

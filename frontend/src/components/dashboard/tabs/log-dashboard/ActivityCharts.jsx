@@ -68,9 +68,10 @@ const ratingOptions = {
     },
 };
 
-export default function ActivityCharts({ growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
+export default function ActivityCharts({ activitySeries = null, growthLogs = [], extractLogs = [], universalLogs = [], isCannabisUser = false }) {
     const last7 = getLast7Days();
     const labels = last7.map(dateLabel);
+    const series = activitySeries;
 
     if (isCannabisUser) {
         // --- Cannabis: bar (growth vs extract) + 2 line charts ---
@@ -136,16 +137,29 @@ export default function ActivityCharts({ growthLogs = [], extractLogs = [], univ
         parenting: 'rgba(236,72,153,0.75)',
     };
 
-    const presentTypes = [...new Set(universalLogs.map(l => l.type))].filter(t => LOG_TYPES.includes(t));
+    const presentTypes = series?.last7Days?.some(d => d.byCategory && Object.keys(d.byCategory).length > 0)
+        ? [...new Set(series.last7Days.flatMap(d => Object.keys(d.byCategory || {})))].filter(t => LOG_TYPES.includes(t))
+        : [...new Set(universalLogs.map(l => l.type))].filter(t => LOG_TYPES.includes(t));
 
-    const allPerDay = last7.map(day => universalLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length);
+    // If backend series exists, use its dates for labels to avoid timezone day-shifts.
+    const seriesDays = series?.last7Days?.length === 7
+        ? series.last7Days.map(d => new Date(`${d.date}T00:00:00.000Z`))
+        : null;
+    const chartDays = seriesDays || last7;
+    const chartLabels = chartDays.map(dateLabel);
+
+    const allPerDay = series?.last7Days?.length === 7
+        ? series.last7Days.map(d => d.count)
+        : chartDays.map(day => universalLogs.filter(l => l.createdAt && isSameDay(new Date(l.createdAt), day)).length);
 
     const barData = {
-        labels,
+        labels: chartLabels,
         datasets: presentTypes.length > 0
             ? presentTypes.map(type => ({
                 label: type.charAt(0).toUpperCase() + type.slice(1),
-                data: last7.map(day => universalLogs.filter(l => l.type === type && l.createdAt && isSameDay(new Date(l.createdAt), day)).length),
+                data: series?.last7Days?.length === 7
+                    ? series.last7Days.map(d => (d.byCategory?.[type] || 0))
+                    : chartDays.map(day => universalLogs.filter(l => l.type === type && l.createdAt && isSameDay(new Date(l.createdAt), day)).length),
                 backgroundColor: LOG_COLORS[type] || 'rgba(91,106,240,0.75)',
                 borderRadius: 6,
                 borderSkipped: false,
@@ -161,7 +175,7 @@ export default function ActivityCharts({ growthLogs = [], extractLogs = [], univ
 
     // Activity frequency line (total entries per day as a trend)
     const frequencyData = {
-        labels,
+        labels: chartLabels,
         datasets: [{
             label: 'Total Entries',
             data: allPerDay,
@@ -177,9 +191,12 @@ export default function ActivityCharts({ growthLogs = [], extractLogs = [], univ
     };
 
     // Weekly cumulative trend
-    const cumulative = allPerDay.reduce((acc, val, i) => { acc.push((acc[i - 1] || 0) + val); return acc; }, []);
+    const cumulative = series?.weeklyCumulative?.length === 7
+        ? series.weeklyCumulative
+        : allPerDay.reduce((acc, val, i) => { acc.push((acc[i - 1] || 0) + val); return acc; }, []);
+    const hasChartData = (series?.last7Days?.some(d => d.count > 0)) || (universalLogs.length > 0);
     const cumulativeData = {
-        labels,
+        labels: chartLabels,
         datasets: [{
             label: 'Cumulative Logs',
             data: cumulative,
@@ -209,19 +226,19 @@ export default function ActivityCharts({ growthLogs = [], extractLogs = [], univ
                         </div>
                     )}
                     <div className="chart-card__body">
-                        {universalLogs.length > 0 ? <Bar data={barData} options={commonOptions} /> : <div className="chart-empty"><span>📋 Submit logs to see your daily activity chart</span></div>}
+                        {hasChartData ? <Bar data={barData} options={commonOptions} /> : <div className="chart-empty"><span>📋 Record 1 log to view your daily and weekly charts</span></div>}
                     </div>
                 </div>
                 <div className="chart-card">
                     <div className="chart-card__header"><span className="chart-card__title">📈 Daily Logging Frequency</span></div>
                     <div className="chart-card__body">
-                        {universalLogs.length > 0 ? <Line data={frequencyData} options={commonOptions} /> : <div className="chart-empty"><span>📈 Log entries to see your daily frequency trend</span></div>}
+                        {hasChartData ? <Line data={frequencyData} options={commonOptions} /> : <div className="chart-empty"><span>📋 Record 1 log to view your daily and weekly charts</span></div>}
                     </div>
                 </div>
                 <div className="chart-card">
                     <div className="chart-card__header"><span className="chart-card__title">📊 Cumulative Logs This Week</span></div>
                     <div className="chart-card__body">
-                        {universalLogs.length > 0 ? <Line data={cumulativeData} options={commonOptions} /> : <div className="chart-empty"><span>📊 Start logging to see your cumulative progress</span></div>}
+                        {hasChartData ? <Line data={cumulativeData} options={commonOptions} /> : <div className="chart-empty"><span>📋 Record 1 log to view your daily and weekly charts</span></div>}
                     </div>
                 </div>
             </div>

@@ -6,6 +6,7 @@ import {
     getPlantExtractLogHistory,
     getUniversalLogs,
     getDashboardStats,
+    getDashboardActivitySeries,
 } from '../../../../api/frontend/logDashboard';
 import LogDashboardHeader from './LogDashboardHeader';
 import TodaySummary from './TodaySummary';
@@ -19,6 +20,7 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
     const [extractLogs, setExtractLogs] = useState([]);
     const [universalLogs, setUniversalLogs] = useState([]);
     const [stats, setStats] = useState(null);
+    const [activitySeries, setActivitySeries] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const loadDashboardData = useCallback(async () => {
@@ -27,22 +29,35 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = userData._id;
 
-            const [statsRes, growth, extract] = await Promise.all([
+            // Phase 1: fetch fast, persistent stats/series first (avoid blocking UI)
+            const [statsRes, seriesRes] = await Promise.all([
                 getDashboardStats(),
-                isCannabisUser && userId ? getPlantGrowthLogHistory(userId) : Promise.resolve([]),
-                isCannabisUser && userId ? getPlantExtractLogHistory(userId) : Promise.resolve([]),
+                getDashboardActivitySeries(),
             ]);
             setStats(statsRes || null);
-            if (isCannabisUser && userId) {
-                setGrowthLogs(growth || []);
-                setExtractLogs(extract || []);
-            }
+            setActivitySeries(seriesRes || null);
             setUniversalLogs(getUniversalLogs());
         } catch (err) {
             console.log('Dashboard load error:', err?.message);
             setUniversalLogs(getUniversalLogs());
         } finally {
             setLoading(false);
+        }
+
+        // Phase 2 (optional): load plant-specific histories without blocking initial render
+        try {
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const userId = userData._id;
+            if (isCannabisUser && userId) {
+                const [growth, extract] = await Promise.all([
+                    getPlantGrowthLogHistory(userId),
+                    getPlantExtractLogHistory(userId),
+                ]);
+                setGrowthLogs(growth || []);
+                setExtractLogs(extract || []);
+            }
+        } catch {
+            // ignore
         }
     }, [isCannabisUser]);
 
@@ -77,12 +92,14 @@ export default function LogDashboard({ refreshKey = 0, isCannabisUser = false })
                     />
                     <WeeklyStats
                         stats={stats}
+                        activitySeries={activitySeries}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}
                         isCannabisUser={isCannabisUser}
                     />
                     <ActivityCharts
+                        activitySeries={activitySeries}
                         growthLogs={growthLogs}
                         extractLogs={extractLogs}
                         universalLogs={universalLogs}

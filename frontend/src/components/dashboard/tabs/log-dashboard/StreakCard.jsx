@@ -40,12 +40,20 @@ export default function StreakCard({ stats = null, growthLogs = [], extractLogs 
 
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const daysLoggedThisMonth = new Set(
-        dates.filter(d => d && new Date(d) >= monthStart).map(d => {
-            const dt = new Date(d);
-            return `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`;
-        })
-    ).size;
+    let daysLoggedThisMonth;
+    if (stats != null && typeof stats.daysLoggedThisMonth === 'number') {
+        daysLoggedThisMonth = stats.daysLoggedThisMonth;
+    } else {
+        daysLoggedThisMonth = new Set(
+            dates.filter(d => d && new Date(d) >= monthStart).map(d => {
+                const dt = new Date(d);
+                return `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`;
+            })
+        ).size;
+        if (stats != null && daysLoggedThisMonth === 0 && (stats.monthlyCount > 0 || stats.currentStreak > 0)) {
+            daysLoggedThisMonth = Math.min(Math.max(1, stats.monthlyCount), 31);
+        }
+    }
 
     const streakProgress = longest > 0 ? Math.min(100, (current / longest) * 100) : 0;
 
