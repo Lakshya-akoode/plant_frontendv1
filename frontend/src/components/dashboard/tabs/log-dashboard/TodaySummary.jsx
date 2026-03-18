@@ -93,7 +93,7 @@ export default function TodaySummary({ stats = null, growthLogs = [], extractLog
 
     const categoryEntries = Object.entries(todayByCategory)
         .filter(([cat, n]) => cat !== 'other' && n > 0);
-    const topTypes = categoryEntries.sort((a, b) => b[1] - a[1]).slice(0, 3);
+    const categoriesToShow = categoryEntries.sort((a, b) => b[1] - a[1]);
 
     return (
         <div className="dashboard-section">
@@ -116,7 +116,7 @@ export default function TodaySummary({ stats = null, growthLogs = [], extractLog
                         <div className="dashboard-stat-card__label">Last Entry</div>
                     </div>
                 </div>
-                {topTypes.map(([type, count]) => {
+                {categoriesToShow.map(([type, count]) => {
                     const meta = LOG_META[type] || { icon: '📋', label: `${type} Today` };
                     return (
                         <div key={type} className="dashboard-stat-card" style={{ '--card-color': '#ea580c' }}>
